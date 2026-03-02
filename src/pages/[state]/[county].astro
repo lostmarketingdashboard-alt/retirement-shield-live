@@ -38,9 +38,9 @@ export async function getStaticPaths() {
 
 const { state, county } = Astro.params
 
-const countyName = county.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+const countyName = county.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) + ' County'
 const stateName = state.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-const countyFullName = countyName + ' County'
+const countyFullName = countyName
 
 // ─────────────────────────────
 // COUNTY AVERAGE
@@ -60,6 +60,27 @@ if (countyRows?.length) {
 
   if (values.length) {
     countyAverage = values.reduce((a,b)=>a+b,0) / values.length
+  }
+}
+
+const retirementSpend = 72000
+
+// ─────────────────────────────
+// NATIONAL AVERAGE
+// ─────────────────────────────
+
+const { data: nationalRows } = await supabase
+  .from('counties')
+  .select('"Life Expectancy (Years)"')
+
+let nationalAverage = 0
+if (nationalRows?.length) {
+  const values = nationalRows
+    .map(r => r["Life Expectancy (Years)"])
+    .filter(v => typeof v === 'number')
+
+  if (values.length) {
+    nationalAverage = values.reduce((a,b)=>a+b,0) / values.length
   }
 }
 
@@ -91,31 +112,30 @@ if (stateRows?.length) {
       ? values.reduce((a,b)=>a+b,0) / values.length
       : 0
 
+    const diff = avg - nationalAverage
+
+    const nearbySurvival75 = Math.max(0, Math.min(100, Math.round(85 + (diff * 2))))
+    const nearbySurvival85 = Math.max(0, Math.min(100, Math.round(50 + (diff * 3))))
+    const nearbySurvival95 = Math.max(0, Math.min(100, Math.round(12 + (diff * 2))))
+    const nearbySurvival90 = Math.max(0, Math.min(100, Math.round(28 + (diff * 2))))
+
+    const nearbyPlan20 = retirementSpend * 20
+    const nearbyPlan30 = retirementSpend * 30
+    const nearbySavingsGap = nearbyPlan30 - nearbyPlan20
+
     return {
       name,
       lifeExpectancy: avg.toFixed(2),
+      difference: diff.toFixed(2),
+      survival75: nearbySurvival75,
+      survival85: nearbySurvival85,
+      survival95: nearbySurvival95,
+      survival90: nearbySurvival90,
+      ssRecommendation: diff > 0 ? 70 : 67,
+      savingsGap: (nearbySavingsGap / 1000000).toFixed(2),
       href: `/${state}/${name.toLowerCase().replace(/\s+/g,'-')}`
     }
   })
-}
-
-// ─────────────────────────────
-// NATIONAL AVERAGE
-// ─────────────────────────────
-
-const { data: nationalRows } = await supabase
-  .from('counties')
-  .select('"Life Expectancy (Years)"')
-
-let nationalAverage = 0
-if (nationalRows?.length) {
-  const values = nationalRows
-    .map(r => r["Life Expectancy (Years)"])
-    .filter(v => typeof v === 'number')
-
-  if (values.length) {
-    nationalAverage = values.reduce((a,b)=>a+b,0) / values.length
-  }
 }
 
 const difference = countyAverage - nationalAverage
@@ -159,7 +179,6 @@ const s95County = survival95
 const s95State = 13
 const s95National = 12
 
-const retirementSpend = 72000
 const plan20 = retirementSpend * 20
 const plan30 = retirementSpend * 30
 const additionalCapital = plan30 - plan20
