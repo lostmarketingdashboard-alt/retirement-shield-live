@@ -92,11 +92,18 @@ nav{
   font-family:'Playfair Display',serif;
   font-size:20px;
   font-weight:600;
-  color: white;
+  color:white;
+  text-decoration:none !important;
+  display:inline-block;
+}
+
+.nav-logo:hover{
+  opacity:.9;
 }
 
 .nav-logo span{
   color:var(--gold);
+  text-decoration:none !important;
 }
 
 .nav-links{
@@ -216,7 +223,7 @@ nav{
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Retirement<span>Shield</span></div>
+  <a href="/" class="nav-logo">Retirement<span>Shield</span></a>
   <ul class="nav-links">
     <li><a href="/lifeexpectancycalculator">Life Expectancy</a></li>
     <li><a href="/quiz">Estate Planning</a></li>

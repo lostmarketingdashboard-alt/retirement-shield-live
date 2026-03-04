@@ -83,13 +83,14 @@ const formattedPopulation = typeof population === 'number'
     z-index: 100;
     border-bottom: 2px solid var(--gold);
   }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--white);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
+ .nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  font-weight:600;
+  color:white;
+  text-decoration:none !important;
+  display:inline-block;
+}
   .nav-logo span { color: var(--gold); }
   .nav-links {
     display: flex;
@@ -961,7 +962,8 @@ const formattedPopulation = typeof population === 'number'
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Retirement<span>Shield</span></div>
+
+  <a href="/" class="nav-logo">Retirement<span>Shield</span></a>
   <ul class="nav-links">
     <li><a href="/lifeexpectancycalculator">Life Expectancy</a></li>
     <li><a href="/quiz">Estate Planning</a></li>
@@ -1440,7 +1442,7 @@ The primary retirement planning risk in {countyName} is not just lifespan — it
       </div>
     </div>
 
-    <p class="body-text">While {countyName} outlives its northern neighbor Broward County by roughly 7 months, the practical retirement planning implications are nearly identical — both counties warrant a delay-to-70 Social Security strategy and 30-year planning horizon. The more meaningful comparison is against the {stateName} state average (78.5 years), which {countyName} exceeds by 0.9 years, primarily due to its large Cuban-American and other Latin immigrant population.</p>
+    <p class="body-text">While {countyName} outlives its neighbor {otherCounties[0]?.name ?? '—'} County by roughly 7 months, the practical retirement planning implications are nearly identical — both counties warrant a delay-to-70 Social Security strategy and 30-year planning horizon. The more meaningful comparison is against the {stateName} state average (78.5 years), which {countyName} exceeds by 0.9 years, primarily due to its large Cuban-American and other Latin immigrant population.</p>
   </div>
 
   <!-- ESTATE PLANNING NOTE -->
