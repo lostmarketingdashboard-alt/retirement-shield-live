@@ -1372,9 +1372,9 @@ const QUESTIONS = [
     group: 'About You',
     label: 'Location',
     category: 'Personal Profile',
-    title: 'What state do you currently live in?',
-    sub: 'Estate and probate laws vary significantly by state. This helps us personalize your results.',
-    type: 'select',
+    title: 'Where do you currently reside?',
+    sub: 'Estate, probate, and property laws vary not just by state — but often by county. Select your state and county so we can tailor your protection analysis.',
+    type: 'state_county',
     options: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'],
     scoring: null
   },
@@ -1387,11 +1387,13 @@ const QUESTIONS = [
     sub: 'Age affects Medicare eligibility, RMD requirements, and which planning strategies apply to you.',
     type: 'options',
     options: [
-      { value: '55-59', label: '55 – 59' },
-      { value: '60-64', label: '60 – 64' },
-      { value: '65-69', label: '65 – 69' },
-      { value: '70-75', label: '70 – 75' },
-      { value: '76+',   label: '76 or older' }
+      { value: 'under45', label: 'Under 45' },
+      { value: '45-54',   label: '45 – 54' },
+      { value: '55-59',   label: '55 – 59' },
+      { value: '60-64',   label: '60 – 64' },
+      { value: '65-69',   label: '65 – 69' },
+      { value: '70-75',   label: '70 – 75' },
+      { value: '76+',     label: '76 or older' }
     ],
     scoring: null,
     twoCol: true
@@ -1673,10 +1675,27 @@ function buildSlideHTML(q, i) {
           ${opts}
         </select>
       </div>`;
-  } else if (q.type === 'options') {
+  }
+  else if (q.type === 'state_county') {
+    const opts = q.options.map(s => `<option value="${s}">${s}</option>`).join('');
+    optionsHTML = `
+      <div class="state-select-wrap" style="margin-bottom:14px;">
+        <select class="state-select" id="input-state" onchange="onStateChange(this.value)">
+          <option value="">Select your state…</option>
+          ${opts}
+        </select>
+      </div>
+      <div class="state-select-wrap">
+        <select class="state-select" id="input-county" disabled onchange="onCountyChange(this.value)">
+          <option value="">Select your county…</option>
+        </select>
+      </div>
+    `;
+  }
+  else if (q.type === 'options') {
     const gridClass = q.twoCol ? 'options-grid two-col' : 'options-grid';
     const btns = q.options.map((o, idx) => {
-      const letters = ['A','B','C','D','E'];
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
       return `
         <button class="option-btn" id="opt-${q.id}-${o.value}" onclick="selectOption('${q.id}','${o.value}')">
           <div class="option-indicator">${letters[idx]}</div>
@@ -1734,6 +1753,55 @@ function onSelectChange(qId, value) {
   }
 }
 
+// --- State + County handlers ---
+async function onStateChange(value) {
+  const countySelect = document.getElementById('input-county')
+
+  if (!value) {
+    countySelect.innerHTML = '<option value="">Select your county…</option>'
+    countySelect.disabled = true
+    document.getElementById('btnNext').disabled = true
+    return
+  }
+
+  answers['state'] = value
+
+  // Fetch counties from Supabase
+  const { data, error } = await supabase
+    .from('county_population')
+    .select('county')
+    .eq('state', value.toLowerCase())
+    .order('county', { ascending: true })
+
+  if (error) {
+    console.error('County fetch error:', error)
+    return
+  }
+
+  const countyOptions = data
+    .map(row => `<option value="${row.county}">${row.county}</option>`)
+    .join('')
+
+  countySelect.innerHTML = `
+    <option value="">Select your county…</option>
+    ${countyOptions}
+  `
+
+  countySelect.disabled = false
+  document.getElementById('btnNext').disabled = true
+}
+
+function onCountyChange(value) {
+  if (!value) {
+    document.getElementById('btnNext').disabled = true
+    return
+  }
+
+  answers['county'] = value
+  document.getElementById('btnNext').disabled = false
+  updateSteps()
+}
+
 function onEmailChange() {
   const fn = document.getElementById('input-firstName')?.value.trim();
   const ln = document.getElementById('input-lastName')?.value.trim();
@@ -1775,7 +1843,24 @@ function showSlide(idx) {
     const sel = document.getElementById(`input-${q.id}`);
     if (sel) sel.value = answers[q.id];
     document.getElementById('btnNext').disabled = false;
-  } else {
+  }
+  else if (q && q.type === 'state_county') {
+    const stateSel = document.getElementById('input-state')
+    const countySel = document.getElementById('input-county')
+
+    if (answers.state) {
+      stateSel.value = answers.state
+      onStateChange(answers.state).then(() => {
+        if (answers.county) {
+          countySel.value = answers.county
+          document.getElementById('btnNext').disabled = false
+        }
+      })
+    } else {
+      document.getElementById('btnNext').disabled = true
+    }
+  }
+  else {
     document.getElementById('btnNext').disabled = true;
   }
 }
@@ -1861,6 +1946,7 @@ function showResults() {
       lastName: answers.lastName || '',
       email: answers.email || '',
       state: answers.state || '',
+      county: answers.county || '',
       age: answers.age || '',
       marital: answers.marital || '',
       dependents: answers.dependents || '',
@@ -1988,7 +2074,9 @@ async function registerFromQuiz() {
       id: user.id,
       full_name: `${answers.firstName || ''} ${answers.lastName || ''}`.trim(),
       email: user.email,
-      role: 'user'
+      role: 'user',
+      state: answers.state || null,
+      county: answers.county || null
     });
 
   if (profileError) {
@@ -2069,6 +2157,8 @@ window.closeRegisterModal = closeRegisterModal;
 window.registerFromQuiz = registerFromQuiz;
 window.selectOption = selectOption;
 window.onSelectChange = onSelectChange;
+window.onStateChange = onStateChange;
+window.onCountyChange = onCountyChange;
 window.onEmailChange = onEmailChange;
 window.goBack = goBack;
 

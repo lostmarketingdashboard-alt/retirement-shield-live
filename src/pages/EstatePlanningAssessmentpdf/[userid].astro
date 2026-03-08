@@ -139,6 +139,66 @@ const gapCount = gaps.length;
       );
   }
 
+  .export-btn {
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.5);
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+@media print {
+
+  /* Hide export button */
+  .export-btn {
+    display: none !important;
+  }
+
+  /* Force exact color rendering */
+  html, body {
+    background: var(--cream) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Force dark sections to KEEP their backgrounds */
+  .cover {
+    background: var(--navy) !important;
+  }
+
+  .score-card,
+  .case-study,
+  .cta-card,
+  .alert-box {
+    background: var(--navy) !important;
+  }
+
+  /* Preserve gradients and textures */
+  .cover-texture {
+    display: block !important;
+  }
+
+  /* Remove any browser lightening */
+  body {
+    filter: none !important;
+  }
+}
+
   .cover-top-bar {
     display: flex;
     align-items: center;
@@ -1115,18 +1175,22 @@ const gapCount = gaps.length;
   <div class="cover-texture"></div>
   
   <div class="cover-top-bar">
-    <div class="logo">
-      <div class="logo-shield">
-        <svg viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 2L34 8V20C34 30 26 38 18 40C10 38 2 30 2 20V8L18 2Z" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
-          <path d="M18 8L28 12V20C28 27 23 33 18 35C13 33 8 27 8 20V12L18 8Z" fill="rgba(201,168,76,0.1)" stroke="#c9a84c" stroke-width="1"/>
-          <path d="M12 20L16 24L24 16" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="logo-text">Retirement <span>Shield</span></div>
+  <div class="logo">
+    <div class="logo-shield">
+      <svg viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 2L34 8V20C34 30 26 38 18 40C10 38 2 30 2 20V8L18 2Z" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+        <path d="M18 8L28 12V20C28 27 23 33 18 35C13 33 8 27 8 20V12L18 8Z" fill="rgba(201,168,76,0.1)" stroke="#c9a84c" stroke-width="1"/>
+        <path d="M12 20L16 24L24 16" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
-    <div class="cover-badge">Confidential Research Report</div>
+    <div class="logo-text">Retirement <span>Shield</span></div>
   </div>
+
+  <div style="display:flex; align-items:center; gap:16px;">
+    <div class="cover-badge">Confidential Research Report</div>
+    <button class="export-btn" onclick="exportPDF()">Export PDF</button>
+  </div>
+</div>
 
   <div class="cover-body">
     <div class="cover-eyebrow">Estate Planning Intelligence</div>
@@ -1140,7 +1204,7 @@ const gapCount = gaps.length;
       </div>
       <div class="cover-stat">
         <div class="cover-stat-num">{
-          answers.networth === 'under250' ? '&lt;$250,000' :
+          answers.networth === 'under250' ? '<$250,000' :
           answers.networth === '250to500' ? '$250,000 – $500,000' :
           answers.networth === '500to1m' ? '$500,000 – $1M' :
           answers.networth === '1to2.5m' ? '$1M – $2.5M' :
@@ -1579,6 +1643,10 @@ const gapCount = gaps.length;
 </div>
 
 <script>
+
+window.exportPDF = function () {
+  window.print();
+};
   // Progress bar
   window.addEventListener('scroll', () => {
     const doc = document.documentElement;
