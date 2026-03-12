@@ -138,8 +138,28 @@ svg.surv-chart{width:100%;display:block;overflow:visible;}
 .btn-gold{background:var(--gold);color:var(--navy);border:none;padding:12px 24px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;transition:background .2s;}
 .btn-gold:hover{background:var(--goldlt);}
 .btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.2);padding:12px 20px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block;}
-.method-note{background:rgba(26,46,74,.04);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.6;}
-.method-note strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy3);margin-bottom:4px;}
+  .method-note{background:rgba(26,46,74,.04);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.6;}
+  .method-note strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy3);margin-bottom:4px;}
+
+  .actuarial-note{
+    background:#F8FAFC;
+    border:1px solid #E2E8F0;
+    border-radius:8px;
+    padding:12px 16px;
+    margin-bottom:16px;
+    font-size:12px;
+    line-height:1.6;
+    color:var(--muted);
+  }
+
+  .actuarial-note strong{
+    display:inline;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0;
+    text-transform:none;
+    color:var(--navy2);
+  }
   /* ---- FORCE HORIZONTAL BAR CHART STYLING FIX ---- */
   .pct-row{
     display:flex !important;
@@ -283,6 +303,10 @@ svg.surv-chart{width:100%;display:block;overflow:visible;}
       <p>Fill in your profile and click Calculate to see your personalized survival probability curve and retirement planning implications.</p>
     </div>
     <div class="results-panel" id="results">
+      <div class="actuarial-note">
+        <strong>Note:</strong>
+        The numbers you're about to see are drawn from Social Security Administration and CDC actuarial data — the same tables used by researchers and planners nationwide. They show statistical probabilities for people with similar characteristics, not a prediction about your life. Use them as a planning prompt, not a verdict. For guidance specific to your situation, a licensed professional is always the right next step.
+      </div>
       <div class="result-headline">
         <div class="rh-label">Your Longevity Profile</div>
         <div class="rh-name" id="rh-name">65-Year-Old Male - Miami-Dade County, FL</div>

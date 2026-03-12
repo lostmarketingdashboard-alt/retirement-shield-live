@@ -115,6 +115,30 @@ export const ssr = false;
         transition: background 0.2s ease;
       }
 
+      .register-btn {
+        display: block;
+        width: 100%;
+        margin-top: 14px;
+        padding: 14px 16px;
+        border: 1.5px solid var(--navy);
+        background: var(--cream);
+        color: var(--navy);
+        font-size: 13px;
+        font-weight: 500;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: 0;
+        font-family: inherit;
+      }
+
+      .register-btn:hover {
+        background: var(--navy);
+        color: var(--cream);
+      }
+
       .login-btn:hover {
         background: var(--navy-light);
       }
@@ -123,6 +147,26 @@ export const ssr = false;
         margin-top: 14px;
         font-size: 13px;
         color: var(--red);
+      }
+
+      .forgot-link {
+        display: block;
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--navy);
+        text-align: right;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .forgot-link:hover {
+        color: var(--gold);
+      }
+
+      .success-msg {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--green);
       }
 
       .footer-note {
@@ -155,11 +199,16 @@ export const ssr = false;
           <label>Password</label>
           <input type="password" id="password" required />
         </div>
+        <div class="forgot-link" id="forgotPassword">Forgot password?</div>
 
         <button type="submit" class="login-btn">Login to Portal →</button>
+        <button type="button" class="register-btn" onclick="window.location.href='/quiz'">
+          New here? Start Free Assessment →
+        </button>
       </form>
 
       <div id="error" class="error-msg"></div>
+      <div id="success" class="success-msg"></div>
 
       <div class="footer-note">
         Protected access. Encrypted authentication via Supabase.
@@ -184,6 +233,30 @@ export const ssr = false;
 
       const form = document.getElementById('loginForm')
       const errorEl = document.getElementById('error')
+      const successEl = document.getElementById('success')
+      const forgotLink = document.getElementById('forgotPassword')
+
+      forgotLink.addEventListener('click', async () => {
+        const email = document.getElementById('email').value
+
+        if (!email) {
+          errorEl.textContent = 'Please enter your email above first.'
+          return
+        }
+
+        errorEl.textContent = ''
+        successEl.textContent = ''
+
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/reset-password'
+        })
+
+        if (error) {
+          errorEl.textContent = error.message
+        } else {
+          successEl.textContent = 'Password reset link sent. Check your email.'
+        }
+      })
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault()

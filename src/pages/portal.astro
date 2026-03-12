@@ -87,7 +87,7 @@ export const ssr = false;
               </div>
             </div>
           </nav>
-
+ ${profile.role === 'user' ? `
           <section class="hero">
             <div class="hero-inner">
               <div class="hero-label">
@@ -102,16 +102,18 @@ export const ssr = false;
                     <div class="progress-label">Complete</div>
                   </div>
                 </div>
-
+  
                 <div class="hero-main">
                   <h1>${profile.full_name ? profile.full_name.split(' ').slice(-1)[0] + ' Family Plan' : 'Your Family Plan'}</h1>
                   <p class="subtext">Prepared following your consultation with Lewis on February 18, 2026</p>
 
+               
                   <div class="status-badges">
                     <span class="badge-complete">1 Completed</span>
                     <span class="badge-progress">2 In Progress</span>
                     <span class="badge-queued">2 Queued</span>
                   </div>
+              
                 </div>
 
                 <div class="review-box">
@@ -122,18 +124,23 @@ export const ssr = false;
               </div>
             </div>
           </section>
-
+    ` : ''}
           <div class="tabs-wrap">
             <div class="tabs">
               ${profile.role === 'admin' ? `
-                <button class="tab active" data-tab="users">Users</button>
-                <button class="tab" data-tab="tasks">Action Tasks</button>
-              ` : `
-                <button class="tab active" data-tab="action">Action Plan</button>
-                <button class="tab" data-tab="team">Your Team</button>
-                <button class="tab" data-tab="timeline">Timeline</button>
-                <button class="tab" data-tab="documents">Documents</button>
-              `}
+  <button class="tab active" data-tab="users">Users</button>
+  <button class="tab" data-tab="tasks">Action Tasks</button>
+  <button class="tab" data-tab="add-users">Add Users</button>
+  <button class="tab" data-tab="assign-referrals">Assign Referral Members</button>
+  <button class="tab" data-tab="team-members">Team Members</button>
+` : profile.role === 'referral' ? `
+  <button class="tab active" data-tab="assigned-members">Assigned Members</button>
+` : `
+  <button class="tab active" data-tab="action">Action Plan</button>
+  <button class="tab" data-tab="team">Your Team</button>
+  <button class="tab" data-tab="timeline">Timeline</button>
+  <button class="tab" data-tab="documents">Documents</button>
+`}
             </div>
             <div class="tab-underline"></div>
           </div>
@@ -307,26 +314,67 @@ export const ssr = false;
           }
         }
 
-        function renderTeam() {
+        async function renderTeam() {
+
+          // Load ALL referral assignments for this user
+          const { data: assignments } = await supabase
+            .from('referral_assignments')
+            .select('referral_id')
+            .eq('user_id', user.id);
+
+          if (!assignments || assignments.length === 0) {
+            contentDiv.innerHTML = `
+              <div class="doc-card">
+                <div class="doc-header">
+                  <div class="doc-icon">👥</div>
+                  <div>
+                    <h3>Your Consultant</h3>
+                    <div class="doc-meta">Primary point of contact</div>
+                  </div>
+                </div>
+                <div class="doc-body">
+                  <p>
+                    No consultant has been assigned to your plan yet.
+                    Once a consultant is formally connected to your strategy,
+                    their details will appear here.
+                  </p>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+          const referralIds = assignments.map(a => a.referral_id);
+
+          // Load all consultants linked to this user
+          const { data: consultants } = await supabase
+            .from('profiles')
+            .select('id, full_name, email')
+            .in('id', referralIds);
+
+          const consultantCards = (consultants || []).map(c => `
+            <div style="margin-top:14px;padding:16px;border:1px solid var(--rule-light);border-radius:12px;">
+              <strong>${c.full_name ?? 'Your Consultant'}</strong>
+              <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">
+                ${c.email ?? ''}
+              </div>
+            </div>
+          `).join('');
+
           contentDiv.innerHTML = `
             <div class="doc-card">
               <div class="doc-header">
                 <div class="doc-icon">👥</div>
                 <div>
-                  <h3>Your Advisory Team</h3>
-                  <div class="doc-meta">Professional coordination overview</div>
+                  <h3>Your Consultant${consultants && consultants.length > 1 ? 's' : ''}</h3>
+                  <div class="doc-meta">Primary point${consultants && consultants.length > 1 ? 's' : ''} of contact</div>
                 </div>
               </div>
-
               <div class="doc-body">
-                <p>
-                  No advisory team has been assigned to your plan yet.
-                  Once your legal, tax, or insurance professionals are
-                  connected to your strategy, they will appear here.
-                </p>
+                ${consultantCards}
               </div>
             </div>
-          `
+          `;
         }
 
         function renderTimeline() {
@@ -416,12 +464,13 @@ export const ssr = false;
       }
 
       // --- ADMIN USERS TAB LOGIC ---
-      if (profile.role === 'admin') {
+      if (profile.role === 'admin' || profile.role === 'referral') {
 
         async function renderUsers() {
           const { data: users } = await supabase
             .from('profiles')
             .select('*')
+            .neq('role', 'referral')
             .order('created_at', { ascending: false })
 
           contentDiv.innerHTML = `
@@ -449,6 +498,7 @@ export const ssr = false;
                         <select data-user="${u.id}" class="role-select" style="padding:6px 12px; border-radius:8px;">
                           <option value="user" ${u.role === 'user' ? 'selected' : ''}>User</option>
                           <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                          <option value="referral" ${u.role === 'referral' ? 'selected' : ''}>Referral</option>
                         </select>
 
                         <button 
@@ -575,9 +625,7 @@ export const ssr = false;
           })
         }
 
-        // --- Action Tasks Tab ---
         async function renderActionTasks() {
-
           // --- Step 1: Add edit mode state ---
           let editingTemplateId = null;
 
@@ -797,24 +845,351 @@ export const ssr = false;
               createBtn.innerText = "Save Changes";
             });
           });
-
         }
 
-        renderUsers()
+        // --- ADMIN: TEAM MEMBERS FUNCTION ---
+        async function renderTeamMembers() {
+          const { data: team } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('role', ['admin','referral'])
+            .order('created_at', { ascending: false });
 
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <div class="doc-header">
+                <div class="doc-icon">🛡️</div>
+                <div>
+                  <h3>Team Members</h3>
+                  <div class="doc-meta">Admins & Referral Accounts</div>
+                </div>
+              </div>
+
+              <div class="doc-body">
+                <table style="width:100%;border-collapse:collapse;font-size:14px;">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Name</th>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Email</th>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Role</th>
+                      <th style="text-align:right;padding:8px;border-bottom:1px solid var(--rule-light);">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${(team || []).map(t => `
+                      <tr>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          ${t.full_name ?? 'No Name'}
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          ${t.email ?? ''}
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          ${t.role}
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);text-align:right;">
+                          <button
+                            data-delete-team="${t.id}"
+                            style="background:#b84040;color:white;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+
+          document.querySelectorAll('[data-delete-team]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const userId = e.target.dataset.deleteTeam;
+
+              const confirmed = confirm("Are you sure you want to permanently delete this team member?");
+              if (!confirmed) return;
+
+              const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', userId);
+
+              if (error) {
+                alert("Error deleting team member.");
+                console.error(error);
+                return;
+              }
+
+              renderTeamMembers();
+            });
+          });
+        }
+
+        // --- ADMIN: ASSIGN REFERRALS FUNCTION ---
+        async function renderAssignReferrals() {
+          const { data: referrals } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('role', 'referral');
+
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <h3>Assign Members To Referral Team</h3>
+              ${ (referrals || []).map(r => `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:12px;border:1px solid var(--rule-light);border-radius:10px;">
+                  <div>
+                    <strong>${r.full_name}</strong>
+                    <div style="font-size:13px;color:var(--text-muted);">${r.email}</div>
+                  </div>
+                  <button data-assign="${r.id}" class="view-pdf-btn" style="padding:8px 16px;">Assign</button>
+                </div>
+              `).join('') }
+            </div>
+          `;
+
+          document.querySelectorAll('[data-assign]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const referralId = e.target.dataset.assign;
+
+              // Load all normal users
+              const { data: users } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('role', 'user');
+
+              // Load existing assignments
+              const { data: existingAssignments } = await supabase
+                .from('referral_assignments')
+                .select('user_id')
+                .eq('referral_id', referralId);
+
+              const assignedIds = (existingAssignments || []).map(a => a.user_id);
+
+              const userList = (users || []).map(u => `
+                <div style="margin-bottom:8px;">
+                  <label>
+                    <input type="checkbox" value="${u.id}" ${assignedIds.includes(u.id) ? 'checked' : ''}>
+                    ${u.full_name}
+                  </label>
+                </div>
+              `).join('');
+
+              const popup = document.createElement('div');
+              popup.style.position = 'fixed';
+              popup.style.top = '50%';
+              popup.style.left = '50%';
+              popup.style.transform = 'translate(-50%, -50%)';
+              popup.style.background = 'white';
+              popup.style.padding = '24px';
+              popup.style.borderRadius = '12px';
+              popup.style.boxShadow = '0 20px 60px rgba(0,0,0,.2)';
+              popup.style.zIndex = '9999';
+              popup.style.maxHeight = '70vh';
+              popup.style.overflowY = 'auto';
+
+              popup.innerHTML = `
+                <h4>Select Users To Assign</h4>
+                ${userList}
+                <div style="margin-top:14px;display:flex;gap:10px;">
+                  <button id="saveAssign" class="view-pdf-btn" style="padding:8px 16px;">Save</button>
+                  <button id="closeAssign" style="padding:8px 16px;">Cancel</button>
+                </div>
+              `;
+
+              document.body.appendChild(popup);
+
+              document.getElementById('closeAssign').onclick = () => popup.remove();
+
+              document.getElementById('saveAssign').onclick = async () => {
+                // First delete all existing assignments for this referral
+                await supabase
+                  .from('referral_assignments')
+                  .delete()
+                  .eq('referral_id', referralId);
+
+                // Then insert fresh selection
+                const selected = popup.querySelectorAll('input:checked');
+
+                const newAssignments = Array.from(selected).map(cb => ({
+                  referral_id: referralId,
+                  user_id: cb.value
+                }));
+
+                if (newAssignments.length) {
+                  await supabase
+                    .from('referral_assignments')
+                    .insert(newAssignments);
+                }
+
+                popup.remove();
+              };
+            });
+          });
+        }
+
+        // --- REFERRAL: ASSIGNED MEMBERS FUNCTION ---
+        async function renderAssignedMembers() {
+          console.log('Current referral user id:', user.id);
+
+          const { data: assignments, error: assignError } = await supabase
+            .from('referral_assignments')
+            .select('*')
+            .eq('referral_id', user.id);
+
+          console.log('Assignments found:', assignments);
+
+          if (assignError) {
+            console.error(assignError);
+          }
+
+          if (!assignments || assignments.length === 0) {
+            contentDiv.innerHTML = `<div class="doc-card"><p>No assigned members yet.</p></div>`;
+            return;
+          }
+
+          const userIds = assignments.map(a => a.user_id);
+
+          const { data: members, error: memberError } = await supabase
+            .from('profiles')
+            .select('id, full_name, email')
+            .in('id', userIds);
+
+          console.log('Members loaded:', members);
+
+          if (memberError) {
+            console.error(memberError);
+          }
+
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <h3>Your Assigned Members</h3>
+              ${(members || []).map(m => `
+                <div style="margin-bottom:14px;padding:12px;border:1px solid var(--rule-light);border-radius:10px;">
+                  <strong>${m.full_name ?? 'No Name'}</strong>
+                  <div style="font-size:13px;color:var(--text-muted);">${m.email ?? ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        async function renderAddUsers() {
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <div class="doc-header">
+                <div class="doc-icon">➕</div>
+                <div>
+                  <h3>Create New User</h3>
+                  <div class="doc-meta">Manually add and assign role</div>
+                </div>
+              </div>
+
+              <div class="doc-body">
+                <input id="newUserName" placeholder="Full Name"
+                  style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+
+                <input id="newUserEmail" placeholder="Email"
+                  style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+
+                <input id="newUserPassword" type="password" placeholder="Temporary Password"
+                  style="width:100%;margin-bottom:12px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+
+                <select id="newUserRole"
+                  style="width:100%;margin-bottom:18px;padding:10px;border-radius:8px;border:1px solid #ddd;">
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                  <option value="referral">Referral</option>
+                </select>
+
+                <button id="createUserBtn" class="view-pdf-btn">Create User</button>
+              </div>
+            </div>
+          `;
+
+          document.getElementById('createUserBtn').addEventListener('click', async () => {
+            const full_name = document.getElementById('newUserName').value.trim();
+            const email = document.getElementById('newUserEmail').value.trim();
+            const password = document.getElementById('newUserPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+            // Use selected role directly (DB constraint must allow 'referral')
+            let safeRole = role;
+
+            if (!full_name || !email || !password) {
+              alert('All fields required');
+              return;
+            }
+
+            // Preserve current admin session
+            const { data: { session: adminSession } } = await supabase.auth.getSession();
+
+            // Create user
+            const { data, error } = await supabase.auth.signUp({
+              email,
+              password
+            });
+
+            if (error) {
+              alert(error.message);
+              return;
+            }
+
+            if (!data.user) {
+              alert('User creation failed.');
+              return;
+            }
+
+            // Insert profile row
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                full_name,
+                email,
+                role: safeRole
+              });
+
+            if (profileError) {
+              console.error(profileError);
+              alert('Profile creation failed: ' + profileError.message);
+              return;
+            }
+
+            // Restore admin session (signUp logs you in as the new user)
+            if (adminSession) {
+              await supabase.auth.setSession({
+                access_token: adminSession.access_token,
+                refresh_token: adminSession.refresh_token
+              });
+            }
+
+            alert('User created successfully');
+            renderUsers();
+          });
+        }
+
+        // Tab click handler (SAFE RESET)
         const tabs = document.querySelectorAll('.tab')
+
+        // Default load
+        if (profile.role === 'admin') {
+          renderUsers()
+        } else if (profile.role === 'referral') {
+          renderAssignedMembers()
+        }
 
         tabs.forEach(tab => {
           tab.addEventListener('click', () => {
             tabs.forEach(t => t.classList.remove('active'))
             tab.classList.add('active')
 
-            if (tab.dataset.tab === 'users') {
-              renderUsers()
-            }
-            if (tab.dataset.tab === 'tasks') {
-              renderActionTasks()
-            }
+            const type = tab.dataset.tab
+
+            if (type === 'users') renderUsers()
+            if (type === 'tasks') renderActionTasks()
+            if (type === 'add-users') renderAddUsers()
+            if (type === 'assign-referrals') renderAssignReferrals()
+            if (type === 'assigned-members') renderAssignedMembers()
+            if (type === 'team-members') renderTeamMembers()
           })
         })
       }
