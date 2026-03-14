@@ -131,6 +131,29 @@ nav{
   margin-bottom:12px;
 }
 
+/* New mode switch button style */
+.mode-switch-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  border:1px solid var(--border);
+  padding:14px 22px;
+  background:var(--navy);
+  color:white;
+  font-size:14px;
+  letter-spacing:.5px;
+  cursor:pointer;
+  transition:.25s ease;
+  border-radius:4px;
+  display:inline-block;
+  font-family:'DM Sans',sans-serif;
+}
+
+.mode-switch-btn:hover{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:white;
+}
+
 .header p{
   opacity:.75;
   max-width:600px;
@@ -173,6 +196,25 @@ nav{
 .county-link:hover{
   border-color:var(--gold);
   background:#fffdf6;
+}
+
+.guide-toggle{
+  padding:12px 18px;
+  border:1px solid var(--border);
+  background:white;
+  cursor:pointer;
+  font-size:14px;
+  transition:.2s;
+}
+
+.guide-toggle:hover{
+  border-color:var(--gold);
+}
+
+.active-toggle{
+  background:var(--gold);
+  color:white;
+  border-color:var(--gold);
 }
 
 @media (max-width: 768px) {
@@ -229,19 +271,26 @@ nav{
 
 <div class="header">
 
-  <h1>Browse State Estate Planning Guides</h1>
-  <p>Select your state to access your complete 2026 Estate Planning Guide — including probate rules, Medicaid planning insights, tax exposure, and retirement protection strategies tailored to your state.</p>
+  <h1 id="pageTitle">Browse State Estate Planning Guides</h1>
+  <p id="pageDescription">
+    Select your state to access your complete 2026 Estate Planning Guide — including probate rules, Medicaid planning insights, tax exposure, and retirement protection strategies tailored to your state.
+  </p>
 
 </div>
 
 <div class="container">
+
+  <div style="margin-bottom:32px;">
+    <button id="modeSwitchBtn" class="mode-switch-btn"></button>
+  </div>
 
   <div class="section-title">Select a State</div>
 
   <div class="states-grid">
     {states.map(state => (
       <a 
-        class="state-btn" 
+        class="state-btn state-link" 
+        data-state={state.toLowerCase().replace(/\s+/g,'-')}
         href={`/guide/${state.toLowerCase().replace(/\s+/g,'-')}`}
       >
         {state}
@@ -270,6 +319,39 @@ document.addEventListener('click', function(e){
     window.closeNewsletterModal();
   }
 });
+
+const switchBtn = document.getElementById('modeSwitchBtn');
+const pageTitle = document.getElementById('pageTitle');
+const pageDescription = document.getElementById('pageDescription');
+const stateLinks = document.querySelectorAll('.state-link');
+
+let currentMode = 'estate';
+
+function updateUI(){
+  stateLinks.forEach(link => {
+    const slug = link.dataset.state;
+    link.href = currentMode === 'probate'
+      ? `/probate/${slug}`
+      : `/guide/${slug}`;
+  });
+
+  if(currentMode === 'probate'){
+    pageTitle.textContent = 'Browse State Probate Guides';
+    pageDescription.textContent = 'Select your state to explore detailed 2026 Probate Guides — including court timelines, probate costs, small estate thresholds, and strategies to reduce administrative burden in your state.';
+    switchBtn.textContent = 'Browse Estate Planning Guides →';
+  } else {
+    pageTitle.textContent = 'Browse State Estate Planning Guides';
+    pageDescription.textContent = 'Select your state to access your complete 2026 Estate Planning Guide — including probate rules, Medicaid planning insights, tax exposure, and retirement protection strategies tailored to your state.';
+    switchBtn.textContent = 'Browse Probate Guides →';
+  }
+}
+
+switchBtn.addEventListener('click', () => {
+  currentMode = currentMode === 'estate' ? 'probate' : 'estate';
+  updateUI();
+});
+
+updateUI();
 
 </script>
 

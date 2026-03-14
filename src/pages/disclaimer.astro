@@ -1,0 +1,393 @@
+
+---
+export const prerender = true;
+---
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<style is:global>
+  :root {
+    --navy: #0F1F3D;
+    --navy-mid: #1B2A4A;
+    --navy-light: #243559;
+    --gold: #C9A84C;
+    --gold-light: #E2C97E;
+    --gold-muted: #F5EDD3;
+    --text: #1A1A2E;
+    --text-mid: #4A4A6A;
+    --text-light: #6B6B88;
+    --bg: #FAFAF8;
+    --bg-warm: #F7F4EF;
+    --border: #E4DDD0;
+    --white: #FFFFFF;
+    --tier-red: #8B2E2E;
+    --tier-red-bg: #FDF0F0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+  .topbar { background: var(--navy); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--gold); }
+  .topbar-brand { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--white); letter-spacing: 0.02em; text-decoration: none; }
+  .topbar-brand span { color: var(--gold); }
+  .topbar-nav { display: flex; gap: 24px; }
+  .topbar-nav a { font-size: 0.8rem; font-weight: 500; color: rgba(255,255,255,0.65); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .topbar-nav a:hover, .topbar-nav a.active { color: var(--gold); }
+
+  .hero { background: var(--navy); padding: 64px 40px 52px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -60px; right: -60px; width: 320px; height: 320px; border: 1px solid rgba(201,168,76,0.15); border-radius: 50%; }
+  .hero::after { content: ''; position: absolute; bottom: -40px; left: 60px; width: 200px; height: 200px; border: 1px solid rgba(201,168,76,0.08); border-radius: 50%; }
+  .hero-inner { max-width: 760px; position: relative; z-index: 1; }
+  .hero-label { display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(201,168,76,0.4); padding: 5px 12px; border-radius: 2px; margin-bottom: 20px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 16px; }
+  .hero-meta { font-size: 0.82rem; color: rgba(255,255,255,0.45); letter-spacing: 0.03em; }
+  .hero-meta strong { color: rgba(255,255,255,0.7); font-weight: 500; }
+
+  /* Warning banner */
+  .warning-banner {
+    background: #1a0a0a;
+    border-bottom: 2px solid #8B2E2E;
+    padding: 16px 40px;
+  }
+  .warning-banner p {
+    max-width: 1080px;
+    margin: 0 auto;
+    font-size: 0.82rem;
+    color: rgba(255,220,220,0.8);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .warning-banner strong { color: #ffaaaa; }
+
+  .layout { max-width: 1160px; margin: 0 auto; padding: 56px 40px; display: grid; grid-template-columns: 220px 1fr; gap: 64px; align-items: start; }
+
+  .sidebar { position: sticky; top: 80px; }
+  .sidebar-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .toc { list-style: none; }
+  .toc li { margin-bottom: 2px; }
+  .toc a { display: block; font-size: 0.8rem; font-weight: 400; color: var(--text-light); text-decoration: none; padding: 5px 10px 5px 0; border-left: 2px solid transparent; transition: all 0.2s; line-height: 1.4; }
+  .toc a:hover { color: var(--navy); border-left-color: var(--gold); padding-left: 8px; }
+  .toc a.active { color: var(--navy); font-weight: 600; border-left-color: var(--gold); padding-left: 8px; }
+  .toc-divider { height: 1px; background: var(--border); margin: 10px 0; }
+
+  .content { min-width: 0; }
+
+  /* Tier badge */
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .tier-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px; height: 48px;
+    background: var(--navy);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .tier-title { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: var(--navy); line-height: 1.3; }
+
+  .alert-box { background: var(--gold-muted); border-left: 4px solid var(--gold); padding: 18px 22px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+  .alert-box p { font-size: 0.9rem; font-style: italic; color: #5A4A1A; line-height: 1.65; margin-bottom: 0; }
+  .alert-box strong { font-style: normal; color: #3D3010; }
+
+  .alert-red { background: var(--tier-red-bg); border-left: 4px solid var(--tier-red); padding: 18px 22px; margin-bottom: 20px; border-radius: 0 4px 4px 0; }
+  .alert-red p { font-size: 0.9rem; font-style: italic; color: #6B1A1A; line-height: 1.65; margin-bottom: 0; }
+  .alert-red strong { font-style: normal; }
+
+  .caps-block { background: var(--bg-warm); border: 1px solid var(--border); padding: 20px 24px; border-radius: 4px; margin-bottom: 20px; }
+  .caps-block p { font-size: 0.82rem; color: var(--text-mid); letter-spacing: 0.01em; line-height: 1.7; font-weight: 500; margin-bottom: 0; }
+
+  .section { margin-bottom: 52px; padding-bottom: 52px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-num { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: block; }
+
+  h2 { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: var(--navy); margin-bottom: 20px; line-height: 1.3; }
+  h3 { font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; color: var(--navy-mid); margin: 28px 0 12px; letter-spacing: 0.01em; }
+
+  p { font-size: 0.95rem; color: var(--text-mid); margin-bottom: 16px; line-height: 1.75; }
+  p a { color: var(--navy); }
+
+  ul { list-style: none; margin: 0 0 20px 0; padding: 0; }
+  ul li { font-size: 0.92rem; color: var(--text-mid); padding: 7px 0 7px 22px; position: relative; line-height: 1.65; border-bottom: 1px solid rgba(228,221,208,0.5); }
+  ul li:last-child { border-bottom: none; }
+  ul li::before { content: ''; position: absolute; left: 0; top: 16px; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+  ul li strong { color: var(--navy-mid); font-weight: 600; }
+
+  /* Tier sections get a subtle left track */
+  .tier-section {
+    margin-bottom: 52px;
+    padding: 36px 36px 36px 32px;
+    border-left: 3px solid var(--gold);
+    border-bottom: 1px solid var(--border);
+    background: rgba(201,168,76,0.03);
+  }
+  .tier-section:last-of-type { border-bottom: none; }
+
+  .contact-block { background: var(--navy); color: var(--white); padding: 28px 32px; border-radius: 4px; margin-top: 8px; }
+  .contact-block strong { font-family: 'Playfair Display', serif; font-size: 1.1rem; display: block; margin-bottom: 10px; color: var(--gold-light); }
+  .contact-block p { color: rgba(255,255,255,0.7); margin-bottom: 6px; font-size: 0.88rem; }
+  .contact-block a { color: var(--gold-light); text-decoration: none; }
+
+  footer { background: var(--navy); color: rgba(255,255,255,0.45); text-align: center; padding: 32px 40px; font-size: 0.78rem; border-top: 1px solid rgba(201,168,76,0.2); line-height: 1.8; }
+  footer a { color: rgba(201,168,76,0.7); text-decoration: none; }
+
+  .back-top { position: fixed; bottom: 32px; right: 32px; width: 44px; height: 44px; background: var(--navy); border: 1px solid var(--gold); color: var(--gold); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; border-radius: 2px; opacity: 0; transition: opacity 0.3s; z-index: 50; text-decoration: none; }
+  .back-top.visible { opacity: 1; }
+  .back-top:hover { background: var(--gold); color: var(--navy); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 0; padding: 40px 24px; }
+    .sidebar { display: none; }
+    .hero { padding: 48px 24px 40px; }
+    .hero h1 { font-size: 2rem; }
+    .topbar { padding: 0 24px; }
+    .topbar-nav { display: none; }
+    .warning-banner { padding: 16px 24px; }
+    .tier-section { padding: 24px 20px; }
+  }
+</style>
+
+
+
+
+<nav class="topbar">
+  <a class="topbar-brand" href="/">Retirement <span>Shield</span></a>
+  <div class="topbar-nav">
+    <a href="/privacy-policy">Privacy Policy</a>
+    <a href="/terms-of-use">Terms of Use</a>
+    <a href="/disclaimer" class="active">Disclaimer</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-label">Legal &amp; Compliance</span>
+    <h1>Full Disclaimer</h1>
+    <p class="hero-meta">
+      <strong>Effective Date:</strong> March 12, 2026 &nbsp;|&nbsp;
+      <strong>Last Updated:</strong> March 12, 2026 &nbsp;|&nbsp;
+      retirementshield.com
+    </p>
+  </div>
+</div>
+
+<div class="warning-banner">
+  <p><strong>READ THIS DISCLAIMER CAREFULLY.</strong> It contains important information about the nature and limitations of the information provided by Retirement Shield. Your use of our Services constitutes your acknowledgment and acceptance of all terms in this Disclaimer.</p>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-label">Five-Tier System</p>
+    <ul class="toc">
+      <li><a href="#t1">Tier 1 — Global Platform</a></li>
+      <li><a href="#t2">Tier 2 — Publisher's Exclusion</a></li>
+      <li><a href="#t3">Tier 3 — Quiz &amp; AI Reports</a></li>
+      <li><a href="#t4">Tier 4 — Referral &amp; Lead Capture</a></li>
+      <li><a href="#t5">Tier 5 — AI-Generated Content</a></li>
+    </ul>
+    <div class="toc-divider"></div>
+    <p class="sidebar-label" style="margin-top:12px;">Additional Disclosures</p>
+    <ul class="toc">
+      <li><a href="#results">No Guarantee of Results</a></li>
+      <li><a href="#returns">No Promissory Language</a></li>
+      <li><a href="#longevity">Longevity Calculators</a></li>
+      <li><a href="#upl">Estate Planning &amp; UPL</a></li>
+      <li><a href="#tax">Tax Information</a></li>
+      <li><a href="#insurance">Insurance &amp; Annuities</a></li>
+      <li><a href="#affiliate">Affiliate Relationships</a></li>
+      <li><a href="#fls">Forward-Looking Statements</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <!-- TIER 1 -->
+    <div id="t1" class="tier-section">
+      <div class="tier-header">
+        <div class="tier-badge">1</div>
+        <h2 class="tier-title">Global Platform Disclaimer</h2>
+      </div>
+      <p>Retirement Shield, LLC ("Retirement Shield") is a retirement education, media, and information platform. We are a publisher of general financial education content. We are not a registered investment adviser, broker-dealer, financial planner, insurance agency, or law firm.</p>
+      <div class="caps-block">
+        <p>ALL CONTENT ON THIS WEBSITE, IN OUR NEWSLETTERS, QUIZZES, CALCULATORS, REPORTS, EMAILS, VIDEOS, AND ALL OTHER MATERIALS (COLLECTIVELY, "CONTENT") IS FOR GENERAL EDUCATIONAL AND INFORMATIONAL PURPOSES ONLY. NOTHING IN OUR CONTENT CONSTITUTES INVESTMENT ADVICE, LEGAL ADVICE, TAX ADVICE, INSURANCE ADVICE, OR ANY OTHER FORM OF PROFESSIONAL ADVICE TAILORED TO YOUR INDIVIDUAL CIRCUMSTANCES.</p>
+      </div>
+      <p>You should not act or refrain from acting based on any information in our Content without first seeking the guidance of a qualified and licensed professional — such as a licensed estate planning attorney, certified financial planner (CFP), CPA, enrolled agent, or licensed insurance professional — who is familiar with your specific facts and objectives.</p>
+    </div>
+
+    <!-- TIER 2 -->
+    <div id="t2" class="tier-section">
+      <div class="tier-header">
+        <div class="tier-badge">2</div>
+        <h2 class="tier-title">Publisher's Exclusion Notice</h2>
+      </div>
+      <p>Retirement Shield publishes general financial education content that qualifies for the publisher's exclusion under Section 202(a)(11)(D) of the Investment Advisers Act of 1940, as interpreted by the U.S. Supreme Court in <em>Lowe v. SEC</em>, 472 U.S. 181 (1985), and affirmed for digital media by the Seeking Alpha ruling (D. Md. 2024). Our Content is:</p>
+      <ul>
+        <li><strong>General and impersonal</strong> — not adapted to the specific investment situation, portfolio, or financial needs of any individual subscriber</li>
+        <li><strong>Bona fide</strong> — educational and analytical in nature, not promotional material designed to tout securities or financial products in which we have an undisclosed material interest</li>
+        <li><strong>Regularly circulated</strong> — distributed on a general schedule and not timed to specific market-moving events</li>
+      </ul>
+      <p>The publisher's exclusion means that Retirement Shield does not hold itself out as providing personalized investment advice and is not required to register as an investment adviser solely by virtue of publishing educational content. Our quiz reports, planning guides, and calculator outputs are educational tools designed to help you identify common planning gaps — they are not professional assessments, certified analyses, or individualized recommendations.</p>
+    </div>
+
+    <!-- TIER 3 -->
+    <div id="t3" class="tier-section">
+      <div class="tier-header">
+        <div class="tier-badge">3</div>
+        <h2 class="tier-title">Quiz and AI-Generated Report Disclaimer</h2>
+      </div>
+      <p>The Retirement Readiness Quiz and any resulting Gap Guide or Planning Checklist generated for your responses are produced using automated and artificial intelligence processes. These outputs are illustrative educational tools only.</p>
+      <div class="alert-red">
+        <p><strong>IMPORTANT NOTICE — PLEASE READ BEFORE VIEWING YOUR RESULTS:</strong> The information in this report reflects common planning gaps experienced by people with similar quiz profiles. It does not constitute a personalized professional assessment of your situation. No attorney-client relationship, adviser-client relationship, or professional relationship of any kind is formed by accessing this report. A licensed estate planning attorney or financial advisor can help you determine whether any specific issue raised here applies to your situation.</p>
+      </div>
+      <p>Specific framing rules applicable to all quiz and calculator outputs:</p>
+      <ul>
+        <li>All identified gaps are presented as common patterns among similar planning profiles, not as findings specific to your situation</li>
+        <li>No output uses language such as "you should," "you need to," "we recommend," or "based on your situation, take action"</li>
+        <li>All outputs include a referral prompt directing users to qualified licensed professionals</li>
+        <li>Output titles use terms such as "Gap Guide" or "Planning Checklist" — not "Report," "Assessment," "Evaluation," or "Analysis"</li>
+      </ul>
+    </div>
+
+    <!-- TIER 4 -->
+    <div id="t4" class="tier-section">
+      <div class="tier-header">
+        <div class="tier-badge">4</div>
+        <h2 class="tier-title">Referral and Lead Capture Disclaimer</h2>
+      </div>
+      <p>By submitting your information through any referral form, attorney matching request, specialist introduction form, or similar lead capture mechanism on our platform, you acknowledge and agree to the following:</p>
+      <ul>
+        <li>Retirement Shield is facilitating an introduction to an independent licensed professional and is not itself providing legal, financial, or insurance services</li>
+        <li>No attorney-client, adviser-client, or fiduciary relationship is created by submitting a referral form or by any communication from Retirement Shield</li>
+        <li>Any professional you are introduced to operates under their own license, professional responsibility rules, and ethical obligations</li>
+        <li>Retirement Shield does not guarantee the qualifications, availability, licensing status, or suitability of any referred professional for your specific needs</li>
+        <li>You may independently verify the licensing status of any referred professional through the relevant state bar, state insurance department, or FINRA BrokerCheck</li>
+        <li><strong>Compensation:</strong> Retirement Shield may receive a flat referral fee from professional partners. This fee is fixed and does not vary based on the value of services rendered to you, assets managed, premiums paid, or legal fees incurred. This arrangement complies with ABA Model Rule 5.4(a) and applicable state bar opinions</li>
+        <li><strong>Your consent to contact:</strong> By submitting a referral form, you provide your explicit consent to be contacted by Retirement Shield and, if applicable, the referred professional regarding your planning needs</li>
+      </ul>
+    </div>
+
+    <!-- TIER 5 -->
+    <div id="t5" class="tier-section">
+      <div class="tier-header">
+        <div class="tier-badge">5</div>
+        <h2 class="tier-title">AI-Generated Content Disclosure</h2>
+      </div>
+      <p>Retirement Shield uses artificial intelligence (AI) tools, including large language models, to assist in the production of certain content, including educational articles, newsletter issues, planning guides, quiz reports, and state-specific legal summaries.</p>
+      <p>AI-generated content is reviewed by our editorial team prior to publication; however, AI systems can produce errors, outdated information, or incomplete analysis. You should not rely on any AI-generated content as a substitute for professional legal, financial, tax, or insurance advice. State-specific legal and regulatory information (including probate thresholds, trust requirements, and Medicaid rules) changes frequently; always verify current rules with a licensed professional in your state.</p>
+      <p>When content has been substantially generated or assisted by AI, we identify it with an appropriate disclosure label.</p>
+    </div>
+
+    <!-- ADDITIONAL DISCLOSURES -->
+    <div id="results" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>No Guarantee of Results</h2>
+      <p>Retirement Shield makes no representation or warranty that any educational content, planning strategy, or professional introduction will result in a particular financial outcome, legal protection, or tax savings. Past planning outcomes of other individuals, whether referenced in testimonials or case studies, do not guarantee similar results for you. Individual outcomes depend on a wide range of personal, financial, legal, and market factors outside our control.</p>
+    </div>
+
+    <div id="returns" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>No Promissory Language — Investment and Returns</h2>
+      <p>We do not promise, project, or imply any specific investment return, income yield, or financial outcome from any strategy discussed in our Content. References to historical market data, interest rates, longevity statistics, or actuarial figures are for general educational context only and are not forecasts of future performance. All investments and financial strategies involve risk, including the possible loss of principal.</p>
+    </div>
+
+    <div id="longevity" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Longevity and Life Expectancy Calculator Disclosures</h2>
+      <p>Any life expectancy, longevity, or survival probability tools on our platform use publicly available actuarial data from sources including the Social Security Administration (SSA), the CDC, and USALEEP county-level mortality data. These tools produce statistical probability estimates based on population cohorts with similar demographic characteristics. They are not medical diagnoses, actuarial certifications, or life insurance underwriting assessments.</p>
+      <p>Outputs are presented as survival probability curves or probability ranges — not as a prediction of any individual's lifespan. We do not use the phrase "your life expectancy is" or similar language implying a definitive personal prediction. Before relying on any longevity estimate for planning purposes, consult a licensed financial planner or actuary.</p>
+      <div class="alert-box">
+        <p><strong>Florida Residents:</strong> Our longevity and life expectancy tools are provided for general educational purposes only. If you are a Florida resident, please be aware that we have sought legal counsel regarding Florida's life expectancy provider registration requirements (Fla. Admin. Code R. 69O-204.201) and have structured our outputs accordingly.</p>
+      </div>
+    </div>
+
+    <div id="upl" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Estate Planning Content — Unauthorized Practice of Law (UPL)</h2>
+      <p>Retirement Shield is not a law firm and does not practice law. Our estate planning content — including state guides, planning checklists, and quiz outputs — is general educational information about estate planning concepts, not legal advice for your specific situation. Reading or using our estate planning content does not create an attorney-client relationship between you and Retirement Shield.</p>
+      <p>Applying legal concepts to your specific facts — including decisions about whether you need a will, trust, power of attorney, or other document — requires the judgment of a licensed attorney. We strongly encourage you to consult a licensed estate planning attorney in your state before making any estate planning decisions.</p>
+    </div>
+
+    <div id="tax" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Tax Information Disclaimer</h2>
+      <p>Any tax-related content published by Retirement Shield is general educational information only. It does not constitute tax advice for your specific situation. Tax laws are complex and subject to change. Individual tax outcomes depend on your specific facts and circumstances. Please consult a licensed CPA, enrolled agent, or tax attorney before making any decisions based on tax considerations.</p>
+    </div>
+
+    <div id="insurance" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Insurance and Annuity Information</h2>
+      <p>Retirement Shield may publish general educational content about life insurance, annuities, long-term care insurance, and related products. This content is for educational purposes only and does not constitute a solicitation or offer to sell any insurance or annuity product. Insurance and annuity products are regulated at the state level and are subject to approval and availability requirements that vary by state. Any insurance or annuity consultation offered through our platform is provided by a separately licensed insurance professional operating under their own license and professional responsibilities.</p>
+    </div>
+
+    <div id="affiliate" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Affiliate and Commercial Relationships Disclosure</h2>
+      <p>Retirement Shield has commercial relationships with certain third-party providers, including educational product affiliates, professional referral partners, and advertising partners. Some links, recommendations, and referrals in our Content may result in compensation to Retirement Shield. These relationships do not affect our editorial independence, but you should be aware that financial relationships may influence which products and services are presented, the order in which they appear, and the prominence given to certain providers.</p>
+      <p>We disclose material commercial relationships in relevant content. Our commitment is to provide accurate, objective educational content regardless of these relationships. We do not accept payment to editorially recommend specific investment products, legal strategies, or financial decisions.</p>
+    </div>
+
+    <div id="fls" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Forward-Looking Statements</h2>
+      <p>Some Content may contain forward-looking statements about economic trends, market conditions, regulatory changes, or planning strategies. These statements are based on currently available information and involve inherent uncertainty. Actual conditions may differ materially from what is described. We undertake no obligation to update forward-looking statements to reflect new information or changed circumstances.</p>
+    </div>
+
+    <div id="contact" class="section">
+      <span class="section-num">Additional Disclosure</span>
+      <h2>Contact for Compliance Questions</h2>
+      <p>If you have any questions about these disclosures or our compliance practices, contact us at:</p>
+      <div class="contact-block">
+        <strong>Retirement Shield, LLC</strong>
+        <p>Email: <a href="mailto:legal@retirementshield.com">legal@retirementshield.com</a></p>
+        <p>Website: <a href="https://retirementshield.com">https://retirementshield.com</a></p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <p>© 2026 Retirement Shield, LLC. All rights reserved.</p>
+  <p style="margin-top:6px;">
+    <a href="privacy-policy.html">Privacy Policy</a> &nbsp;·&nbsp;
+    <a href="terms-of-use.html">Terms of Use</a> &nbsp;·&nbsp;
+    <a href="disclaimer.html">Full Disclaimer</a> &nbsp;·&nbsp;
+    <a href="mailto:legal@retirementshield.com">legal@retirementshield.com</a>
+  </p>
+  <p style="margin-top:8px; font-size:0.72rem; color:rgba(255,255,255,0.25);">This document is for informational purposes only and does not constitute legal advice. Consult a qualified attorney for legal guidance specific to your situation.</p>
+</footer>
+
+<a href="#" class="back-top" id="backTop" title="Back to top">↑</a>
+
+<script>
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => { backTop.classList.toggle('visible', window.scrollY > 400); });
+  const sections = document.querySelectorAll('[id]');
+  const tocLinks = document.querySelectorAll('.toc a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        tocLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.toc a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
