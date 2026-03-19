@@ -1,9 +1,17 @@
 ---
-/* 
-  You can later add:
-  import Layout from '../layouts/Layout.astro'
-  or any data fetching here
-*/
+import { supabase } from '../lib/supabase';
+
+const { data, error } = await supabase
+  .from('articles')
+  .select('slug, headline, lede, pillar, published_at')
+  .order('published_at', { ascending: false })
+  .limit(6);
+
+if (error) {
+  console.error('Supabase fetch error:', error);
+}
+
+const recentArticles = data ?? [];
 ---
 
 <!DOCTYPE html>
@@ -1201,37 +1209,43 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
     <div class="section-line"></div>
   </div>
   <div class="buckets-grid reveal">
-    <a href="#" class="bucket-card featured">
+    <a href="/articleslist?q=estate" class="bucket-card featured">
       <span class="bucket-icon">🏛️</span>
       <div>
         <div class="bucket-name">Estate &amp; Legacy</div>
         <div class="bucket-desc">Wills, trusts, beneficiary designations, probate, and what actually happens to your assets when you're gone.</div>
-        <div class="bucket-count">24 Articles · Start Here</div>
+        <div class="bucket-count">4 Articles · Start Here</div>
       </div>
     </a>
-    <a href="#" class="bucket-card">
+    <a href="/articleslist?q=income" class="bucket-card">
       <span class="bucket-icon">💵</span>
       <div class="bucket-name">Income Replacement</div>
       <div class="bucket-desc">Social Security, spousal benefits, pensions, and turning savings into lasting income.</div>
-      <div class="bucket-count">31 Articles</div>
+      <div class="bucket-count">8 Articles</div>
     </a>
-    <a href="#" class="bucket-card">
+    <a href="/articleslist?q=tax" class="bucket-card">
       <span class="bucket-icon">📊</span>
       <div class="bucket-name">Tax Optimization</div>
       <div class="bucket-desc">RMDs, Roth conversions, IRMAA, the widow's penalty, and the brackets most people don't see coming.</div>
-      <div class="bucket-count">28 Articles</div>
+      <div class="bucket-count">18 Articles</div>
     </a>
-    <a href="#" class="bucket-card">
+    <a href="/articleslist?q=portfolio" class="bucket-card">
       <span class="bucket-icon">🛡️</span>
       <div class="bucket-name">Portfolio Protection</div>
       <div class="bucket-desc">Sequence-of-returns risk, Medicare costs, long-term care, and sustainable spending in uncertain markets.</div>
-      <div class="bucket-count">19 Articles</div>
+      <div class="bucket-count">9 Articles</div>
     </a>
-    <a href="#" class="bucket-card">
+    <a href="/articleslist?q=retirement" class="bucket-card">
       <span class="bucket-icon">📋</span>
       <div class="bucket-name">Retirement Readiness</div>
       <div class="bucket-desc">Medicare enrollment timelines, 401(k) rules, healthcare costs, and decisions before Day One.</div>
-      <div class="bucket-count">22 Articles</div>
+      <div class="bucket-count">33 Articles</div>
+    </a>
+  </div>
+
+  <div style="text-align:center; margin-top:40px;" class="reveal">
+    <a href="/articleslist" class="btn-primary" style="padding:16px 36px; font-size:0.75rem;">
+      View All Articles →
     </a>
   </div>
 </section>
@@ -1242,56 +1256,48 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
     <span class="section-label">Recent Coverage</span>
     <div class="section-line"></div>
   </div>
+
   <div class="articles-layout reveal">
     <div class="articles-main">
-      <div class="article-featured">
-        <span class="article-bucket-tag">Estate &amp; Legacy</span>
-        <h3>What the 10-Year Rule for Inherited IRAs Actually Requires — and Who It Applies To</h3>
-        <p>The SECURE Act (2019) eliminated the "stretch IRA." Most non-spouse beneficiaries must now empty an inherited IRA within 10 years. The IRS rules on whether annual withdrawals are required within those 10 years have been revised multiple times.</p>
-        <div class="article-meta">Estate &amp; Legacy · 9 min read · Source: IRS Pub. 590-B; SECURE Act; SECURE 2.0</div>
-      </div>
-      <div class="article-featured">
-        <span class="article-bucket-tag">Tax Optimization</span>
-        <h3>The Roth Conversion Window: Why the Years Between Retirement and Age 73 May Be the Most Tax-Efficient of Your Life</h3>
-        <p>If you retire before required minimum distributions begin and before Social Security adds to your taxable income, you may be in an unusually low tax bracket for several years. Some people use that window to convert traditional IRA funds to a Roth.</p>
-        <div class="article-meta">Tax Optimization · 8 min read · Source: IRS Pub. 590-A, 590-B; SECURE 2.0</div>
-      </div>
-      <div class="article-featured">
-        <span class="article-bucket-tag">Income Replacement</span>
-        <h3>Spousal Benefits: What a Non-Working Spouse Can Actually Collect From Social Security</h3>
-        <p>A spouse who never worked can claim up to 50% of their partner's full retirement age benefit. The rules around when to claim, how survivor benefits interact, and what happens after divorce are specific and often misunderstood.</p>
-        <div class="article-meta">Income Replacement · 11 min read · Source: SSA Publication No. 05-10035</div>
-      </div>
+      {recentArticles.length === 0 && (
+        <p style="color:var(--text-muted); font-size:0.9rem;">
+          No articles found. Check Supabase connection or table permissions.
+        </p>
+      )}
+      {recentArticles?.slice(0,3).map(article => (
+        <div class="article-featured">
+          <span class="article-bucket-tag">{article.pillar}</span>
+          <h3>
+            <a href={`/articles/${article.slug}`} style="text-decoration:none; color:inherit;">
+              {article.headline}
+            </a>
+          </h3>
+          <p>{article.lede}</p>
+          <div class="article-meta">
+            {article.pillar} · Preview · Source: Retirement Shield Editorial
+          </div>
+        </div>
+      ))}
     </div>
+
     <aside class="articles-sidebar">
       <div class="section-rule" style="margin-bottom:22px;">
         <span class="section-label" style="font-size:0.56rem;">Also Worth Reading</span>
         <div class="section-line"></div>
       </div>
-      <div class="sidebar-article">
-        <span class="article-bucket-tag">Portfolio Protection</span>
-        <h4>Medicare's Part A Deductible Isn't Annual — Here's What That Actually Costs You</h4>
-        <p>Most people assume Medicare has a once-a-year deductible. Part A resets by benefit period, not calendar year.</p>
-        <div class="article-meta">7 min · CMS.gov</div>
-      </div>
-      <div class="sidebar-article">
-        <span class="article-bucket-tag">Tax Optimization</span>
-        <h4>How Social Security Benefits Get Taxed — and What "Combined Income" Means</h4>
-        <p>Up to 85% of your Social Security benefit can be federally taxable, depending on your combined income.</p>
-        <div class="article-meta">6 min · IRS source</div>
-      </div>
-      <div class="sidebar-article">
-        <span class="article-bucket-tag">Estate &amp; Legacy</span>
-        <h4>Probate: What Actually Happens in Your State</h4>
-        <p>Timelines and costs vary dramatically. Some states wrap it up in months. Others take years.</p>
-        <div class="article-meta">10 min · State statutes</div>
-      </div>
-      <div class="sidebar-article">
-        <span class="article-bucket-tag">Income Replacement</span>
-        <h4>How a Gray Divorce Changes Your Social Security Options</h4>
-        <p>Divorce after 55 changes your Social Security strategy — especially after 10+ years of marriage.</p>
-        <div class="article-meta">8 min · SSA source</div>
-      </div>
+
+      {recentArticles?.slice(3,6).map(article => (
+        <div class="sidebar-article">
+          <span class="article-bucket-tag">{article.pillar}</span>
+          <h4>
+            <a href={`/articles/${article.slug}`} style="text-decoration:none; color:inherit;">
+              {article.headline}
+            </a>
+          </h4>
+          <p>{article.lede}</p>
+          <div class="article-meta">Preview</div>
+        </div>
+      ))}
     </aside>
   </div>
 </section>
@@ -1358,18 +1364,15 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
     <div class="trust-divider"></div>
     <div class="trust-item">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      No product recommendations. No commissions. Ever.
+      No product recommendations.
     </div>
     <div class="trust-divider"></div>
     <div class="trust-item">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      Education, not advice — how things work, not what you should do
+      Education on how things work, not what you should do
     </div>
-    <div class="trust-divider"></div>
-    <div class="trust-item">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      6th–8th grade reading level. Every term defined on first use.
-    </div>
+
+    
   </div>
 </div>
 
@@ -1479,11 +1482,11 @@ Retirement Shield exists to help you ask better questions — not to replace the
     <div class="footer-col">
       <h5>Topics</h5>
       <ul>
-        <li><a href="#">Social Security</a></li>
-        <li><a href="#">Medicare</a></li>
-        <li><a href="#">RMDs &amp; IRAs</a></li>
-        <li><a href="#">Wills &amp; Trusts</a></li>
-        <li><a href="#">Long-Term Care</a></li>
+        <li><a href="/articleslist">Social Security</a></li>
+        <li><a href="/articleslist">Medicare</a></li>
+        <li><a href="/articleslist">RMDs &amp; IRAs</a></li>
+        <li><a href="/articleslist">Wills &amp; Trusts</a></li>
+        <li><a href="/articleslist">Long-Term Care</a></li>
       </ul>
     </div>
     <div class="footer-col">

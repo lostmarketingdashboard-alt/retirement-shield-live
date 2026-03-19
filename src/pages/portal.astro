@@ -133,6 +133,7 @@ export const ssr = false;
   <button class="tab" data-tab="add-users">Add Users</button>
   <button class="tab" data-tab="assign-referrals">Assign Referral Members</button>
   <button class="tab" data-tab="team-members">Team Members</button>
+  <button class="tab" data-tab="articles">Articles</button>
 ` : profile.role === 'referral' ? `
   <button class="tab active" data-tab="assigned-members">Assigned Members</button>
 ` : `
@@ -1167,6 +1168,431 @@ export const ssr = false;
           });
         }
 
+        // --- ADMIN: ARTICLES MANAGEMENT FUNCTION ---
+        async function renderArticles() {
+
+          const { data: articles, error } = await supabase
+            .from('articles')
+            .select('*')
+            .order('published_at', { ascending: false });
+
+          if (error) {
+            console.error(error);
+            contentDiv.innerHTML = `<div class="doc-card"><p style="color:red;">Error loading articles.</p></div>`;
+            return;
+          }
+
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <div class="doc-header" style="flex-direction:column;align-items:stretch;gap:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:20px;">
+                  <div style="display:flex;align-items:center;gap:20px;">
+                    <div class="doc-icon">📰</div>
+                    <div>
+                      <h3>All Articles</h3>
+                      <div class="doc-meta">Manage published content</div>
+                    </div>
+                  </div>
+
+                  <button id="addArticleBtn"
+                    style="
+                      background:var(--amber);
+                      color:white;
+                      border:none;
+                      padding:10px 18px;
+                      border-radius:10px;
+                      cursor:pointer;
+                      font-weight:600;
+                      font-size:13px;
+                    ">
+                    + Add Article
+                  </button>
+                </div>
+
+                <input 
+                  type="text" 
+                  id="articleSearch"
+                  placeholder="Search by title, slug, or pillar..."
+                  style="
+                    width:100%;
+                    padding:12px 14px;
+                    border-radius:10px;
+                    border:1px solid var(--rule-light);
+                    font-size:14px;
+                    outline:none;
+                  "
+                />
+              </div>
+
+              <div class="doc-body" style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:900px;">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Title</th>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Slug</th>
+                      <th style="text-align:left;padding:8px;border-bottom:1px solid var(--rule-light);">Pillar</th>
+                      <th style="text-align:right;padding:8px;border-bottom:1px solid var(--rule-light);">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${(articles || []).map(a => `
+                      <tr>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          <div style="font-weight:600;cursor:pointer;" data-expand="${a.id}">
+                            ${a.headline ?? 'Untitled'}
+                          </div>
+                          <div id="expand-${a.id}" style="display:none;margin-top:8px;font-size:13px;color:var(--text-muted);">
+                            ${a.lede ?? ''}
+                          </div>
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          ${a.slug ?? ''}
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);">
+                          ${a.pillar ?? ''}
+                        </td>
+                        <td style="padding:8px;border-bottom:1px solid var(--rule-light);text-align:right;">
+                          <button data-edit-article="${a.id}" class="btn-edit">Edit</button>
+                          <button data-delete-article="${a.id}" class="btn-delete">Delete</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+
+          // Add search filter logic
+          const searchInput = document.getElementById('articleSearch');
+
+          if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+              const query = e.target.value.toLowerCase();
+
+              document.querySelectorAll('tbody tr').forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+              });
+            });
+          }
+
+          // Expand preview
+          document.querySelectorAll('[data-expand]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const id = btn.dataset.expand;
+              const el = document.getElementById(`expand-${id}`);
+              el.style.display = el.style.display === 'block' ? 'none' : 'block';
+            });
+          });
+
+          // Delete
+          document.querySelectorAll('[data-delete-article]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const id = e.target.dataset.deleteArticle;
+
+              if (!confirm("Delete this article permanently?")) return;
+
+              const { error } = await supabase
+                .from('articles')
+                .delete()
+                .eq('id', id);
+
+              if (error) {
+                alert("Error deleting article.");
+                console.error(error);
+                return;
+              }
+
+              renderArticles();
+            });
+          });
+
+          // Edit - Full Custom Modal
+          document.querySelectorAll('[data-edit-article]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const id = e.target.dataset.editArticle;
+
+              const { data: article } = await supabase
+                .from('articles')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+              if (!article) {
+                alert("Article not found.");
+                return;
+              }
+
+              const modal = document.createElement('div');
+              modal.style.position = 'fixed';
+              modal.style.top = '0';
+              modal.style.left = '0';
+              modal.style.width = '100%';
+              modal.style.height = '100%';
+              modal.style.background = 'rgba(0,0,0,0.6)';
+              modal.style.display = 'flex';
+              modal.style.alignItems = 'center';
+              modal.style.justifyContent = 'center';
+              modal.style.zIndex = '99999';
+
+              const formFields = Object.entries(article).map(([key, value]) => {
+
+                let displayValue = '';
+
+                if (value === null || value === undefined) {
+                  displayValue = '';
+                } 
+                else if (typeof value === 'object') {
+                  // Properly format JSON fields like faq_data & data_highlights
+                  displayValue = JSON.stringify(value, null, 2);
+                } 
+                else {
+                  displayValue = value;
+                }
+
+                return `
+                  <div style="margin-bottom:14px;">
+                    <label style="font-weight:600;font-size:13px;display:block;margin-bottom:4px;">
+                      ${key}
+                    </label>
+                    <textarea data-field="${key}"
+                      style="width:100%;min-height:80px;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:13px;font-family:monospace;">${displayValue}</textarea>
+                  </div>
+                `;
+              }).join('');
+
+              modal.innerHTML = `
+                <div style="
+                  background:white;
+                  width:90%;
+                  max-width:900px;
+                  max-height:85vh;
+                  overflow-y:auto;
+                  padding:28px;
+                  border-radius:16px;
+                  box-shadow:0 30px 80px rgba(0,0,0,.3);
+                ">
+                  <h3 style="margin-top:0;">Edit Article</h3>
+                  ${formFields}
+                  <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+                    <button id="closeModal"
+                      style="padding:10px 18px;border-radius:8px;border:1px solid #ccc;background:white;cursor:pointer;">
+                      Cancel
+                    </button>
+                    <button id="saveModal"
+                      style="padding:10px 20px;border-radius:8px;background:var(--amber);color:white;border:none;cursor:pointer;">
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              document.body.appendChild(modal);
+
+              document.getElementById('closeModal').onclick = () => {
+                modal.remove();
+              };
+
+              document.getElementById('saveModal').onclick = async () => {
+
+            const updatedData = {};
+
+modal.querySelectorAll('textarea').forEach(field => {
+  const key = field.dataset.field;
+  let value = field.value.trim();
+
+  if (!value) return;
+
+  // BOOLEAN FIELDS
+  if (key === 'mission_test_pass' || key === 'compliance_reviewed') {
+    const lower = value.toLowerCase();
+
+    if (lower === 'true' || lower === 't' || lower === '1') value = true;
+    else if (lower === 'false' || lower === 'f' || lower === '0') value = false;
+    else {
+      alert(`${key} must be true or false`);
+      throw new Error("Invalid boolean");
+    }
+  }
+
+  // NUMBER FIELD
+  if (key === 'word_count') {
+    const num = Number(value);
+    if (isNaN(num)) {
+      alert("word_count must be a number");
+      throw new Error("Invalid number");
+    }
+    value = num;
+  }
+
+  // JSON FIELDS
+  if (key === 'faq_data' || key === 'data_highlights') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      value = [{ note: value }];
+    }
+  }
+
+  updatedData[key] = value;
+});
+
+                const { error } = await supabase
+                  .from('articles')
+                  .update(updatedData)
+                  .eq('id', id);
+
+                if (error) {
+                  alert("Error updating article.");
+                  console.error(error);
+                  return;
+                }
+
+                modal.remove();
+                renderArticles();
+              };
+            });
+          });
+
+          // ADD NEW ARTICLE (FULL DYNAMIC FORM)
+          const addBtn = document.getElementById('addArticleBtn');
+          if (addBtn) {
+            addBtn.addEventListener('click', async () => {
+
+              // Fetch one row just to get all column keys
+              const { data: sample } = await supabase
+                .from('articles')
+                .select('*')
+                .limit(1);
+
+              if (!sample || sample.length === 0) {
+                alert("No article schema found.");
+                return;
+              }
+
+              const columns = Object.keys(sample[0]);
+
+              const modal = document.createElement('div');
+              modal.style.position = 'fixed';
+              modal.style.top = '0';
+              modal.style.left = '0';
+              modal.style.width = '100%';
+              modal.style.height = '100%';
+              modal.style.background = 'rgba(0,0,0,0.6)';
+              modal.style.display = 'flex';
+              modal.style.alignItems = 'center';
+              modal.style.justifyContent = 'center';
+              modal.style.zIndex = '99999';
+
+              const formFields = columns
+                .filter(col => col !== 'id') // id auto generated
+                .map(col => `
+                  <div style="margin-bottom:14px;">
+                    <label style="font-weight:600;font-size:13px;display:block;margin-bottom:4px;">
+                      ${col}
+                    </label>
+                    <textarea data-field="${col}"
+                      style="width:100%;min-height:80px;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:13px;font-family:monospace;"></textarea>
+                  </div>
+                `).join('');
+
+              modal.innerHTML = `
+                <div style="
+                  background:white;
+                  width:90%;
+                  max-width:900px;
+                  max-height:85vh;
+                  overflow-y:auto;
+                  padding:28px;
+                  border-radius:16px;
+                  box-shadow:0 30px 80px rgba(0,0,0,.3);
+                ">
+                  <h3 style="margin-top:0;">Create New Article</h3>
+
+                  ${formFields}
+
+                  <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end;">
+                    <button id="closeNewModal"
+                      style="padding:10px 18px;border-radius:8px;border:1px solid #ccc;background:white;cursor:pointer;">
+                      Cancel
+                    </button>
+                    <button id="saveNewArticle"
+                      style="padding:10px 20px;border-radius:8px;background:var(--amber);color:white;border:none;cursor:pointer;">
+                      Save Article
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              document.body.appendChild(modal);
+
+              document.getElementById('closeNewModal').onclick = () => {
+                modal.remove();
+              };
+
+              document.getElementById('saveNewArticle').onclick = async () => {
+
+                const newArticle = {};
+
+               modal.querySelectorAll('textarea').forEach(field => {
+  const key = field.dataset.field;
+  let value = field.value.trim();
+
+  if (!value) return;
+
+  // BOOLEAN FIELDS
+  if (key === 'mission_test_pass' || key === 'compliance_reviewed') {
+    const lower = value.toLowerCase();
+
+    if (lower === 'true' || lower === 't' || lower === '1') value = true;
+    else if (lower === 'false' || lower === 'f' || lower === '0') value = false;
+    else {
+      alert(`${key} must be true or false`);
+      throw new Error("Invalid boolean");
+    }
+  }
+
+  // NUMBER FIELD
+  if (key === 'word_count') {
+    const num = Number(value);
+    if (isNaN(num)) {
+      alert("word_count must be a number");
+      throw new Error("Invalid number");
+    }
+    value = num;
+  }
+
+  // JSON FIELDS
+  if (key === 'faq_data' || key === 'data_highlights') {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      value = [{ note: value }];
+    }
+  }
+
+  newArticle[key] = value;
+});
+
+                const { error } = await supabase
+                  .from('articles')
+                  .insert(newArticle);
+
+                if (error) {
+                  alert("Error creating article.");
+                  console.error(error);
+                  return;
+                }
+
+                modal.remove();
+                renderArticles();
+              };
+
+            });
+          }
+        }
+
         // Tab click handler (SAFE RESET)
         const tabs = document.querySelectorAll('.tab')
 
@@ -1190,6 +1616,7 @@ export const ssr = false;
             if (type === 'assign-referrals') renderAssignReferrals()
             if (type === 'assigned-members') renderAssignedMembers()
             if (type === 'team-members') renderTeamMembers()
+            if (type === 'articles') renderArticles()
           })
         })
       }
@@ -2013,6 +2440,48 @@ export const ssr = false;
       background: var(--amber-light);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(200,130,26,.3);
+    }
+
+    /* =========================
+       BUTTON STYLING (ADMIN)
+    ========================== */
+
+    .btn-edit {
+      background: transparent;
+      border: 1px solid var(--navy);
+      color: var(--navy);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+      margin-right: 8px;
+    }
+
+    .btn-edit:hover {
+      background: var(--navy);
+      color: var(--white);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.15);
+    }
+
+    .btn-delete {
+      background: #b84040;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+
+    .btn-delete:hover {
+      background: #932f2f;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.15);
     }
 </style>
 </body>
