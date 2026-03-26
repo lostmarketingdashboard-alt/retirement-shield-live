@@ -1,4 +1,6 @@
-import { e as createComponent, r as renderTemplate, n as defineScriptVars, g as addAttribute, k as renderHead } from '../chunks/astro/server_CVC9IwxY.mjs';
+import { e as createComponent, r as renderTemplate, p as defineScriptVars, g as addAttribute, k as renderHead } from '../chunks/astro/server_B-8Lc69N.mjs';
+import 'piccolore';
+import 'clsx';
 import { createClient } from '@supabase/supabase-js';
 /* empty css                                */
 export { renderers } from '../renderers.mjs';

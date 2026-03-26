@@ -1,5 +1,7 @@
-import { e as createComponent, k as renderHead, g as addAttribute, r as renderTemplate, l as renderScript, h as createAstro, o as renderComponent } from '../../chunks/astro/server_CVC9IwxY.mjs';
+import { e as createComponent, k as renderHead, g as addAttribute, r as renderTemplate, l as renderScript, h as createAstro, n as renderComponent } from '../../chunks/astro/server_B-8Lc69N.mjs';
+import 'piccolore';
 import { s as supabase } from '../../chunks/supabase_DUGQ5BJP.mjs';
+import 'clsx';
 /* empty css                                       */
 export { renderers } from '../../renderers.mjs';
 

@@ -1,4 +1,6 @@
-import { e as createComponent, r as renderTemplate, m as maybeRenderHead, h as createAstro } from '../chunks/astro/server_CVC9IwxY.mjs';
+import { e as createComponent, r as renderTemplate, m as maybeRenderHead, h as createAstro } from '../chunks/astro/server_B-8Lc69N.mjs';
+import 'piccolore';
+import 'clsx';
 /* empty css                                                    */
 export { renderers } from '../renderers.mjs';
 
