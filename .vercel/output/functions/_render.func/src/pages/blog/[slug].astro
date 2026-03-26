@@ -1,0 +1,16 @@
+---
+const { slug } = Astro.params;
+
+const res = await fetch(
+  `${import.meta.env.PUBLIC_STRAPI_URL}/api/articles?filters[slug][$eq]=${slug}&populate=*`
+);
+
+const json = await res.json();
+const article = json.data[0]?.attributes;
+---
+
+<h1>{article.title}</h1>
+
+<p>{article.excerpt}</p>
+
+<div set:html={article.content}></div>

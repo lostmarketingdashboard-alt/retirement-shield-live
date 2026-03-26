@@ -189,20 +189,7 @@ const tags = article.tags ? article.tags.split(',').map(t => t.trim()) : []
     padding:24px;
     font-size:12px;
   }
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
 
-  nav {
-    justify-content: center;
-    padding: 18px 16px;
-  }
-
-  .nav-logo {
-    font-size: 18px;
-  }
-}
   /* ══════════════════════════════════════════════════
    MASTHEAD — DESKTOP
 ══════════════════════════════════════════════════ */
@@ -282,187 +269,31 @@ nav.desktop-nav a:hover { opacity: 1; color: var(--amber-light); border-bottom-c
   text-transform: uppercase; letter-spacing: 0.12em; width: 100%; justify-content: center;
 }
 
-/* NAV */
-nav{
-  background: var(--navy);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:18px 32px;
-}
-
-.nav-logo{
-  font-family:'Playfair Display',serif;
-  font-size:20px;
-  font-weight:600;
-  color:white;
-  text-decoration:none !important;
-  display:inline-block;
-}
-
-.nav-logo:hover{
-  opacity:.9;
-}
-
-.nav-logo span{
-  color:var(--gold);
-  text-decoration:none !important;
-}
-
-.nav-links{
-  list-style:none;
-  display:flex;
-  gap:28px;
-  align-items:center;
-}
-
-.nav-links a{
-  text-decoration:none;
-  color: white;
-  font-size:14px;
-}
-
-.nav-links a:hover{
-  color:var(--gold);
-}
-
-.nav-cta{
-  padding:10px 18px;
-  background:var(--gold);
-  color:white !important;
-  border-radius:4px;
-}
-
-.nav-cta:hover{
-  opacity:.9;
-}
-
-/* HEADER */
-.header{
-  background:var(--navy);
-  color:white;
-  padding:64px 32px;
-}
-
-.header h1{
-  font-family:'Playfair Display',serif;
-  font-size:38px;
-  margin-bottom:12px;
-}
-
-/* New mode switch button style */
-.mode-switch-btn{
-  appearance:none;
-  -webkit-appearance:none;
-  border:1px solid var(--border);
-  padding:14px 22px;
-  background:var(--navy);
-  color:white;
-  font-size:14px;
-  letter-spacing:.5px;
-  cursor:pointer;
-  transition:.25s ease;
-  border-radius:4px;
-  display:inline-block;
-  font-family:'DM Sans',sans-serif;
-}
-
-.mode-switch-btn:hover{
-  background:var(--gold);
-  border-color:var(--gold);
-  color:white;
-}
-
-.header p{
-  opacity:.75;
-  max-width:600px;
-  line-height:1.6;
-}
-
-/* BODY */
-.container{
-  padding:64px 32px;
-  max-width:1100px;
-  margin:0 auto;
-}
-
-.section-title{
-  font-family:'Playfair Display',serif;
-  font-size:24px;
-  margin-bottom:24px;
-}
-
-.states-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:16px;
-}
-
-.state-btn,
-.county-link{
-  padding:16px;
-  border:1px solid var(--border);
-  background:white;
-  cursor:pointer;
-  font-size:14px;
-  transition:.2s;
-  text-align:center;
-  text-decoration:none;
-  color:var(--text);
-}
-
-.state-btn:hover,
-.county-link:hover{
-  border-color:var(--gold);
-  background:#fffdf6;
-}
-
-.guide-toggle{
-  padding:12px 18px;
-  border:1px solid var(--border);
-  background:white;
-  cursor:pointer;
-  font-size:14px;
-  transition:.2s;
-}
-
-.guide-toggle:hover{
-  border-color:var(--gold);
-}
-
-.active-toggle{
-  background:var(--gold);
-  color:white;
-  border-color:var(--gold);
-}
-
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
-
-  nav {
-    justify-content: center;
-    padding: 18px 16px;
-  }
-
-  .nav-logo {
-    font-size: 18px;
-  }
-}
 </style>
 
-<nav>
-  <a href="/" class="nav-logo">Retirement<span>Shield</span></a>
-  <ul class="nav-links">
-    <li><a href="/lifeexpectancycalculator">Life Expectancy</a></li>
-    <li><a href="/quiz">Estate Planning</a></li>
-    <!-- <li><a href="#">Calculators</a></li> -->
-    <li><a href="#" onclick="openNewsletterModal(event)">Newsletter</a></li>
-    <li><a href="/quiz" class="nav-cta">Free Assessment</a></li>
-  </ul>
-</nav>
+<!-- ══ MASTHEAD ══════════════════════════════════════ -->
+<header class="masthead">
+  <a href="/" class="masthead-brand">
+    <svg class="shield-mark" viewBox="0 0 38 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 2L3 8.5V22c0 9.3 6.8 18 16 20.5C28.2 40 35 31.3 35 22V8.5L19 2z" fill="none" stroke="#c8821a" stroke-width="1.5"/>
+      <path d="M19 7L7 12.5V22c0 7 5.1 13.5 12 15.5C25.9 35.5 31 29 31 22V12.5L19 7z" fill="rgba(200,130,26,0.1)"/>
+      <path d="M12 22l5 5 9-10" stroke="#c8821a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="brand-name">Retirement Shield</div>
+      <span class="brand-tagline">Retirement education for Americans 55–75</span>
+    </div>
+  </a>
+  <nav class="desktop-nav">
+    <a href="/list">Check Your County’s Life Expectancy</a>
+    <a href="/lifeexpectancycalculator">Life Expectancy</a>
+    <a href="/guidelist">Estate</a>
+    <a href="/quiz" class="nav-cta">Estate Planning Quiz</a>
+  </nav>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</header>
 
 <div class="container">
 
