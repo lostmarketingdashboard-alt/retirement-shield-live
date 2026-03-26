@@ -1,10 +1,13 @@
 {
-  "framework": "astro",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".vercel/output",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs20.x"
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "npm run build",
+        "distDir": ".vercel/output"
+      }
     }
-  }
+  ]
 }
