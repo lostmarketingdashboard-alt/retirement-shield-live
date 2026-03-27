@@ -504,7 +504,6 @@ nav{
   </ul>
 </nav>
 
-
 <div class="container">
 
   {!article && (
@@ -516,7 +515,7 @@ nav{
 
   {article && (
     <>
-      <h1>{article.title}</h1>
+      <h1>{article?.title}</h1>
 
       {article.cover && (article.cover.url || article.cover.data?.attributes?.url) && (
         <div class="cover">
@@ -528,19 +527,65 @@ nav{
       )}
 
       <div class="meta">
-        {formatDate(article.publishedAt) && (
-          <span>Published {formatDate(article.publishedAt)}</span>
+        {formatDate(article?.publishedAt) && (
+          <span>Published {formatDate(article?.publishedAt)}</span>
         )}
       </div>
 
       <div class="section">
-        {(article.excerpt || article.description) && (
+        {(article?.excerpt || article?.description) && (
           <div class="subheadline">
             {article.excerpt || article.description}
           </div>
         )}
 
-        {article.content && <div set:html={article.content}></div>}
+        {Array.isArray(article?.blocks) && article.blocks.map((block) => (
+          <>
+            {/* RICH TEXT */}
+            {block.__component === 'shared.rich-text' && block.body && (
+              <div set:html={block.body}></div>
+            )}
+
+         
+
+           {block.__component === 'shared.media' && (
+            (block.file?.data?.attributes?.url || block.file?.url) && (
+              <div class="cover">
+                <img
+                  src={`${import.meta.env.PUBLIC_STRAPI_URL}${block.file?.data?.attributes?.url || block.file?.url}`}
+                  alt={(block.file?.data?.attributes?.alternativeText || block.file?.alternativeText) || article.title}
+                />
+              </div>
+            )
+          )}
+
+          {block.__component === 'shared.slider' && Array.isArray(block.files?.data) && (
+            <div style="display:grid; gap:12px; margin:24px 0;">
+              {block.files.data.map((file) => (
+                file?.attributes?.url && (
+                  <img
+                    src={`${import.meta.env.PUBLIC_STRAPI_URL}${file.attributes.url}`}
+                    alt={file.attributes.alternativeText || article.title}
+                    style="width:100%; border-radius:12px;"
+                  />
+                )
+              ))}
+            </div>
+          )}
+
+            {/* QUOTE */}
+            {block.__component === 'shared.quote' && (
+              <div style="border-left:4px solid var(--gold); padding:16px 20px; margin:24px 0; background:#fffaf3; border-radius:8px;">
+                {block.title && (
+                  <div style="font-weight:600; margin-bottom:6px;">{block.title}</div>
+                )}
+                {block.body && (
+                  <div style="font-style:italic;">{block.body}</div>
+                )}
+              </div>
+            )}
+          </>
+        ))}
       </div>
     </>
   )}
