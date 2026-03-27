@@ -3,15 +3,35 @@ export const prerender = false;
 
 let articles = [];
 
+let base;
 try {
-  const res = await fetch(`${import.meta.env.PUBLIC_STRAPI_URL}/api/articles?populate=*`);
+  const envUrl = import.meta.env.PUBLIC_STRAPI_URL;
 
-  if (!res.ok) {
-    throw new Error(`Strapi error: ${res.status}`);
+  if (!envUrl) {
+    console.error('Missing PUBLIC_STRAPI_URL');
+    articles = [];
+  } else {
+    base = envUrl.startsWith('http') ? envUrl : `https://${envUrl}`;
   }
 
-  const json = await res.json();
-  articles = Array.isArray(json?.data) ? json.data : [];
+  if (!base) {
+    throw new Error('Invalid Strapi base URL');
+  }
+
+  const res = await fetch(`${base}/api/articles?populate=*&pagination[pageSize]=100`);
+
+  if (!res.ok) {
+    console.error(`Strapi error: ${res.status}`);
+    articles = [];
+  } else {
+    const json = await res.json();
+    const items = Array.isArray(json?.data) ? json.data : [];
+
+    // flatten safely (prevents SSR crash in prod)
+    articles = items.map(item =>
+      item?.attributes ? { id: item.id, ...item.attributes } : item
+    );
+  }
 
 } catch (err) {
   console.error('Blog fetch failed:', err);
@@ -554,19 +574,19 @@ nav{
 <br/>
   {articles.length === 0 && <p>No articles found</p>}
 
-  {articles.map((a) => (
+  {articles.filter(a => a?.slug).map((a) => (
     <a href={`/blog/${a.slug}`} class="card">
 
-      {a.cover?.url && (
-        <img src={`${import.meta.env.PUBLIC_STRAPI_URL}${a.cover.url}`} />
+      {(a.cover?.data?.attributes?.url || a.cover?.url) && (
+        <img src={`${base}${a.cover?.data?.attributes?.url || a.cover?.url}`} />
       )}
 
       <div class="meta">
-        {formatDate(a.publishedAt)}
+        {formatDate(a.publishedAt || a.published_at)}
       </div>
 
       <div class="title">
-        {a.title}
+        {a.title || a.headline}
       </div>
 
       {(a.excerpt || a.description) && (
