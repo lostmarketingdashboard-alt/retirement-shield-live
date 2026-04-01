@@ -1,36 +1,30 @@
 ---
-import { marked } from 'marked';
+import { supabase } from '../../lib/supabase'
 
-export const prerender = false;
-const { slug } = Astro.params;
+export const prerender = false
 
-const query = new URLSearchParams({
-  'filters[slug][$eq]': slug || '',
-  'populate[0]': 'cover',
-  'populate[blocks][on][shared.rich-text][populate]': '*',
-  'populate[blocks][on][shared.media][populate]': '*',
-  'populate[blocks][on][shared.slider][populate]': '*',
-  'populate[blocks][on][shared.quote][populate]': '*',
-});
+export async function getStaticPaths() {
+  const { data } = await supabase
+    .from('articles')
+    .select('slug')
 
-const url = `${import.meta.env.PUBLIC_STRAPI_URL}/api/articles?${query.toString()}`;
+  if (!data) return []
 
-let article = null;
-let fetchError = null;
+  return data.map(row => ({
+    params: { slug: row.slug }
+  }))
+}
 
-try {
-  const res = await fetch(url);
+const { slug } = Astro.params
 
-  if (!res.ok) {
-    throw new Error(`Strapi error: ${res.status}`);
-  }
+const { data: article } = await supabase
+  .from('articles')
+  .select('*')
+  .eq('slug', slug)
+  .single()
 
-  const json = await res.json();
-  const items = Array.isArray(json?.data) ? json.data : [];
-  article = items[0] ?? null;
-} catch (err) {
-  console.error('Blog slug fetch failed:', err);
-  fetchError = err;
+if (!article) {
+  throw new Error(`Article not found: ${slug}`)
 }
 
 const formatDate = (dateStr) => {
@@ -43,25 +37,17 @@ const formatDate = (dateStr) => {
   })
 }
 
-const pageTitle = article?.meta_title || article?.headline || article?.title || 'Article';
-const pageDescription = article?.meta_description || article?.excerpt || article?.description || '';
-const pageOgImage = article?.og_image_url || null;
-
-const renderMarkdown = (value) => {
-  if (typeof value !== 'string' || !value.trim()) return '';
-  return marked.parse(value);
-};
+const tags = article.tags ? article.tags.split(',').map(t => t.trim()) : []
 ---
-
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{pageTitle}</title>
-  <meta name="description" content={pageDescription} />
+  <title>{article.meta_title || article.headline}</title>
+  <meta name="description" content={article.meta_description || ''} />
 
-  {pageOgImage && (
-    <meta property="og:image" content={pageOgImage} />
+  {article.og_image_url && (
+    <meta property="og:image" content={article.og_image_url} />
   )}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -203,7 +189,20 @@ const renderMarkdown = (value) => {
     padding:24px;
     font-size:12px;
   }
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
 
+  nav {
+    justify-content: center;
+    padding: 18px 16px;
+  }
+
+  .nav-logo {
+    font-size: 18px;
+  }
+}
   /* ══════════════════════════════════════════════════
    MASTHEAD — DESKTOP
 ══════════════════════════════════════════════════ */
@@ -283,63 +282,6 @@ nav.desktop-nav a:hover { opacity: 1; color: var(--amber-light); border-bottom-c
   text-transform: uppercase; letter-spacing: 0.12em; width: 100%; justify-content: center;
 }
 
-
-body {
-  margin:0;
-  background:#f7f8fc;
-  font-family:'DM Sans',sans-serif;
-  color:var(--text);
-}
-
-.container {
-  max-width:880px;
-  margin:0 auto;
-  padding:60px 24px 100px;
-}
-
-h1 {
-  font-family:'Playfair Display',serif;
-  font-size:42px;
-  line-height:1.2;
-  margin-bottom:18px;
-}
-
-.subheadline {
-  font-size:18px;
-  color:var(--slate);
-  margin-bottom:28px;
-}
-
-.meta {
-  font-size:13px;
-  color:#718096;
-  margin-bottom:40px;
-}
-
-.section {
-  background:white;
-  padding:32px;
-  border-radius:16px;
-  border:1px solid var(--border);
-  margin-bottom:24px;
-}
-
-.section p {
-  line-height:1.75;
-  font-size:16px;
-  color:var(--slate);
-}
-
-.cover {
-  margin-bottom: 28px;
-}
-
-.cover img {
-  width: 100%;
-  border-radius: 16px;
-  object-fit: cover;
-  max-height: 420px;
-}
 /* NAV */
 nav{
   background: var(--navy);
@@ -511,8 +453,6 @@ nav{
 }
 </style>
 
-
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">Retirement<span>Shield</span></a>
   <ul class="nav-links">
@@ -522,92 +462,73 @@ nav{
     <li><a href="#" onclick="openNewsletterModal(event)">Newsletter</a></li>
     <li><a href="/quiz" class="nav-cta">Free Assessment</a></li>
   </ul>
-</nav> 
+</nav>
 
 <div class="container">
 
-  {!article && (
-    <div>
-      <h1>Article not found</h1>
-      {fetchError && <p>Something went wrong loading this article.</p>}
+  <div class="eyebrow">{article.category} · {article.pillar}</div>
+
+  <h1>{article.headline}</h1>
+
+  {article.subheadline && (
+    <div class="subheadline">{article.subheadline}</div>
+  )}
+
+  <div class="meta">
+    {formatDate(article.published_at) && (
+      <span>Published {formatDate(article.published_at)}</span>
+    )}
+    {article.author_name && (
+      <span>By {article.author_name}</span>
+    )}
+    {article.reviewer_name && (
+      <span>Reviewed by {article.reviewer_name}</span>
+    )}
+    {article.word_count && (
+      <span>{article.word_count} words</span>
+    )}
+  </div>
+
+  <div class="section">
+    {article.lede && <p><strong>{article.lede}</strong></p>}
+
+    {article.section_1_heading && <h2>{article.section_1_heading}</h2>}
+    {article.section_1_body && <p>{article.section_1_body}</p>}
+
+    {article.section_2_heading && <h2>{article.section_2_heading}</h2>}
+    {article.section_2_body && <p>{article.section_2_body}</p>}
+
+    {article.section_3_heading && <h2>{article.section_3_heading}</h2>}
+    {article.section_3_body && <p>{article.section_3_body}</p>}
+
+    {article.section_4_heading && <h2>{article.section_4_heading}</h2>}
+    {article.section_4_body && <p>{article.section_4_body}</p>}
+  </div>
+
+  {article.key_takeaways && (
+    <div class="section key-takeaways">
+      <h2>Key Takeaways</h2>
+      <p>{article.key_takeaways}</p>
     </div>
   )}
 
-  {article && (
-    <>
-      <h1>{article?.title || article?.headline}</h1>
+  {article.sources && (
+    <div class="section">
+      <h2>Sources</h2>
+      <p>{article.sources}</p>
+    </div>
+  )}
 
-      {article.cover && (article.cover.url || article.cover.data?.attributes?.url) && (
-        <div class="cover">
-          <img
-            src={`${import.meta.env.PUBLIC_STRAPI_URL}${article.cover.url || article.cover.data?.attributes?.url}`}
-            alt={article.title}
-          />
-        </div>
-      )}
-
-      <div class="meta">
-        {formatDate(article?.publishedAt) && (
-          <span>Published {formatDate(article?.publishedAt)}</span>
-        )}
-      </div>
-
-      <div class="section">
-        {(article?.excerpt || article?.description) && (
-          <div class="subheadline">
-            {article.excerpt || article.description}
-          </div>
-        )}
-
-        {Array.isArray(article?.blocks) && article.blocks.map((block) => (
-          <>
-            {/* RICH TEXT */}
-            {block.__component === 'shared.rich-text' && block.body && (
-              <div set:html={renderMarkdown(block.body)}></div>
-            )}
-
-         
-
-           {block.__component === 'shared.media' && (
-            (block.file?.data?.attributes?.url || block.file?.url) && (
-              <div class="cover">
-                <img
-                  src={`${import.meta.env.PUBLIC_STRAPI_URL}${block.file?.data?.attributes?.url || block.file?.url}`}
-                  alt={(block.file?.data?.attributes?.alternativeText || block.file?.alternativeText) || article.title}
-                />
-              </div>
-            )
-          )}
-
-          {block.__component === 'shared.slider' && Array.isArray(block.files?.data) && (
-            <div style="display:grid; gap:12px; margin:24px 0;">
-              {block.files.data.map((file) => (
-                file?.attributes?.url && (
-                  <img
-                    src={`${import.meta.env.PUBLIC_STRAPI_URL}${file.attributes.url}`}
-                    alt={file.attributes.alternativeText || article.title}
-                    style="width:100%; border-radius:12px;"
-                  />
-                )
-              ))}
-            </div>
-          )}
-
-            {/* QUOTE */}
-            {block.__component === 'shared.quote' && (
-              <div style="border-left:4px solid var(--gold); padding:16px 20px; margin:24px 0; background:#fffaf3; border-radius:8px;">
-                {block.title && (
-                  <div style="font-weight:600; margin-bottom:6px;">{block.title}</div>
-                )}
-                {block.body && (
-                  <div style="font-style:italic;" set:html={renderMarkdown(block.body)}></div>
-                )}
-              </div>
-            )}
-          </>
-        ))}
-      </div>
-    </>
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map(tag => (
+        <div class="tag">{tag}</div>
+      ))}
+    </div>
   )}
 
 </div>
+
+<footer>
+  © {new Date().getFullYear()} Retirement Shield · Educational content only · Not legal or financial advice
+</footer>
