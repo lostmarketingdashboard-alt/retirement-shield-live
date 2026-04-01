@@ -1,6 +1,4 @@
 ---
-import { marked } from 'marked';
-
 export const prerender = false;
 const { slug } = Astro.params;
 
@@ -47,9 +45,41 @@ const pageTitle = article?.meta_title || article?.headline || article?.title || 
 const pageDescription = article?.meta_description || article?.excerpt || article?.description || '';
 const pageOgImage = article?.og_image_url || null;
 
+const escapeHtml = (value) => value
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
+
+const applyInlineMarkdown = (value) => value
+  .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  .replace(/\*(.+?)\*/g, '<em>$1</em>');
+
 const renderMarkdown = (value) => {
   if (typeof value !== 'string' || !value.trim()) return '';
-  return marked.parse(value);
+
+  const normalized = value.replace(/\r\n/g, '\n').trim();
+  const blocks = normalized.split(/\n{2,}/);
+
+  return blocks.map((block) => {
+    const escaped = escapeHtml(block.trim());
+
+    if (escaped.startsWith('### ')) {
+      return `<h3>${applyInlineMarkdown(escaped.slice(4))}</h3>`;
+    }
+
+    if (escaped.startsWith('## ')) {
+      return `<h2>${applyInlineMarkdown(escaped.slice(3))}</h2>`;
+    }
+
+    if (escaped.startsWith('# ')) {
+      return `<h2>${applyInlineMarkdown(escaped.slice(2))}</h2>`;
+    }
+
+    const paragraph = applyInlineMarkdown(escaped).replace(/\n/g, '<br />');
+    return `<p>${paragraph}</p>`;
+  }).join('');
 };
 ---
 
