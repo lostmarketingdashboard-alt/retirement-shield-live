@@ -176,6 +176,58 @@ export const ssr = false;
         text-align: center;
       }
 
+      .payment-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(13, 27, 42, 0.72);
+        z-index: 1000;
+      }
+
+      .payment-modal.open {
+        display: flex;
+      }
+
+      .payment-modal-card {
+        width: 100%;
+        max-width: 440px;
+        background: var(--cream);
+        color: var(--text-dark);
+        border-top: 4px solid var(--gold);
+        box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+        padding: 32px 28px;
+      }
+
+      .payment-modal-card h2 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .payment-modal-card p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text-mid);
+      }
+
+      .payment-modal-actions {
+        margin-top: 22px;
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .payment-modal-btn {
+        border: none;
+        background: var(--navy);
+        color: var(--cream);
+        padding: 12px 18px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
     </style>
   </head>
 
@@ -215,6 +267,18 @@ export const ssr = false;
       </div>
     </div>
 
+    <div id="paymentModal" class="payment-modal" aria-hidden="true">
+      <div class="payment-modal-card" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+        <h2 id="paymentModalTitle">Payment Required</h2>
+        <p id="paymentModalMessage">
+          Your account is not marked as paid yet. Please complete payment before accessing the portal.
+        </p>
+        <div class="payment-modal-actions">
+          <button type="button" id="closePaymentModal" class="payment-modal-btn">Close</button>
+        </div>
+      </div>
+    </div>
+
   <script type="module">
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -235,6 +299,30 @@ export const ssr = false;
       const errorEl = document.getElementById('error')
       const successEl = document.getElementById('success')
       const forgotLink = document.getElementById('forgotPassword')
+      const paymentModal = document.getElementById('paymentModal')
+      const paymentModalMessage = document.getElementById('paymentModalMessage')
+      const closePaymentModal = document.getElementById('closePaymentModal')
+
+      function showPaymentModal(message) {
+        paymentModalMessage.textContent = message
+        paymentModal.classList.add('open')
+        paymentModal.setAttribute('aria-hidden', 'false')
+      }
+
+      function hidePaymentModal() {
+        paymentModal.classList.remove('open')
+        paymentModal.setAttribute('aria-hidden', 'true')
+      }
+
+      closePaymentModal.addEventListener('click', hidePaymentModal)
+      paymentModal.addEventListener('click', (e) => {
+        if (e.target === paymentModal) hidePaymentModal()
+      })
+
+      const paymentRequired = new URLSearchParams(window.location.search).get('payment')
+      if (paymentRequired === 'required') {
+        showPaymentModal('Your account has not been marked as paid yet. Please complete payment before accessing the portal.')
+      }
 
       forgotLink.addEventListener('click', async () => {
         const email = document.getElementById('email').value
@@ -260,17 +348,45 @@ export const ssr = false;
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault()
+        errorEl.textContent = ''
+        successEl.textContent = ''
 
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
 
         if (error) {
           errorEl.textContent = error.message
+          return
+        }
+
+        const userId = data.user?.id
+
+        if (!userId) {
+          errorEl.textContent = 'Unable to verify your account.'
+          await supabase.auth.signOut()
+          return
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role, paid')
+          .eq('id', userId)
+          .single()
+
+        if (profileError || !profile) {
+          errorEl.textContent = 'Unable to load your profile.'
+          await supabase.auth.signOut()
+          return
+        }
+
+        if (profile.role === 'user' && !profile.paid) {
+          await supabase.auth.signOut()
+          showPaymentModal('Your account has not been marked as paid yet. Please complete payment before accessing the portal.')
           return
         }
 

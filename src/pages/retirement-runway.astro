@@ -1,0 +1,1797 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Retirement Runway — Personalized Money-Lasts-Until Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo { text-decoration: none; }
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+}
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 26% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.hero h1 em { color: var(--gold); font-style: normal; }
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  max-width: 740px;
+  margin: 0 auto 38px;
+  font-weight: 300;
+}
+
+.hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.wizard-section,
+.analysis-section,
+.report-section {
+  padding: 52px 24px 30px;
+}
+
+.wizard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.sticky-sidebar { position: sticky; top: 94px; }
+
+.sidebar-card,
+.form-card,
+.analysis-card,
+.report-shell,
+.disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card { padding: 28px; }
+
+.sidebar-label,
+.step-label,
+.section-kicker,
+.report-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 8px 0 14px;
+}
+
+.sidebar-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 22px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+
+.step-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-glow);
+}
+
+.step-item.done .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.step-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.sidebar-note {
+  border-radius: 14px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.78);
+  padding: 18px;
+  font-size: 13px;
+}
+
+.sidebar-note strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-card { overflow: hidden; }
+
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.24);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.progress-inline {
+  color: rgba(255,255,255,0.62);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 34px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.form-sub {
+  color: rgba(255,255,255,0.64);
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--navy);
+  margin: 8px 0;
+}
+
+.step-help {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  max-width: 720px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+
+.field-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.insight-grid,
+.scenario-grid,
+.metric-grid,
+.compare-grid,
+.signal-grid,
+.timeline-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.insight-grid,
+.metric-grid,
+.signal-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.scenario-grid,
+.compare-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.timeline-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.insight-card,
+.metric-card,
+.scenario-card,
+.compare-card,
+.signal-card,
+.timeline-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.insight-card strong,
+.signal-card strong {
+  display: block;
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.insight-card span,
+.signal-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.btn-back,
+.btn-next,
+.btn-print,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back,
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 13px 18px;
+}
+
+.btn-next,
+.btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 13px 20px;
+}
+
+.btn-next:hover,
+.btn-print:hover {
+  background: var(--gold-light);
+}
+
+.analysis-section,
+.report-section { display: none; }
+.analysis-section.active,
+.report-section.active { display: block; }
+
+.analysis-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 42px 28px;
+  text-align: center;
+}
+
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+
+.analysis-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.analysis-sub {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.analysis-steps {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.analysis-step.done .analysis-indicator {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.analysis-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-shell {
+  max-width: 1060px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 30px;
+  color: var(--white);
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+
+.report-subtitle {
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  max-width: 780px;
+}
+
+.report-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.report-meta-item,
+.pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.report-body {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.hero-summary,
+.section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.hero-summary {
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 22px;
+}
+
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.summary-title em { color: var(--gold); font-style: normal; }
+
+.summary-copy {
+  font-size: 15px;
+  color: var(--text-mid);
+}
+
+.summary-benchmark {
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.14;
+  margin: 8px 0 10px;
+}
+
+.metric-grid { margin-top: 22px; }
+
+.metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.metric-sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.section-card { padding: 24px; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.section-copy {
+  font-size: 13px;
+  color: var(--text-light);
+  max-width: 650px;
+}
+
+.pill {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--navy);
+}
+
+.scenario-card {
+  position: relative;
+}
+
+.scenario-card.safe { border-left: 4px solid var(--green); }
+.scenario-card.watch { border-left: 4px solid var(--amber); }
+.scenario-card.risk { border-left: 4px solid var(--red); }
+
+.scenario-name {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.scenario-date {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+
+.scenario-sub {
+  font-size: 13px;
+  color: var(--text-mid);
+  margin-bottom: 12px;
+}
+
+.scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scenario-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.scenario-list-item span:last-child {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.timeline-card .year {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.timeline-card .value {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.timeline-card .sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.signal-card strong { margin-bottom: 6px; }
+
+.signal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.signal-badge.good { background: var(--green-bg); color: var(--green); }
+.signal-badge.warn { background: var(--amber-bg); color: var(--amber); }
+.signal-badge.bad { background: var(--red-bg); color: var(--red); }
+
+.compare-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.compare-card .value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.compare-card .sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.callout {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+
+.report-note {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.disclaimer {
+  max-width: 1060px;
+  margin: 0 auto 64px;
+  padding: 24px 28px 32px;
+}
+
+.disclaimer p {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 980px) {
+  .wizard-grid,
+  .field-grid,
+  .insight-grid,
+  .metric-grid,
+  .scenario-grid,
+  .compare-grid,
+  .signal-grid,
+  .timeline-grid,
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-sidebar { position: static; }
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section,
+  .analysis-section,
+  .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card,
+  .form-body,
+  .report-body,
+  .section-card,
+  .hero-summary,
+  .analysis-card,
+  .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header,
+  .report-header { padding: 28px 20px; }
+  .step-question,
+  .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row,
+  .section-head,
+  .report-actions,
+  .form-header-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .report-actions > div:last-child { width: 100%; }
+  .report-actions > div:last-child button { width: 100%; }
+}
+
+@media print {
+  body { background: #fff; }
+  .site-header,
+  .hero,
+  .wizard-section,
+  .analysis-section,
+  .report-actions,
+  .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell {
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .hero-summary,
+  .section-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Longevity + Cash-Flow Tool</div>
+    <h1>The Retirement <em>Runway</em> — Personalized Money-Lasts-Until Tracker</h1>
+    <p class="hero-sub">Show retirees the number they actually obsess over: how long the money lasts. This tracker models runway under optimistic, baseline, and stress-tested conditions using savings, withdrawals, inflation, returns, and local longevity framing.</p>
+    <div class="hero-points">
+      <div class="hero-point">Three scenario runway dates</div>
+      <div class="hero-point">County life expectancy framing</div>
+      <div class="hero-point">Saved portal report + print-ready summary</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Runway Builder</div>
+        <div class="sidebar-title">The question is not just “Do I have enough?” It’s “Until when?”</div>
+        <div class="sidebar-copy">This tool turns retirement inputs into a runway date and shows how inflation, returns, and longer life can stretch or shrink the timeline.</div>
+
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Longevity</div>
+              <div class="step-sub">Name, county, age, and local lifespan framing</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Money Inputs</div>
+              <div class="step-sub">Savings, withdrawals, guaranteed income, and returns</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Stress Test</div>
+              <div class="step-sub">Inflation, costs, and scenario assumptions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong>Prototype note</strong>
+          This version uses bundled planning assumptions and regional adjustment factors so the product flow is ready before live FRED, FMP, and BEA integrations.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See the date your money is projected to run out.</div>
+        <div class="form-sub">This tracker estimates how long current savings can support withdrawals under optimistic, baseline, and stress-tested conditions, then saves the result as a portal report.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Whose retirement runway are we modeling?</div>
+          <div class="step-help">These inputs set the report identity and the longevity comparison used in the summary.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="currentAge">Current Age</label>
+              <input class="field-input" id="currentAge" type="number" min="45" max="100" placeholder="e.g. 67">
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="insight-card">
+              <strong>What you get</strong>
+              <span>A projected runway date, scenario comparisons, and clear explanations for why the runway expands or contracts.</span>
+            </div>
+            <div class="insight-card">
+              <strong>Why people come back</strong>
+              <span>A runway number feels urgent. If it moves, retirees want to know why immediately.</span>
+            </div>
+            <div class="insight-card">
+              <strong>What comes later</strong>
+              <span>Live inflation, rate, and regional cost updates that can trigger monthly email changes automatically.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What are the core money inputs?</div>
+          <div class="step-help">These are the mechanical assumptions: starting assets, spending, guaranteed income, and expected portfolio return.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="savingsBalance">Investable Savings</label>
+              <input class="field-input" id="savingsBalance" type="text" placeholder="e.g. 850000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="monthlyWithdrawal">Planned Monthly Withdrawal</label>
+              <input class="field-input" id="monthlyWithdrawal" type="text" placeholder="e.g. 4500">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="monthlyGuaranteedIncome">Monthly Guaranteed Income</label>
+              <input class="field-input" id="monthlyGuaranteedIncome" type="text" placeholder="e.g. 2900">
+              <div class="field-note">Social Security, pension, annuity income, or other predictable income.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="expectedReturn">Expected Annual Return %</label>
+              <input class="field-input" id="expectedReturn" type="text" placeholder="e.g. 5.5">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="portfolioMix">Portfolio Mix / Notes</label>
+              <textarea class="field-textarea" id="portfolioMix" placeholder="e.g. 55% stock / 45% bond, mostly dividend ETFs and treasuries."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How should we stress test the runway?</div>
+          <div class="step-help">This is where the runway becomes sticky: a better month can extend it, and a worse month can shorten it.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="inflationRate">Baseline Inflation %</label>
+              <input class="field-input" id="inflationRate" type="text" placeholder="e.g. 2.8">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stressInflationRate">Stress Inflation %</label>
+              <input class="field-input" id="stressInflationRate" type="text" placeholder="e.g. 5.2">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="regionalCostTier">Regional Cost Tier</label>
+              <select class="field-select" id="regionalCostTier">
+                <option value="" selected disabled>Select one...</option>
+                <option value="below">Below national average cost</option>
+                <option value="average">Near national average cost</option>
+                <option value="above">Above national average cost</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="runwayPriority">Primary Concern</label>
+              <select class="field-select" id="runwayPriority">
+                <option value="" selected disabled>Select one...</option>
+                <option value="outliving">Outliving assets</option>
+                <option value="inflation">Inflation pressure</option>
+                <option value="market">Market drawdowns</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="signal-grid">
+            <div class="signal-card">
+              <strong>Optimistic</strong>
+              <span>Moderately better returns, steadier inflation, and shorter drawdown pressure.</span>
+            </div>
+            <div class="signal-card">
+              <strong>Baseline</strong>
+              <span>Your entered return and inflation assumptions, adjusted for local cost pressure.</span>
+            </div>
+            <div class="signal-card">
+              <strong>Stress-tested</strong>
+              <span>Lower returns, higher inflation, and longer-life assumptions pushing the runway harder.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateRunwayReport()">Generate My Retirement Runway →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Retirement Runway</div>
+    <div class="analysis-sub" id="analysisSub">Running the optimistic, baseline, and stress-tested scenarios.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Checking the savings, withdrawal, and guaranteed income mix...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Applying baseline inflation, return, and regional cost assumptions...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Stress testing the runway under worse returns, higher inflation, and longer life...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report to your portal and preparing the print-ready summary...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Money-Lasts-Until Tracker</div>
+      <div class="report-title" id="reportTitle">The Retirement Runway</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved runway projection showing how long current assets may last under three scenario paths.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County benchmark —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="summary-title">Your money does not just need to grow. It needs to <em>last</em>.</div>
+            <div class="summary-copy" id="summaryCopy">This report converts your current savings and withdrawal pattern into a projected runway date, then shows how the runway changes when inflation, returns, and longevity shift.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="report-kicker">Longevity Check</div>
+            <div class="headline" id="benchmarkHeadline">How the runway compares with local life expectancy</div>
+            <div id="benchmarkCopy">Your baseline runway is compared with a local longevity benchmark so you can see whether the plan ends before, near, or after the likely planning horizon.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Baseline Runway Ends</div>
+            <div class="metric-value" id="baselineDateValue">—</div>
+            <div class="metric-sub" id="baselineDateSub">Most realistic current path</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Net Monthly Draw</div>
+            <div class="metric-value" id="netDrawValue">$0</div>
+            <div class="metric-sub" id="netDrawSub">Withdrawal minus guaranteed income</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Years to Longevity Target</div>
+            <div class="metric-value" id="longevityGapValue">—</div>
+            <div class="metric-sub" id="longevityGapSub">Compared with local life expectancy</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">Runway Scenarios</div>
+            <div class="section-copy">The same household can have three very different retirement outcomes depending on returns, inflation, and lifespan pressure.</div>
+          </div>
+          <div class="pill" id="scenarioPill">3 scenario view</div>
+        </div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Checkpoints Along the Runway</div>
+            <div class="section-copy">These balances give the user an intuitive feel for how fast the runway narrows if conditions stay roughly on plan.</div>
+          </div>
+        </div>
+        <div class="timeline-grid" id="timelineGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 3</div>
+            <div class="section-title">What is stretching or shrinking the runway?</div>
+            <div class="section-copy">These are the drivers users can understand without reading an actuarial appendix.</div>
+          </div>
+        </div>
+        <div class="signal-grid" id="signalGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 4</div>
+            <div class="section-title">Plan Comparison</div>
+            <div class="section-copy">This simplifies the retirement math into the three numbers the user actually wants to compare.</div>
+          </div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Summary</div>
+            <div class="section-title">Runway narrative</div>
+            <div class="section-copy">A plain-English explanation for what the tracker means right now.</div>
+          </div>
+        </div>
+        <div class="callout" id="runwayCallout">Your current runway summary will appear here.</div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editRunwayReport()">Edit Responses</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This runway tracker is for educational purposes only and does not constitute investment, tax, legal, or financial advice. Runway dates shown here are estimates based on user-entered inputs and prototype planning assumptions for inflation, return, regional costs, and longevity. Actual market performance, tax treatment, healthcare costs, and spending patterns can materially change results. County and state longevity framing is illustrative only. Always review retirement income decisions with a qualified financial professional before acting on any projection. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+const STATE_LONGEVITY = {
+  CA: 84.0, FL: 83.2, NY: 83.4, NJ: 83.8, WA: 83.2, MA: 84.1, MD: 82.8, CO: 82.6,
+  OR: 82.7, AZ: 82.1, TX: 80.9, NC: 80.7, GA: 80.1, PA: 81.3, OH: 79.8, MI: 79.9,
+  TN: 78.9, SC: 79.4, AL: 77.9, LA: 76.8
+};
+
+const REGIONAL_COST_FACTOR = {
+  below: 0.94,
+  average: 1,
+  above: 1.08
+};
+
+let latestRunwayPayload = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parsePercent(value, fallback = 0) {
+  const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function stateName(code) {
+  return STATE_OPTIONS.find(([v]) => v === code)?.[1] ?? code;
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function getLongevityTarget(stateCode, age) {
+  const target = STATE_LONGEVITY[stateCode] || 81.5;
+  return Math.max(target, age + 8);
+}
+
+function simulateRunway({ balance, netMonthlyDraw, annualReturnPct, inflationPct, maxMonths = 480 }) {
+  let assets = balance;
+  let currentMonthlyDraw = netMonthlyDraw;
+  const annualReturn = annualReturnPct / 100;
+  const monthlyReturn = Math.pow(1 + annualReturn, 1 / 12) - 1;
+  const monthlyInflation = Math.pow(1 + (inflationPct / 100), 1 / 12) - 1;
+  const checkpoints = [];
+
+  for (let month = 1; month <= maxMonths; month += 1) {
+    assets = assets * (1 + monthlyReturn) - currentMonthlyDraw;
+    currentMonthlyDraw = currentMonthlyDraw * (1 + monthlyInflation);
+
+    if ([12, 60, 120, 180].includes(month)) {
+      checkpoints.push({ month, assets: Math.max(assets, 0) });
+    }
+
+    if (assets <= 0) {
+      return { months: month, finalAssets: 0, depleted: true, checkpoints };
+    }
+  }
+
+  return { months: maxMonths, finalAssets: assets, depleted: false, checkpoints };
+}
+
+function addMonthsToToday(months) {
+  const date = new Date();
+  date.setMonth(date.getMonth() + months);
+  return date;
+}
+
+function formatMonthYear(date) {
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function monthsToYearsText(months) {
+  const years = months / 12;
+  if (years >= 10) return `${years.toFixed(1)} years`;
+  return `${years.toFixed(1)} years`;
+}
+
+function buildRunwayPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const stateCode = document.getElementById('stateSelect').value;
+  const stateFullName = stateName(stateCode);
+  const countyName = document.getElementById('countyName').value.trim();
+  const currentAge = Number(document.getElementById('currentAge').value || 0);
+  const savingsBalance = parseMoney(document.getElementById('savingsBalance').value);
+  const monthlyWithdrawal = parseMoney(document.getElementById('monthlyWithdrawal').value);
+  const monthlyGuaranteedIncome = parseMoney(document.getElementById('monthlyGuaranteedIncome').value);
+  const expectedReturn = parsePercent(document.getElementById('expectedReturn').value, 5.5);
+  const portfolioMix = document.getElementById('portfolioMix').value.trim();
+  const inflationRate = parsePercent(document.getElementById('inflationRate').value, 2.8);
+  const stressInflationRate = parsePercent(document.getElementById('stressInflationRate').value, 5.2);
+  const regionalCostTier = document.getElementById('regionalCostTier').value;
+  const runwayPriority = document.getElementById('runwayPriority').value;
+
+  const regionalFactor = REGIONAL_COST_FACTOR[regionalCostTier] || 1;
+  const netMonthlyDraw = Math.max(0, (monthlyWithdrawal * regionalFactor) - monthlyGuaranteedIncome);
+  const longevityAge = getLongevityTarget(stateCode, currentAge);
+  const yearsToLongevity = Math.max(0, longevityAge - currentAge);
+  const monthsToLongevity = Math.round(yearsToLongevity * 12);
+
+  const optimistic = simulateRunway({
+    balance: savingsBalance,
+    netMonthlyDraw,
+    annualReturnPct: expectedReturn + 1.5,
+    inflationPct: Math.max(1, inflationRate - 0.9),
+    maxMonths: 600
+  });
+
+  const baseline = simulateRunway({
+    balance: savingsBalance,
+    netMonthlyDraw,
+    annualReturnPct: expectedReturn,
+    inflationPct: inflationRate,
+    maxMonths: 600
+  });
+
+  const stress = simulateRunway({
+    balance: savingsBalance,
+    netMonthlyDraw,
+    annualReturnPct: Math.max(-1, expectedReturn - 3.5),
+    inflationPct: stressInflationRate,
+    maxMonths: 600
+  });
+
+  const scenarioPayload = [
+    {
+      key: 'optimistic',
+      name: 'Optimistic',
+      tone: optimistic.depleted ? 'watch' : 'safe',
+      annualReturnPct: expectedReturn + 1.5,
+      inflationPct: Math.max(1, inflationRate - 0.9),
+      result: optimistic
+    },
+    {
+      key: 'baseline',
+      name: 'Baseline',
+      tone: baseline.months >= monthsToLongevity ? 'safe' : baseline.months >= monthsToLongevity * 0.75 ? 'watch' : 'risk',
+      annualReturnPct: expectedReturn,
+      inflationPct: inflationRate,
+      result: baseline
+    },
+    {
+      key: 'stress',
+      name: 'Stress-Tested',
+      tone: stress.months >= monthsToLongevity ? 'watch' : 'risk',
+      annualReturnPct: Math.max(-1, expectedReturn - 3.5),
+      inflationPct: stressInflationRate,
+      result: stress
+    }
+  ];
+
+  const baselineEndDate = addMonthsToToday(baseline.months);
+  const longevityGapMonths = baseline.months - monthsToLongevity;
+  const priorityText = {
+    outliving: 'outliving assets',
+    inflation: 'inflation pressure',
+    market: 'market drawdowns'
+  }[runwayPriority] || 'runway durability';
+
+  const narrative = baseline.depleted
+    ? `At the current withdrawal pattern, the baseline runway projects depletion around ${formatMonthYear(baselineEndDate)}. The main pressure points are ${priorityText}, a net monthly draw of about ${formatMoney(netMonthlyDraw)}, and inflation compounding the withdrawals over time.`
+    : `Under the current assumptions, the baseline runway still has assets remaining after ${monthsToYearsText(baseline.months)}. The biggest variables are ${priorityText}, inflation, and whether portfolio returns stay close to the plan.`;
+
+  return {
+    fullName,
+    stateCode,
+    stateName: stateFullName,
+    countyName,
+    currentAge,
+    savingsBalance,
+    monthlyWithdrawal,
+    monthlyGuaranteedIncome,
+    expectedReturn,
+    portfolioMix,
+    inflationRate,
+    stressInflationRate,
+    regionalCostTier,
+    regionalFactor,
+    runwayPriority,
+    netMonthlyDraw,
+    longevityAge,
+    yearsToLongevity,
+    monthsToLongevity,
+    scenarios: scenarioPayload,
+    baselineMonths: baseline.months,
+    baselineEndDate: baselineEndDate.toISOString(),
+    narrative
+  };
+}
+
+function renderRunwayReport(payload) {
+  latestRunwayPayload = payload;
+  const baselineScenario = payload.scenarios.find((s) => s.key === 'baseline');
+  const baselineDate = new Date(payload.baselineEndDate);
+  const longevityGapMonths = baselineScenario.result.months - payload.monthsToLongevity;
+
+  document.getElementById('reportTitle').textContent = `The Retirement Runway for ${payload.fullName || 'Your Plan'}`;
+  document.getElementById('reportSubtitle').textContent = `A saved money-lasts-until projection for ${payload.countyName || 'your county'}${payload.stateName ? `, ${payload.stateName}` : ''}, updated from your current retirement assumptions.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'} · ${payload.stateName || 'State not entered'} longevity framing`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryCopy').textContent = payload.portfolioMix || payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `Local longevity benchmark: roughly age ${payload.longevityAge.toFixed(1)}`;
+  document.getElementById('benchmarkCopy').textContent = `For planning purposes, this report is comparing the runway against a ${payload.stateName} longevity target near age ${payload.longevityAge.toFixed(1)}. That gives the user a clear sense of whether the plan runs short, lands near target, or extends beyond it.`;
+  document.getElementById('baselineDateValue').textContent = formatMonthYear(baselineDate);
+  document.getElementById('netDrawValue').textContent = formatMoney(payload.netMonthlyDraw);
+  document.getElementById('longevityGapValue').textContent = `${Math.abs(longevityGapMonths / 12).toFixed(1)} yrs`;
+  document.getElementById('baselineDateSub').textContent = `About ${monthsToYearsText(baselineScenario.result.months)} from today`;
+  document.getElementById('netDrawSub').textContent = `${formatMoney(payload.monthlyWithdrawal)} spending less ${formatMoney(payload.monthlyGuaranteedIncome)} guaranteed income`;
+  document.getElementById('longevityGapSub').textContent = longevityGapMonths >= 0 ? 'Runway extends beyond longevity target' : 'Runway ends before longevity target';
+  document.getElementById('scenarioPill').textContent = `Regional cost factor ${payload.regionalFactor.toFixed(2)}x`;
+
+  const scenarioGrid = document.getElementById('scenarioGrid');
+  scenarioGrid.innerHTML = payload.scenarios.map((scenario) => {
+    const endDate = addMonthsToToday(scenario.result.months);
+    return `
+      <div class="scenario-card ${scenario.tone}">
+        <div class="scenario-name">${scenario.name}</div>
+        <div class="scenario-date">${formatMonthYear(endDate)}</div>
+        <div class="scenario-sub">${scenario.result.depleted ? `Assets project to run out in about ${monthsToYearsText(scenario.result.months)}.` : `Assets remain after ${monthsToYearsText(scenario.result.months)}.`}</div>
+        <div class="scenario-list">
+          <div class="scenario-list-item"><span>Return assumption</span><span>${scenario.annualReturnPct.toFixed(1)}%</span></div>
+          <div class="scenario-list-item"><span>Inflation assumption</span><span>${scenario.inflationPct.toFixed(1)}%</span></div>
+          <div class="scenario-list-item"><span>Months from today</span><span>${scenario.result.months}</span></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const timelineGrid = document.getElementById('timelineGrid');
+  const checkpoints = baselineScenario.result.checkpoints.length
+    ? baselineScenario.result.checkpoints
+    : [{ month: 12, assets: payload.savingsBalance }, { month: 60, assets: payload.savingsBalance }, { month: 120, assets: payload.savingsBalance }, { month: 180, assets: payload.savingsBalance }];
+  timelineGrid.innerHTML = checkpoints.map((checkpoint) => `
+    <div class="timeline-card">
+      <div class="year">${checkpoint.month / 12} years</div>
+      <div class="value">${formatMoney(checkpoint.assets)}</div>
+      <div class="sub">Estimated remaining balance if the baseline path holds</div>
+    </div>
+  `).join('');
+
+  const signalGrid = document.getElementById('signalGrid');
+  const signals = [
+    {
+      tone: payload.netMonthlyDraw <= payload.savingsBalance * 0.0035 ? 'good' : payload.netMonthlyDraw <= payload.savingsBalance * 0.005 ? 'warn' : 'bad',
+      title: 'Current withdrawal pressure',
+      text: `The plan is pulling about ${formatMoney(payload.netMonthlyDraw)} per month from assets after guaranteed income is counted.`
+    },
+    {
+      tone: payload.inflationRate <= 3 ? 'good' : payload.inflationRate <= 4.5 ? 'warn' : 'bad',
+      title: 'Inflation drag',
+      text: `Baseline inflation is modeled at ${payload.inflationRate.toFixed(1)}%, with a stress case of ${payload.stressInflationRate.toFixed(1)}%.`
+    },
+    {
+      tone: payload.expectedReturn >= 5 ? 'good' : payload.expectedReturn >= 3.5 ? 'warn' : 'bad',
+      title: 'Return support',
+      text: `The baseline expected return is ${payload.expectedReturn.toFixed(1)}%, which can materially alter the runway if missed for several years.`
+    }
+  ];
+  signalGrid.innerHTML = signals.map((signal) => `
+    <div class="signal-card">
+      <div class="signal-badge ${signal.tone}">${signal.tone === 'good' ? 'Supportive' : signal.tone === 'warn' ? 'Watch closely' : 'Pressure point'}</div>
+      <strong>${signal.title}</strong>
+      <span>${signal.text}</span>
+    </div>
+  `).join('');
+
+  const compareGrid = document.getElementById('compareGrid');
+  compareGrid.innerHTML = [
+    {
+      label: 'Current Assets',
+      value: formatMoney(payload.savingsBalance),
+      sub: 'Starting investable balance entered into the tracker'
+    },
+    {
+      label: 'Annual Net Draw',
+      value: formatMoney(payload.netMonthlyDraw * 12),
+      sub: 'Year-one draw after guaranteed income offsets'
+    },
+    {
+      label: 'Longevity Planning Horizon',
+      value: `${payload.longevityAge.toFixed(1)}`,
+      sub: `Approximate local planning age from current age ${payload.currentAge}`
+    }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('runwayCallout').textContent = payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Running runway scenarios for ${payload.fullName || 'your plan'} in ${payload.stateName || 'your state'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveRunwayReport(payload) {
+  const supabase = window.retirementRunwaySupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_code: payload.stateCode || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    current_age: payload.currentAge || null,
+    savings_balance: payload.savingsBalance,
+    monthly_withdrawal: payload.monthlyWithdrawal,
+    monthly_guaranteed_income: payload.monthlyGuaranteedIncome,
+    net_monthly_draw: payload.netMonthlyDraw,
+    expected_return_pct: payload.expectedReturn,
+    inflation_rate_pct: payload.inflationRate,
+    stress_inflation_rate_pct: payload.stressInflationRate,
+    regional_cost_tier: payload.regionalCostTier || null,
+    baseline_runway_months: payload.baselineMonths,
+    baseline_runway_end_date: payload.baselineEndDate,
+    longevity_target_age: payload.longevityAge,
+    report_title: `The Retirement Runway for ${payload.fullName || 'Your Plan'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('retirement_runway_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save Retirement Runway report:', error);
+  }
+}
+
+function showGeneratedRunwayReport(payload) {
+  renderRunwayReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedRunwayReport(payload) {
+  renderRunwayReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedRunwayReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fieldMap = {
+    fullName: payload.fullName,
+    countyName: payload.countyName,
+    currentAge: payload.currentAge,
+    savingsBalance: payload.savingsBalance ? String(payload.savingsBalance) : '',
+    monthlyWithdrawal: payload.monthlyWithdrawal ? String(payload.monthlyWithdrawal) : '',
+    monthlyGuaranteedIncome: payload.monthlyGuaranteedIncome ? String(payload.monthlyGuaranteedIncome) : '',
+    expectedReturn: payload.expectedReturn ? String(payload.expectedReturn) : '',
+    portfolioMix: payload.portfolioMix,
+    inflationRate: payload.inflationRate ? String(payload.inflationRate) : '',
+    stressInflationRate: payload.stressInflationRate ? String(payload.stressInflationRate) : ''
+  };
+
+  Object.entries(fieldMap).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = value;
+  });
+
+  if (payload.stateCode) document.getElementById('stateSelect').value = payload.stateCode;
+  if (payload.regionalCostTier) document.getElementById('regionalCostTier').value = payload.regionalCostTier;
+  if (payload.runwayPriority) document.getElementById('runwayPriority').value = payload.runwayPriority;
+
+  showHydratedRunwayReport(payload);
+  return true;
+}
+
+async function generateRunwayReport() {
+  const payload = buildRunwayPayload();
+  await saveRunwayReport(payload);
+  showGeneratedRunwayReport(payload);
+}
+
+function editRunwayReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateRunwayReport = generateRunwayReport;
+window.editRunwayReport = editRunwayReport;
+window.hydrateRetirementRunwayReport = hydrateSavedRunwayReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.retirementRunwaySupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateRetirementRunwayReport) {
+  const { data: report } = await supabase
+    .from('retirement_runway_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateRetirementRunwayReport(report);
+  }
+}
+</script>
+</body>
+</html>

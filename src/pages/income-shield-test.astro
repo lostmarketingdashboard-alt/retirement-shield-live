@@ -1,0 +1,1717 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Income Shield — Retirement Income Stress Test & Rebalancing Alerts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo { text-decoration: none; }
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+}
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 26% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.hero h1 em { color: var(--gold); font-style: normal; }
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 0 auto 38px;
+  font-weight: 300;
+}
+
+.hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.wizard-section,
+.analysis-section,
+.report-section {
+  padding: 52px 24px 30px;
+}
+
+.wizard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.sticky-sidebar { position: sticky; top: 94px; }
+
+.sidebar-card,
+.form-card,
+.analysis-card,
+.report-shell,
+.disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card { padding: 28px; }
+
+.sidebar-label,
+.step-label,
+.section-kicker,
+.report-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 8px 0 14px;
+}
+
+.sidebar-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 22px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+
+.step-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-glow);
+}
+
+.step-item.done .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.step-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.sidebar-note {
+  border-radius: 14px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.78);
+  padding: 18px;
+  font-size: 13px;
+}
+
+.sidebar-note strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-card { overflow: hidden; }
+
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.24);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.progress-inline {
+  color: rgba(255,255,255,0.62);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 34px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.form-sub {
+  color: rgba(255,255,255,0.64);
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--navy);
+  margin: 8px 0;
+}
+
+.step-help {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  max-width: 720px;
+}
+
+.field-grid,
+.insight-grid,
+.metric-grid,
+.scenario-grid,
+.compare-grid,
+.rebalance-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.insight-grid,
+.metric-grid,
+.compare-grid,
+.rebalance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.scenario-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+
+.field-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.source-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--cream);
+  padding: 16px;
+}
+
+.source-card strong {
+  display: block;
+  font-size: 14px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.source-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.btn-back,
+.btn-next,
+.btn-print,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back,
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 13px 18px;
+}
+
+.btn-next,
+.btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 13px 20px;
+}
+
+.btn-next:hover,
+.btn-print:hover {
+  background: var(--gold-light);
+}
+
+.analysis-section,
+.report-section { display: none; }
+.analysis-section.active,
+.report-section.active { display: block; }
+
+.analysis-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 42px 28px;
+  text-align: center;
+}
+
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+
+.analysis-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.analysis-sub {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.analysis-steps {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.analysis-step.done .analysis-indicator {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.analysis-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 30px;
+  color: var(--white);
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+
+.report-subtitle {
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  max-width: 780px;
+}
+
+.report-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.report-meta-item,
+.pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.report-body {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.hero-summary,
+.section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.hero-summary {
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 22px;
+}
+
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.summary-title em { color: var(--gold); font-style: normal; }
+
+.summary-copy {
+  font-size: 15px;
+  color: var(--text-mid);
+}
+
+.summary-benchmark {
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.14;
+  margin: 8px 0 10px;
+}
+
+.metric-card,
+.scenario-card,
+.compare-card,
+.rebalance-card,
+.insight-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.metric-label,
+.scenario-label,
+.compare-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.metric-value,
+.scenario-value,
+.compare-card .value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.metric-sub,
+.scenario-sub,
+.compare-card .sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.section-card { padding: 24px; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.section-copy {
+  font-size: 13px;
+  color: var(--text-light);
+  max-width: 650px;
+}
+
+.pill {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--navy);
+}
+
+.scenario-card.safe { border-left: 4px solid var(--green); }
+.scenario-card.watch { border-left: 4px solid var(--amber); }
+.scenario-card.risk { border-left: 4px solid var(--red); }
+
+.scenario-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scenario-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.scenario-list-item span:last-child {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.rebalance-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.rebalance-badge.good { background: var(--green-bg); color: var(--green); }
+.rebalance-badge.warn { background: var(--amber-bg); color: var(--amber); }
+.rebalance-badge.bad { background: var(--red-bg); color: var(--red); }
+
+.rebalance-card strong,
+.insight-card strong {
+  display: block;
+  font-size: 14px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.rebalance-card span,
+.insight-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.callout {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+
+.report-note {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.disclaimer {
+  max-width: 1080px;
+  margin: 0 auto 64px;
+  padding: 24px 28px 32px;
+}
+
+.disclaimer p {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 1100px) {
+  .wizard-grid,
+  .field-grid,
+  .insight-grid,
+  .metric-grid,
+  .scenario-grid,
+  .compare-grid,
+  .rebalance-grid,
+  .hero-grid,
+  .source-grid {
+    grid-template-columns: 1fr;
+  }
+  .sticky-sidebar { position: static; }
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section,
+  .analysis-section,
+  .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card,
+  .form-body,
+  .report-body,
+  .section-card,
+  .hero-summary,
+  .analysis-card,
+  .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header,
+  .report-header { padding: 28px 20px; }
+  .step-question,
+  .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row,
+  .section-head,
+  .report-actions,
+  .form-header-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .report-actions > div:last-child { width: 100%; }
+  .report-actions > div:last-child button { width: 100%; }
+}
+
+@media print {
+  body { background: #fff; }
+  .site-header,
+  .hero,
+  .wizard-section,
+  .analysis-section,
+  .report-actions,
+  .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell {
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .hero-summary,
+  .section-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Retirement Income Defense Tool</div>
+    <h1>The Income <em>Shield</em> — Retirement Income Stress Test & Rebalancing Alerts</h1>
+    <p class="hero-sub">Model retirement income as a system instead of a collection of accounts. This tool stress tests five real-world threats to monthly cash flow, then shows where income sources are too concentrated, too fragile, or underweight relative to the user’s risk profile.</p>
+    <div class="hero-points">
+      <div class="hero-point">Five retirement stress scenarios</div>
+      <div class="hero-point">Income-system vulnerability map</div>
+      <div class="hero-point">Quarterly-style rebalancing summary</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Income Stress Test</div>
+        <div class="sidebar-title">Retirement income is only stable until one part of the system breaks.</div>
+        <div class="sidebar-copy">This report tests how resilient the income mix really is under the fears retirees talk about most: market shocks, spouse death, health costs, and inflation.</div>
+
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Risk Lens</div>
+              <div class="step-sub">Name, county, household setup, and priority concern</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Income Sources</div>
+              <div class="step-sub">Monthly income streams and dependence by source</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Stress Settings</div>
+              <div class="step-sub">Health shock, spouse risk, inflation, and rebalancing view</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong>Prototype note</strong>
+          This version uses bundled scenario assumptions so the full product flow is live now. The API-connected monthly recalculation layer can plug in afterward without changing the user experience.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">Stress test the retirement income system before life does it for you.</div>
+        <div class="form-sub">Enter monthly income sources, then see what happens to the full system under five scenarios: market crash, rising rates, spouse death, health crisis, and high inflation.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Whose income shield are we testing?</div>
+          <div class="step-help">These fields set the report identity and the emotional framing for the rebalancing recommendations.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="householdType">Household Setup</label>
+              <select class="field-select" id="householdType">
+                <option value="" selected disabled>Select one...</option>
+                <option value="couple">Married / partnered household</option>
+                <option value="solo">Single / widowed household</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="riskPriority">Which risk keeps you up at night most?</label>
+              <select class="field-select" id="riskPriority">
+                <option value="" selected disabled>Select one...</option>
+                <option value="spouse">Loss of one spouse’s income</option>
+                <option value="market">Market decline and dividend cuts</option>
+                <option value="health">Health crisis and rising costs</option>
+                <option value="inflation">Inflation eroding spending power</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="insight-card">
+              <strong>What this shows</strong>
+              <span>How the whole retirement income machine behaves when multiple pressures hit, not just whether one account falls.</span>
+            </div>
+            <div class="insight-card">
+              <strong>Why it matters</strong>
+              <span>A stable retirement plan is not the same thing as a stable retirement income system.</span>
+            </div>
+            <div class="insight-card">
+              <strong>What comes later</strong>
+              <span>Live market, rate, and yield updates so the stress test can refresh monthly automatically.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What income sources make up the retirement paycheck today?</div>
+          <div class="step-help">Enter monthly amounts. Leave any source blank if it does not apply.</div>
+
+          <div class="source-grid">
+            <div class="field-group source-card">
+              <label class="field-label" for="socialSecurityIncome">Social Security</label>
+              <input class="field-input" id="socialSecurityIncome" type="text" placeholder="e.g. 2400">
+              <span>Usually the most resilient income stream, but can drop materially after a spouse’s death.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="pensionIncome">Pension</label>
+              <input class="field-input" id="pensionIncome" type="text" placeholder="e.g. 1600">
+              <span>Important to test whether the benefit survives fully, partially, or not at all after a spouse dies.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="dividendIncome">Dividends</label>
+              <input class="field-input" id="dividendIncome" type="text" placeholder="e.g. 950">
+              <span>Useful, but vulnerable during a market shock or dividend-cut cycle.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="bondIncome">Bond Interest</label>
+              <input class="field-input" id="bondIncome" type="text" placeholder="e.g. 500">
+              <span>More rate-sensitive than many retirees realize, especially when reinvestment assumptions change.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="rentalIncome">Rental Income</label>
+              <input class="field-input" id="rentalIncome" type="text" placeholder="e.g. 1200">
+              <span>Can be powerful but also gets stress from vacancies, maintenance, and health-related management issues.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="annuityIncome">Annuity Payouts</label>
+              <input class="field-input" id="annuityIncome" type="text" placeholder="e.g. 800">
+              <span>Often improves stress resilience because the income is contractual, not market-driven.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="partTimeIncome">Part-Time Work</label>
+              <input class="field-input" id="partTimeIncome" type="text" placeholder="e.g. 700">
+              <span>Highly useful today, but usually one of the most fragile sources in a health event.</span>
+            </div>
+            <div class="field-group source-card">
+              <label class="field-label" for="otherIncome">Other Monthly Income</label>
+              <input class="field-input" id="otherIncome" type="text" placeholder="e.g. 300">
+              <span>Use this for trust distributions, family support, royalties, or anything else not listed above.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How severe should the stress test be?</div>
+          <div class="step-help">These settings shape the five scenarios and the rebalancing summary at the end.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="monthlySpending">Current Monthly Spending</label>
+              <input class="field-input" id="monthlySpending" type="text" placeholder="e.g. 5200">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="healthShockIncrease">Health Crisis Cost Increase %</label>
+              <input class="field-input" id="healthShockIncrease" type="text" placeholder="e.g. 22">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="inflationShockRate">High Inflation Shock %</label>
+              <input class="field-input" id="inflationShockRate" type="text" placeholder="e.g. 6">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="rebalancingGoal">Rebalancing Goal</label>
+              <select class="field-select" id="rebalancingGoal">
+                <option value="" selected disabled>Select one...</option>
+                <option value="stability">Maximize income stability</option>
+                <option value="growth">Preserve more growth potential</option>
+                <option value="legacy">Balance income and legacy goals</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="portfolioNotes">Portfolio / household notes</label>
+              <textarea class="field-textarea" id="portfolioNotes" placeholder="e.g. Dividends and pension cover basics, but spouse Social Security is a major part of the safety net."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateIncomeShieldReport()">Generate My Income Shield →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Income Shield</div>
+    <div class="analysis-sub" id="analysisSub">Stress testing the retirement income system under five real-world scenario shocks.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Mapping the current retirement income mix and monthly dependence...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Applying market, spouse-loss, health, inflation, and rate scenarios...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Scoring the resilience of each income source under pressure...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Preparing the quarterly-style rebalancing summary and saving the report...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Income Stress Test</div>
+      <div class="report-title" id="reportTitle">The Income Shield</div>
+      <div class="report-subtitle" id="reportSubtitle">A retirement income resilience report showing what happens when key threats hit the paycheck system.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County frame —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="summary-title">A retirement income plan is only as strong as its weakest <em>cash-flow link</em>.</div>
+            <div class="summary-copy" id="summaryCopy">This report measures the resilience of the full income system, not just the performance of one account or one asset class.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="report-kicker">Primary Stress Point</div>
+            <div class="headline" id="benchmarkHeadline">Which scenario hurts this plan most</div>
+            <div id="benchmarkCopy">The most damaging scenario for this household appears here, along with why it weakens the income system more than the others.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Current Monthly Income</div>
+            <div class="metric-value" id="totalIncomeValue">$0</div>
+            <div class="metric-sub" id="totalIncomeSub">All listed monthly income sources combined</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Monthly Spending</div>
+            <div class="metric-value" id="spendingValue">$0</div>
+            <div class="metric-sub" id="spendingSub">Current household outflow entered into the model</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Current Coverage Gap</div>
+            <div class="metric-value" id="gapValue">$0</div>
+            <div class="metric-sub" id="gapSub">Positive means a surplus; negative means a shortfall</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">Five Stress Scenarios</div>
+            <div class="section-copy">Each scenario tests what happens to total monthly income, spending pressure, and the resulting gap.</div>
+          </div>
+          <div class="pill" id="scenarioPill">5 scenario view</div>
+        </div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Income Mix Comparison</div>
+            <div class="section-copy">This gives the user the simple system-level numbers they can compare immediately.</div>
+          </div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 3</div>
+            <div class="section-title">Rebalancing Alerts</div>
+            <div class="section-copy">These are prototype quarterly-style recommendations based on resilience, concentration, and the user’s stated goal.</div>
+          </div>
+        </div>
+        <div class="rebalance-grid" id="rebalanceGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Summary</div>
+            <div class="section-title">Income Shield narrative</div>
+            <div class="section-copy">A plain-English explanation of what the stress test is really saying about the plan.</div>
+          </div>
+        </div>
+        <div class="callout" id="shieldCallout">Your income stress test summary will appear here.</div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editIncomeShieldReport()">Edit Responses</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This income stress test is for educational purposes only and does not constitute investment, insurance, tax, legal, or financial advice. Scenario assumptions used here are prototype planning assumptions and are not live market forecasts. Actual dividend cuts, rate moves, inflation shocks, healthcare spending changes, and survivor-income rules can differ materially from these estimates. Use this report as a planning prompt and discuss major retirement income decisions with a qualified professional. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+const SURVIVOR_REDUCTION = {
+  couple: 0.18,
+  solo: 0.02
+};
+
+const REBALANCE_LABELS = {
+  stability: 'Maximize income stability',
+  growth: 'Preserve more growth potential',
+  legacy: 'Balance income and legacy goals'
+};
+
+let latestShieldPayload = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parsePercent(value, fallback = 0) {
+  const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function stateName(code) {
+  return STATE_OPTIONS.find(([v]) => v === code)?.[1] ?? code;
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function buildIncomeSourceMap() {
+  return {
+    social_security: parseMoney(document.getElementById('socialSecurityIncome').value),
+    pension: parseMoney(document.getElementById('pensionIncome').value),
+    dividends: parseMoney(document.getElementById('dividendIncome').value),
+    bonds: parseMoney(document.getElementById('bondIncome').value),
+    rental: parseMoney(document.getElementById('rentalIncome').value),
+    annuity: parseMoney(document.getElementById('annuityIncome').value),
+    part_time: parseMoney(document.getElementById('partTimeIncome').value),
+    other: parseMoney(document.getElementById('otherIncome').value)
+  };
+}
+
+function sumValues(object) {
+  return Object.values(object).reduce((sum, value) => sum + value, 0);
+}
+
+function scenarioCardTone(gap) {
+  if (gap >= 0) return 'safe';
+  if (gap >= -1000) return 'watch';
+  return 'risk';
+}
+
+function buildIncomeShieldPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const stateCode = document.getElementById('stateSelect').value;
+  const stateFullName = stateName(stateCode);
+  const countyName = document.getElementById('countyName').value.trim();
+  const householdType = document.getElementById('householdType').value;
+  const riskPriority = document.getElementById('riskPriority').value;
+  const monthlySpending = parseMoney(document.getElementById('monthlySpending').value);
+  const healthShockIncrease = parsePercent(document.getElementById('healthShockIncrease').value, 22);
+  const inflationShockRate = parsePercent(document.getElementById('inflationShockRate').value, 6);
+  const rebalancingGoal = document.getElementById('rebalancingGoal').value;
+  const portfolioNotes = document.getElementById('portfolioNotes').value.trim();
+  const incomeSources = buildIncomeSourceMap();
+  const totalIncome = sumValues(incomeSources);
+  const currentGap = totalIncome - monthlySpending;
+
+  const scenarios = [
+    {
+      key: 'market_crash',
+      name: 'Stock market crash',
+      income: totalIncome - (incomeSources.dividends * 0.30),
+      spending: monthlySpending,
+      note: 'Assumes a 30% dividend-income reduction across the equity-income sleeve.'
+    },
+    {
+      key: 'rising_rates',
+      name: 'Rising interest rates',
+      income: totalIncome + (incomeSources.bonds * 0.10),
+      spending: monthlySpending,
+      note: 'Assumes lower bond prices but modestly better reinvestment income.'
+    },
+    {
+      key: 'spouse_death',
+      name: 'Spouse death',
+      income: totalIncome - (incomeSources.social_security * (SURVIVOR_REDUCTION[householdType] || 0.1)) - (incomeSources.pension * 0.20),
+      spending: monthlySpending * 0.92,
+      note: 'Models a reduced Social Security stream and a partial pension drop after one spouse is gone.'
+    },
+    {
+      key: 'health_crisis',
+      name: 'Health crisis',
+      income: totalIncome - (incomeSources.part_time * 0.70) - (incomeSources.rental * 0.10),
+      spending: monthlySpending * (1 + healthShockIncrease / 100),
+      note: 'Assumes work income falls, rental friction rises, and spending increases under care pressure.'
+    },
+    {
+      key: 'high_inflation',
+      name: 'High inflation',
+      income: totalIncome,
+      spending: monthlySpending * (1 + inflationShockRate / 100),
+      note: 'Models purchasing power erosion without an equal increase in every income source.'
+    }
+  ].map((scenario) => {
+    const gap = scenario.income - scenario.spending;
+    return {
+      ...scenario,
+      gap,
+      tone: scenarioCardTone(gap)
+    };
+  });
+
+  const worstScenario = [...scenarios].sort((a, b) => a.gap - b.gap)[0];
+
+  const compare = [
+    {
+      label: 'Total monthly income',
+      value: totalIncome,
+      sub: 'All listed income sources before any stress event'
+    },
+    {
+      label: 'Most severe stressed income',
+      value: Math.min(...scenarios.map((s) => s.income)),
+      sub: 'Lowest projected monthly income across the five scenarios'
+    },
+    {
+      label: 'Largest stressed shortfall',
+      value: Math.abs(Math.min(...scenarios.map((s) => s.gap))),
+      sub: 'How far below spending the plan falls in the worst scenario'
+    }
+  ];
+
+  const sourceShares = Object.entries(incomeSources).map(([key, value]) => ({
+    key,
+    value,
+    share: totalIncome ? value / totalIncome : 0
+  })).sort((a, b) => b.value - a.value);
+
+  const rebalance = [];
+
+  if (sourceShares[0]?.share >= 0.45) {
+    rebalance.push({
+      tone: 'warn',
+      title: 'Income concentration is high',
+      text: `${sourceShares[0].key.replace('_', ' ')} makes up about ${Math.round(sourceShares[0].share * 100)}% of total monthly income. A shock to one source would hit the whole system hard.`
+    });
+  } else {
+    rebalance.push({
+      tone: 'good',
+      title: 'Income concentration looks more balanced',
+      text: 'No single income source appears to dominate the retirement paycheck to an extreme degree.'
+    });
+  }
+
+  if (incomeSources.annuity === 0 && rebalancingGoal === 'stability') {
+    rebalance.push({
+      tone: 'warn',
+      title: 'Stability goal but limited contractual income',
+      text: 'For a stability-first household, the current mix may rely too heavily on market-sensitive or interruption-prone sources.'
+    });
+  } else {
+    rebalance.push({
+      tone: 'good',
+      title: 'Contractual income support',
+      text: 'The current system includes at least some income sources that are less directly tied to market shocks.'
+    });
+  }
+
+  if (worstScenario.key === 'spouse_death') {
+    rebalance.push({
+      tone: 'bad',
+      title: 'Spouse-death vulnerability is the main weakness',
+      text: 'The biggest system failure appears after one spouse is gone, which can point to survivor-income, insurance, and title/planning gaps.'
+    });
+  } else if (worstScenario.key === 'health_crisis') {
+    rebalance.push({
+      tone: 'bad',
+      title: 'Health-cost vulnerability is the main weakness',
+      text: 'The biggest system break appears when healthcare spending rises and flexible work or property income becomes harder to maintain.'
+    });
+  } else {
+    rebalance.push({
+      tone: 'warn',
+      title: 'Market and inflation sensitivity still matter',
+      text: 'Even if the worst case is not catastrophic, the system still shows sensitivity to growth and purchasing-power shocks.'
+    });
+  }
+
+  const narrative = `Current monthly income is about ${formatMoney(totalIncome)} against spending of ${formatMoney(monthlySpending)}, leaving a ${currentGap >= 0 ? 'surplus' : 'shortfall'} of ${formatMoney(Math.abs(currentGap))}. The worst stress test is "${worstScenario.name}," where the income gap shifts to ${formatMoney(Math.abs(worstScenario.gap))} ${worstScenario.gap >= 0 ? 'above' : 'below'} current spending. ${portfolioNotes ? portfolioNotes : 'This suggests the income system should be reviewed as a whole rather than one account at a time.'}`;
+
+  return {
+    fullName,
+    stateCode,
+    stateName: stateFullName,
+    countyName,
+    householdType,
+    riskPriority,
+    monthlySpending,
+    healthShockIncrease,
+    inflationShockRate,
+    rebalancingGoal,
+    portfolioNotes,
+    incomeSources,
+    totalIncome,
+    currentGap,
+    scenarios,
+    worstScenario,
+    compare,
+    rebalance,
+    narrative
+  };
+}
+
+function renderIncomeShieldReport(payload) {
+  latestShieldPayload = payload;
+  document.getElementById('reportTitle').textContent = `The Income Shield for ${payload.fullName || 'Your Household'}`;
+  document.getElementById('reportSubtitle').textContent = `A retirement income resilience report for ${payload.countyName || 'your county'}${payload.stateName ? `, ${payload.stateName}` : ''}, showing what happens when major threats hit the paycheck system.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'} · ${payload.stateName || 'State not entered'} income stress test`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryCopy').textContent = payload.portfolioNotes || payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `The worst scenario right now is: ${payload.worstScenario.name}`;
+  document.getElementById('benchmarkCopy').textContent = `${payload.worstScenario.note} Under that stress, the projected monthly income gap becomes ${payload.worstScenario.gap >= 0 ? 'a surplus of' : 'a shortfall of'} ${formatMoney(Math.abs(payload.worstScenario.gap))}.`;
+  document.getElementById('totalIncomeValue').textContent = formatMoney(payload.totalIncome);
+  document.getElementById('spendingValue').textContent = formatMoney(payload.monthlySpending);
+  document.getElementById('gapValue').textContent = `${payload.currentGap >= 0 ? '+' : '-'}${formatMoney(Math.abs(payload.currentGap))}`;
+  document.getElementById('totalIncomeSub').textContent = 'All listed monthly income sources combined';
+  document.getElementById('spendingSub').textContent = 'Current household outflow entered into the model';
+  document.getElementById('gapSub').textContent = payload.currentGap >= 0 ? 'Current income surplus before stress hits' : 'Current shortfall before stress hits';
+  document.getElementById('scenarioPill').textContent = `${payload.scenarios.length} scenario view`;
+
+  document.getElementById('scenarioGrid').innerHTML = payload.scenarios.map((scenario) => `
+    <div class="scenario-card ${scenario.tone}">
+      <div class="scenario-label">${scenario.name}</div>
+      <div class="scenario-value">${scenario.gap >= 0 ? '+' : '-'}${formatMoney(Math.abs(scenario.gap))}</div>
+      <div class="scenario-sub">${scenario.gap >= 0 ? 'Projected monthly surplus' : 'Projected monthly shortfall'}</div>
+      <div class="scenario-list">
+        <div class="scenario-list-item"><span>Income under stress</span><span>${formatMoney(scenario.income)}</span></div>
+        <div class="scenario-list-item"><span>Spending under stress</span><span>${formatMoney(scenario.spending)}</span></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('compareGrid').innerHTML = payload.compare.map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${formatMoney(item.value)}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('rebalanceGrid').innerHTML = payload.rebalance.map((item) => `
+    <div class="rebalance-card">
+      <div class="rebalance-badge ${item.tone}">${item.tone === 'good' ? 'Supportive' : item.tone === 'warn' ? 'Needs review' : 'Priority alert'}</div>
+      <strong>${item.title}</strong>
+      <span>${item.text}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('shieldCallout').textContent = payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Stress testing income sources for ${payload.fullName || 'your household'} in ${payload.stateName || 'your state'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveIncomeShieldReport(payload) {
+  const supabase = window.incomeShieldSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_code: payload.stateCode || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    household_type: payload.householdType || null,
+    risk_priority: payload.riskPriority || null,
+    monthly_spending: payload.monthlySpending,
+    total_monthly_income: payload.totalIncome,
+    current_gap: payload.currentGap,
+    worst_scenario_key: payload.worstScenario.key,
+    worst_scenario_gap: payload.worstScenario.gap,
+    rebalancing_goal: payload.rebalancingGoal || null,
+    report_title: `The Income Shield for ${payload.fullName || 'Your Household'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('income_shield_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save Income Shield report:', error);
+  }
+}
+
+function showGeneratedIncomeShieldReport(payload) {
+  renderIncomeShieldReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedIncomeShieldReport(payload) {
+  renderIncomeShieldReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedIncomeShieldReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fields = {
+    fullName: payload.fullName,
+    countyName: payload.countyName,
+    socialSecurityIncome: payload.incomeSources?.social_security,
+    pensionIncome: payload.incomeSources?.pension,
+    dividendIncome: payload.incomeSources?.dividends,
+    bondIncome: payload.incomeSources?.bonds,
+    rentalIncome: payload.incomeSources?.rental,
+    annuityIncome: payload.incomeSources?.annuity,
+    partTimeIncome: payload.incomeSources?.part_time,
+    otherIncome: payload.incomeSources?.other,
+    monthlySpending: payload.monthlySpending,
+    healthShockIncrease: payload.healthShockIncrease,
+    inflationShockRate: payload.inflationShockRate,
+    portfolioNotes: payload.portfolioNotes
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = String(value);
+  });
+
+  if (payload.stateCode) document.getElementById('stateSelect').value = payload.stateCode;
+  if (payload.householdType) document.getElementById('householdType').value = payload.householdType;
+  if (payload.riskPriority) document.getElementById('riskPriority').value = payload.riskPriority;
+  if (payload.rebalancingGoal) document.getElementById('rebalancingGoal').value = payload.rebalancingGoal;
+
+  showHydratedIncomeShieldReport(payload);
+  return true;
+}
+
+async function generateIncomeShieldReport() {
+  const payload = buildIncomeShieldPayload();
+  await saveIncomeShieldReport(payload);
+  showGeneratedIncomeShieldReport(payload);
+}
+
+function editIncomeShieldReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateIncomeShieldReport = generateIncomeShieldReport;
+window.editIncomeShieldReport = editIncomeShieldReport;
+window.hydrateIncomeShieldReport = hydrateSavedIncomeShieldReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.incomeShieldSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateIncomeShieldReport) {
+  const { data: report } = await supabase
+    .from('income_shield_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateIncomeShieldReport(report);
+  }
+}
+</script>
+</body>
+</html>

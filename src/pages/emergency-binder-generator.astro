@@ -1,0 +1,2317 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The "After I'm Gone" Emergency Binder Generator — Retirement Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-pale: #F5EDD6;
+  --gold-glow: rgba(201, 168, 76, 0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15, 31, 61, 0.08);
+  --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 96px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 74% 76%, rgba(201,168,76,0.05) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.24);
+  border-radius: 100px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.64);
+  line-height: 1.7;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+}
+
+.hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.82);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.wizard-section {
+  padding: 56px 24px 28px;
+}
+
+.wizard-shell {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 96px;
+}
+
+.sidebar-card,
+.form-card,
+.binder-shell,
+.analysis-card,
+.disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card {
+  padding: 28px;
+}
+
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin-bottom: 14px;
+}
+
+.sidebar-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 22px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+
+.step-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-glow);
+}
+
+.step-item.done .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.step-kicker {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
+}
+
+.step-headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.step-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.sidebar-note {
+  background: var(--navy);
+  color: rgba(255,255,255,0.75);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 13px;
+}
+
+.sidebar-note strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-card {
+  overflow: hidden;
+}
+
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.22);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.progress-inline {
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  line-height: 1.12;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.form-sub {
+  color: rgba(255,255,255,0.62);
+  font-size: 15px;
+  max-width: 720px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 25%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.form-body {
+  padding: 30px;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  margin-bottom: 8px;
+}
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.step-help {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  max-width: 680px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field-group {
+  margin-bottom: 18px;
+}
+
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-textarea,
+.field-select {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.field-input:focus,
+.field-textarea:focus,
+.field-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+
+.field-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.field-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.radio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.radio-card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--cream);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+
+.radio-card:hover,
+.radio-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.radio-card input { display: none; }
+
+.radio-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.radio-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.45;
+}
+
+.insight-band {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.insight-chip {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.insight-chip strong {
+  display: block;
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.insight-chip span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.btn-back,
+.btn-next,
+.btn-print,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back,
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 14px 18px;
+}
+
+.btn-back:hover,
+.btn-secondary:hover {
+  border-color: var(--text-light);
+}
+
+.btn-next,
+.btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 14px 22px;
+}
+
+.btn-next:hover,
+.btn-print:hover {
+  background: var(--gold-light);
+}
+
+.analysis-section,
+.binder-section {
+  display: none;
+  padding: 18px 24px 34px;
+}
+
+.analysis-section.active,
+.binder-section.active {
+  display: block;
+}
+
+.analysis-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 42px 28px;
+  text-align: center;
+}
+
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+
+.analysis-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.analysis-sub {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.analysis-steps {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.analysis-step.done .analysis-indicator {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.analysis-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.binder-shell {
+  max-width: 1040px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.binder-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 32px;
+  color: var(--white);
+}
+
+.binder-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.binder-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.binder-subtitle {
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.binder-meta {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.binder-meta-item {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.78);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.gate-wrap {
+  padding: 22px 26px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #fffdf8 0%, #faf6ea 100%);
+}
+
+.gate-card {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.gate-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.gate-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.gate-form {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.gate-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gate-consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.gate-consent input {
+  margin-top: 3px;
+}
+
+.gate-status {
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 18px;
+  color: var(--text-light);
+}
+
+.gate-status.success { color: var(--green); }
+.gate-status.error { color: var(--red); }
+
+.binder-body {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.cover-card,
+.section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.cover-card {
+  padding: 28px;
+  background:
+    linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)),
+    var(--white);
+}
+
+.cover-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+.cover-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.cover-title em { color: var(--gold); font-style: normal; }
+
+.cover-text {
+  font-size: 15px;
+  color: var(--text-mid);
+  max-width: 680px;
+}
+
+.urgency-card {
+  border-radius: 16px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  padding: 22px;
+}
+
+.urgency-card .label {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.urgency-card .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+
+.section-card {
+  padding: 24px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.section-kicker {
+  font-size: 11px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  line-height: 1.15;
+  color: var(--navy);
+}
+
+.section-copy {
+  font-size: 13px;
+  color: var(--text-light);
+  max-width: 650px;
+}
+
+.pill {
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.checklist-list {
+  display: grid;
+  gap: 12px;
+}
+
+.checklist-item {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--cream);
+}
+
+.checkmark {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.checkmark.ok { background: var(--green-bg); color: var(--green); }
+.checkmark.warn { background: var(--amber-bg); color: var(--amber); }
+.checkmark.miss { background: var(--red-bg); color: var(--red); }
+
+.checklist-item strong {
+  display: block;
+  font-size: 15px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.checklist-item p {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.inventory-card,
+.map-card,
+.contact-card,
+.doc-status-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--cream);
+  padding: 18px;
+}
+
+.mini-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+
+.inventory-table,
+.contact-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table th,
+.inventory-table td,
+.contact-table th,
+.contact-table td {
+  text-align: left;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.inventory-table th,
+.contact-table th {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+}
+
+.inventory-table tr:last-child td,
+.contact-table tr:last-child td { border-bottom: none; }
+
+.doc-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.doc-status-card strong {
+  display: block;
+  font-size: 15px;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.doc-status-card p {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-tag.ok { color: var(--green); }
+.status-tag.warn { color: var(--amber); }
+.status-tag.miss { color: var(--red); }
+
+.list-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.list-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.list-row span:first-child {
+  font-size: 13px;
+  color: var(--text-light);
+  flex: 0 0 38%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.list-row span:last-child {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.table-card-full {
+  width: 100%;
+}
+
+.table-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.print-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+
+.print-note {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.disclaimer {
+  max-width: 1040px;
+  margin: 0 auto 64px;
+  padding: 24px 28px 32px;
+}
+
+.disclaimer p {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 960px) {
+  .wizard-shell,
+  .cover-grid,
+  .two-col,
+  .field-grid,
+  .radio-grid,
+  .doc-status-grid,
+  .insight-band {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-sidebar {
+    position: static;
+  }
+
+  .section-head,
+  .print-actions,
+  .btn-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section,
+  .analysis-section,
+  .binder-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card,
+  .form-body,
+  .binder-body,
+  .section-card,
+  .cover-card,
+  .disclaimer,
+  .gate-wrap,
+  .analysis-card { padding-left: 20px; padding-right: 20px; }
+  .form-header,
+  .binder-header { padding: 28px 20px; }
+  .binder-title { font-size: 28px; }
+  .section-title { font-size: 23px; }
+  .cover-title { font-size: 28px; }
+  .print-actions > div:last-child { width: 100%; }
+  .print-actions > div:last-child button { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .binder-body { padding: 18px; }
+  .section-card,
+  .cover-card,
+  .inventory-card,
+  .map-card,
+  .contact-card,
+  .doc-status-card {
+    padding: 16px;
+  }
+
+  .section-head {
+    gap: 10px;
+  }
+
+  .inventory-table thead,
+  .contact-table thead {
+    display: none;
+  }
+
+  .inventory-table,
+  .contact-table,
+  .inventory-table tbody,
+  .contact-table tbody,
+  .inventory-table tr,
+  .contact-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .inventory-table tr,
+  .contact-table tr {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inventory-table tr:last-child,
+  .contact-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .inventory-table td,
+  .contact-table td {
+    display: grid;
+    grid-template-columns: minmax(96px, 38%) 1fr;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: none;
+  }
+
+  .inventory-table td::before,
+  .contact-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+  }
+
+  .list-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .list-row span:first-child,
+  .list-row span:last-child {
+    flex: none;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .site-header,
+  .hero,
+  .wizard-section,
+  .analysis-section,
+  .print-actions,
+  .disclaimer {
+    display: none !important;
+  }
+
+  .binder-section {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  .binder-shell,
+  .cover-card,
+  .section-card {
+    box-shadow: none !important;
+    border-color: #ddd !important;
+  }
+
+  .binder-shell {
+    max-width: none !important;
+    border: none !important;
+  }
+
+  .section-card,
+  .cover-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Printable Family Tool</div>
+    <h1>The “After I’m Gone” <em>Emergency Binder</em> Generator</h1>
+    <p class="hero-sub">A guided binder builder for the families who know they need to get organized, but do not know where to start. In a few minutes, create a print-ready emergency binder with your state checklist, account inventory, digital asset organizer, contact sheet, and a surviving-spouse roadmap.</p>
+    <div class="hero-points">
+      <div class="hero-point">State-specific estate planning checklist</div>
+      <div class="hero-point">First-72-hours family instructions</div>
+      <div class="hero-point">Print-ready PDF via browser print</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-shell">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Binder Builder</div>
+        <div class="sidebar-title">One afternoon of organization can spare your family months of chaos.</div>
+        <div class="sidebar-copy">This wizard mirrors the tone and layout of the current Retirement Shield tools, but the output is meant to be printed, shared, and kept somewhere obvious.</div>
+
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-kicker">Step 1</div>
+              <div class="step-headline">Household Snapshot</div>
+              <div class="step-sub">Names, state, ages, and living situation</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-kicker">Step 2</div>
+              <div class="step-headline">Document Readiness</div>
+              <div class="step-sub">Will, trust, POA, healthcare paperwork</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-kicker">Step 3</div>
+              <div class="step-headline">Accounts & Access</div>
+              <div class="step-sub">Property, accounts, passwords, subscriptions</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="4">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-kicker">Step 4</div>
+              <div class="step-headline">Emergency Contacts</div>
+              <div class="step-sub">Who to call, where documents live, review cadence</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong>Designed for the surviving spouse</strong>
+          Every output section is framed around the real question families ask in a crisis: “What do I need, who do I call, and where do I find it?”
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 4</div>
+        </div>
+        <div class="form-title">Build the binder they will actually print.</div>
+        <div class="form-sub">The output is a clean report preview on the page, built to save into the portal like the other completed tools and ready to print as a PDF.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 4</div>
+          <div class="step-question">Who is this binder for?</div>
+          <div class="step-help">Start with the basics so the binder feels personal and the urgency framing can match the household stage of life.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="primaryName">Primary Name</label>
+              <input class="field-input" id="primaryName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="spouseName">Spouse / Partner Name</label>
+              <input class="field-input" id="spouseName" type="text" placeholder="e.g. Thomas">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State of Residence</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County or Parish</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="primaryAge">Primary Age</label>
+              <input class="field-input" id="primaryAge" type="number" min="40" max="100" placeholder="e.g. 68">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="spouseAge">Spouse / Partner Age</label>
+              <input class="field-input" id="spouseAge" type="number" min="40" max="100" placeholder="e.g. 72">
+            </div>
+            <div class="field-group full">
+              <label class="field-label">Household Situation</label>
+              <div class="radio-grid" data-radio-group="household">
+                <label class="radio-card">
+                  <input type="radio" name="household" value="married">
+                  <div class="radio-title">Married / partnered</div>
+                  <div class="radio-sub">Binder is framed for the surviving spouse or partner who may need immediate help.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="household" value="solo">
+                  <div class="radio-title">Single / widowed</div>
+                  <div class="radio-sub">Binder emphasizes children, trustees, and backup decision-makers instead.</div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-band">
+            <div class="insight-chip">
+              <strong>What this includes</strong>
+              <span>Checklist, contact sheet, account inventory, digital map, and “where to find everything.”</span>
+            </div>
+            <div class="insight-chip">
+              <strong>What this is not</strong>
+              <span>Not legal advice and not a substitute for attorney-drafted estate documents.</span>
+            </div>
+            <div class="insight-chip">
+              <strong>Best use case</strong>
+              <span>Print it, review it with family, update it every 12 months or after a major life change.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 4</div>
+          <div class="step-question">What shape are the legal documents in?</div>
+          <div class="step-help">This drives the state-specific checklist and tells the family which gaps to close first.</div>
+
+          <div class="field-grid">
+            <div class="field-group full">
+              <label class="field-label">Will Status</label>
+              <div class="radio-grid" data-radio-group="willStatus">
+                <label class="radio-card">
+                  <input type="radio" name="willStatus" value="updated">
+                  <div class="radio-title">Updated in the last 5 years</div>
+                  <div class="radio-sub">Current enough to rely on, assuming beneficiaries and titles were reviewed too.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="willStatus" value="old">
+                  <div class="radio-title">Exists, but outdated</div>
+                  <div class="radio-sub">Useful, but likely needs review after moves, deaths, marriages, or new assets.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="willStatus" value="missing">
+                  <div class="radio-title">No will / not sure</div>
+                  <div class="radio-sub">State intestacy rules would control more than the family expects.</div>
+                </label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Trust or probate-avoidance plan</label>
+              <div class="radio-grid" data-radio-group="trustStatus">
+                <label class="radio-card">
+                  <input type="radio" name="trustStatus" value="yes">
+                  <div class="radio-title">Trust or deed strategy in place</div>
+                  <div class="radio-sub">Revocable trust, TOD deed, or state-specific home transfer strategy.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="trustStatus" value="no">
+                  <div class="radio-title">Not in place</div>
+                  <div class="radio-sub">Home and titled assets may still be exposed to probate.</div>
+                </label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Durable power of attorney</label>
+              <div class="radio-grid" data-radio-group="poaStatus">
+                <label class="radio-card">
+                  <input type="radio" name="poaStatus" value="yes">
+                  <div class="radio-title">Yes</div>
+                  <div class="radio-sub">Someone can handle finances if incapacity happens first.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="poaStatus" value="no">
+                  <div class="radio-title">No / unsure</div>
+                  <div class="radio-sub">Family may need guardianship or court involvement.</div>
+                </label>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Healthcare directive + HIPAA release</label>
+              <div class="radio-grid" data-radio-group="healthStatus">
+                <label class="radio-card">
+                  <input type="radio" name="healthStatus" value="yes">
+                  <div class="radio-title">Yes</div>
+                  <div class="radio-sub">Medical agent and records access are already documented.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="healthStatus" value="no">
+                  <div class="radio-title">No / unsure</div>
+                  <div class="radio-sub">Medical decisions and hospital communication can stall fast.</div>
+                </label>
+              </div>
+            </div>
+
+            <div class="field-group full">
+              <label class="field-label" for="documentLocation">Where are the core originals currently kept?</label>
+              <textarea class="field-textarea" id="documentLocation" placeholder="e.g. Fireproof safe in office closet, top shelf. Attorney copy at Smith Law."></textarea>
+              <div class="field-note">This will populate the “where to find everything” map.</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 4</div>
+          <div class="step-question">What will the family need to locate quickly?</div>
+          <div class="step-help">This is the practical heart of the binder: assets, property, accounts, subscriptions, and digital access points.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="homeStatus">Home ownership / title situation</label>
+              <select class="field-select" id="homeStatus">
+                <option value="" selected disabled>Select one...</option>
+                <option value="owned">Primary residence owned</option>
+                <option value="trust">Home already in trust or TOD/Lady Bird deed plan</option>
+                <option value="renting">Renting / no real estate</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="accountCount">Approximate number of financial accounts</label>
+              <select class="field-select" id="accountCount">
+                <option value="" selected disabled>Select one...</option>
+                <option value="3-5">3 to 5 accounts</option>
+                <option value="6-10">6 to 10 accounts</option>
+                <option value="10+">More than 10 accounts</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="financialInstitutions">Banks, brokerages, insurance carriers, retirement custodians</label>
+              <textarea class="field-textarea" id="financialInstitutions" placeholder="e.g. Chase checking, Fidelity IRA, Schwab brokerage, Northwestern Mutual life policy"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="digitalAccess">Digital access organizer</label>
+              <textarea class="field-textarea" id="digitalAccess" placeholder="Email, password manager, phone passcode, cloud storage, social media"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="autopayList">Autopay bills and subscriptions</label>
+              <textarea class="field-textarea" id="autopayList" placeholder="Mortgage, utilities, streaming, insurance, donations"></textarea>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="keyLocations">Where to find key physical items</label>
+              <textarea class="field-textarea" id="keyLocations" placeholder="Deeds, vehicle title, passports, safe deposit key, military papers, burial instructions"></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(4)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step4">
+          <div class="step-label">Step 4 of 4</div>
+          <div class="step-question">Who should be called first, and when should the family review this again?</div>
+          <div class="step-help">This final step fills the contact sheet, the surviving-spouse note, and the saved portal document.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="primaryContactName">Primary emergency contact</label>
+              <input class="field-input" id="primaryContactName" type="text" placeholder="Name">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="primaryContactPhone">Primary contact phone</label>
+              <input class="field-input" id="primaryContactPhone" type="text" placeholder="Phone number">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="attorneyName">Estate attorney / advisor</label>
+              <input class="field-input" id="attorneyName" type="text" placeholder="Firm or person">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="attorneyPhone">Attorney / advisor phone</label>
+              <input class="field-input" id="attorneyPhone" type="text" placeholder="Phone number">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="survivingSpouseInstructions">One paragraph to the surviving spouse or family</label>
+              <textarea class="field-textarea" id="survivingSpouseInstructions" placeholder="What should they do first?"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="familyMeetingDate">Next family review date</label>
+              <input class="field-input" id="familyMeetingDate" type="text" placeholder="e.g. Thanksgiving weekend">
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(3)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateBinder()">Generate My Binder →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Emergency Binder</div>
+    <div class="analysis-sub" id="analysisSub">Personalizing your print-ready checklist, contact sheet, and family roadmap.</div>
+
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1">
+        <div class="analysis-indicator">1</div>
+        <div class="analysis-text">Pulling state-specific estate planning reminders...</div>
+      </div>
+      <div class="analysis-step" id="analysisStep2">
+        <div class="analysis-indicator">2</div>
+        <div class="analysis-text">Translating document answers into a readiness checklist...</div>
+      </div>
+      <div class="analysis-step" id="analysisStep3">
+        <div class="analysis-indicator">3</div>
+        <div class="analysis-text">Mapping the accounts, contacts, and physical document locations...</div>
+      </div>
+      <div class="analysis-step" id="analysisStep4">
+        <div class="analysis-indicator">4</div>
+        <div class="analysis-text">Assembling the print-ready binder preview and PDF action...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="binder-section" id="binderSection">
+  <div class="binder-shell fade-up" id="binderShell">
+    <div class="binder-header">
+      <div class="binder-kicker">Emergency Binder Generator</div>
+      <div class="binder-title" id="binderTitle">The “After I’m Gone” Emergency Binder</div>
+      <div class="binder-subtitle" id="binderSubtitle">Prepared for your household with a practical checklist, contact map, and account inventory starter.</div>
+      <div class="binder-meta">
+        <div class="binder-meta-item" id="metaHousehold">Margaret & Thomas</div>
+        <div class="binder-meta-item" id="metaState">Florida</div>
+        <div class="binder-meta-item" id="metaDate">Generated April 11, 2026</div>
+      </div>
+    </div>
+
+    <div class="binder-body">
+      <div class="cover-card">
+        <div class="cover-grid">
+          <div>
+            <div class="cover-title">A practical family binder for the day when <em>someone else</em> has to take over.</div>
+            <div class="cover-text" id="coverText">This binder was built so a surviving spouse, adult child, or trusted helper can move in order instead of in panic. Keep a printed copy somewhere obvious, tell the right people where it lives, and review it once a year.</div>
+          </div>
+          <div class="urgency-card">
+            <div class="label">Why This Matters</div>
+            <div class="headline" id="urgencyHeadline">The handoff matters more than most families think.</div>
+            <div id="urgencyCopy">When a household is already in the later retirement years, organization matters because incapacity usually arrives before anyone feels fully ready for it. The goal is not fear. The goal is clarity.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">State-Specific Estate Planning Checklist</div>
+            <div class="section-copy" id="stateChecklistCopy">Pulled from the same practical framing used across the rest of the Retirement Shield planning tools.</div>
+          </div>
+          <div class="pill" id="statePill">Florida household</div>
+        </div>
+        <div class="checklist-list" id="checklistList"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Document Readiness Snapshot</div>
+            <div class="section-copy">A one-page status view of the documents the family will ask about first.</div>
+          </div>
+        </div>
+        <div class="doc-status-grid" id="docStatusGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 3</div>
+            <div class="section-title">Account Inventory Templates</div>
+            <div class="section-copy">The fields below are intentionally simple so this can be printed and filled in by hand if needed.</div>
+          </div>
+          <div class="pill" id="accountCountPill">6 to 10 accounts</div>
+        </div>
+        <div class="inventory-card table-card-full">
+          <div class="mini-title">Known Institutions</div>
+          <table class="inventory-table">
+            <thead>
+              <tr><th>Institution</th><th>Type</th><th>Notes</th></tr>
+            </thead>
+            <tbody id="institutionRows"></tbody>
+          </table>
+          <div class="table-note">Long institution names, policy carriers, and notes are allowed to wrap so the full text always remains visible.</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 4</div>
+            <div class="section-title">Digital Asset Organizer</div>
+            <div class="section-copy">Digital access is now part of estate administration whether families prepare for it or not.</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="inventory-card">
+            <div class="mini-title">Access Summary</div>
+            <div class="list-block" id="digitalRows"></div>
+          </div>
+          <div class="inventory-card">
+            <div class="mini-title">Autopay & Recurring Bills</div>
+            <div class="list-block" id="autopayRows"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 5</div>
+            <div class="section-title">Emergency Contact Sheet</div>
+            <div class="section-copy">Who should be called, and in what order, before anyone starts guessing.</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <table class="contact-table">
+            <thead>
+              <tr><th>Role</th><th>Name</th><th>Phone / Notes</th></tr>
+            </thead>
+            <tbody id="contactRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 6</div>
+            <div class="section-title">“Where to Find Everything” Map</div>
+            <div class="section-copy">This is the page surviving spouses use first. Keep it current.</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="map-card">
+            <div class="mini-title">Original Documents</div>
+            <div class="list-block" id="mapDocumentRows"></div>
+          </div>
+          <div class="map-card">
+            <div class="mini-title">Keys, IDs, and Physical Items</div>
+            <div class="list-block" id="mapItemRows"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Final Page</div>
+            <div class="section-title">A note to the surviving spouse or family helper</div>
+            <div class="section-copy">A human paragraph belongs in this binder. It lowers panic fast.</div>
+          </div>
+        </div>
+        <div class="inventory-card">
+          <div id="survivingSpouseNote" style="font-size:15px; color:var(--text-mid); line-height:1.75;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="print-actions">
+      <div class="print-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editBinder()">Edit Responses</button>
+        <button class="btn-print" type="button" id="printBtn" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This emergency binder generator is provided for educational and organizational purposes only. It does not create legal documents and does not constitute legal, tax, financial, or insurance advice. State-specific reminders included in this output are high-level planning prompts only and may not reflect the latest legal changes or the specific facts of your household. Estate planning, probate, title, Medicaid, and incapacity rules vary by state and by circumstance. Retirement Shield is not a law firm and does not prepare legal documents. Review your binder with a licensed estate planning attorney in your state before relying on it for legal decisions. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const stateOptions = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+const stateSpecificGuide = {
+  FL: {
+    note: 'Florida households should review homestead restrictions, probate exposure for titled assets, and whether a Lady Bird Deed or trust is already in place.',
+    bullets: [
+      ['warn', 'Review homestead title rules', 'Florida homestead rules can control who inherits the home and can limit what happens at death if the title plan is loose or outdated.'],
+      ['warn', 'Confirm whether a Lady Bird Deed or trust exists', 'Florida is one of the few states where an enhanced life estate deed can be a powerful probate-avoidance and Medicaid-recovery planning tool.'],
+      ['ok', 'Double-check beneficiary designations', 'IRAs, 401(k)s, annuities, and life insurance typically pass by beneficiary form, not by will.']
+    ]
+  },
+  TX: {
+    note: 'Texas families should pay close attention to homestead protections, transfer strategies for real estate, and whether all non-probate assets have named beneficiaries.',
+    bullets: [
+      ['warn', 'Verify deed and title structure on the residence', 'Real estate often creates the biggest administrative problem when the family assumes the will alone solves everything.'],
+      ['ok', 'Check TOD designations and beneficiary forms', 'Texas offers several non-probate transfer routes, but only if paperwork has actually been completed.'],
+      ['warn', 'Make sure incapacity documents are current', 'A durable power of attorney and medical directive matter just as much as the death-side plan.']
+    ]
+  },
+  CA: {
+    note: 'California families should review probate thresholds carefully and make sure larger estates are not relying on a will alone.',
+    bullets: [
+      ['warn', 'Assess probate exposure now', 'California probate can be expensive because fees are commonly tied to gross estate value rather than net equity.'],
+      ['warn', 'Fund the trust if one exists', 'An unfunded trust often creates a false sense of security because the assets still need to be titled correctly.'],
+      ['ok', 'Inventory all account beneficiary forms', 'Retirement accounts and insurance contracts should be reviewed alongside the trust documents.']
+    ]
+  },
+  NY: {
+    note: 'New York households should review fiduciary appointments, asset titling, and whether the family can locate originals quickly.',
+    bullets: [
+      ['warn', 'Review executor and agent designations', 'Named decision-makers should still be alive, willing, and practical for the job.'],
+      ['warn', 'Separate probate assets from beneficiary assets', 'Families often overestimate what the will controls and underestimate how much passes by title or contract.'],
+      ['ok', 'Keep the originals accessible', 'A good binder is valuable only if the surviving family knows exactly where the originals are.']
+    ]
+  },
+  AZ: {
+    note: 'Arizona families should review beneficiary designations, deed strategy, and any account that would otherwise funnel into probate.',
+    bullets: [
+      ['ok', 'Use beneficiary designations intentionally', 'Retirement accounts, life insurance, and payable-on-death accounts can keep administration much cleaner.'],
+      ['warn', 'Review home transfer strategy', 'Homes still need clear title planning if the goal is a smoother handoff for the surviving spouse or children.'],
+      ['warn', 'Confirm powers of attorney are signed and usable', 'Incapacity often creates the first crisis long before death does.']
+    ]
+  }
+};
+
+const stepCount = 4;
+let currentStep = 1;
+let latestSubmission = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+stateOptions.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+document.querySelectorAll('[data-radio-group]').forEach(group => {
+  group.querySelectorAll('.radio-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const input = card.querySelector('input');
+      if (!input) return;
+      group.querySelectorAll('.radio-card').forEach(el => el.classList.remove('selected'));
+      card.classList.add('selected');
+      input.checked = true;
+    });
+  });
+});
+
+function nextStep(step) {
+  currentStep = step;
+  document.querySelectorAll('.form-step').forEach(panel => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+
+  document.getElementById('progressText').textContent = `Step ${step} of ${stepCount}`;
+  document.getElementById('progressFill').style.width = `${(step / stepCount) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function getSelectedValue(name) {
+  return document.querySelector(`input[name="${name}"]:checked`)?.value ?? '';
+}
+
+function titleCaseState(code) {
+  return stateOptions.find(([value]) => value === code)?.[1] ?? code;
+}
+
+function getUrgencyCopy(avgAge, householdType) {
+  if (avgAge >= 75) {
+    return {
+      headline: 'This is no longer a someday task.',
+      copy: 'In the later retirement years, the family handoff should be organized before a hospitalization, fall, or sudden loss forces the issue. The binder matters because clarity saves time at the exact moment time feels shortest.'
+    };
+  }
+  if (avgAge >= 67) {
+    return {
+      headline: 'The right time is while everyone is still well enough to explain things.',
+      copy: `For households in the early-to-mid retirement years, the risk is not just death. It is confusion during incapacity, rehab, or a financial emergency. A clear binder lowers friction for the ${householdType === 'married' ? 'surviving spouse' : 'adult children and helpers'} before the family is forced to improvise.`
+    };
+  }
+  return {
+    headline: 'Build it now while details are still easy to gather.',
+    copy: 'Even when the household feels years away from a crisis, the easiest time to organize documents, passwords, titles, and instructions is before anyone is under pressure.'
+  };
+}
+
+function parseLines(text, fallbackLabel) {
+  const items = text
+    .split(/(?:\r?\n|,|;)+/)
+    .map(item => item.trim())
+    .filter(Boolean);
+  return items.length ? items : [fallbackLabel];
+}
+
+function buildChecklist(data) {
+  const stateGuide = stateSpecificGuide[data.state] || {
+    note: `${data.stateName} families should review wills, powers of attorney, beneficiary designations, and home title strategy before assuming the surviving spouse can handle everything without probate friction.`,
+    bullets: [
+      ['warn', 'Review how the home passes at death', 'The residence is usually the asset most likely to create delay, confusion, and court involvement if title planning is unfinished.'],
+      ['warn', 'Confirm incapacity documents are current', 'Durable financial and healthcare documents matter because many family crises start before death.'],
+      ['ok', 'Recheck beneficiary forms and contact lists', 'Accounts with named beneficiaries often transfer more cleanly than families expect, but only if the forms were actually updated.']
+    ]
+  };
+
+  const result = [...stateGuide.bullets];
+
+  result.push(
+    data.willStatus === 'updated'
+      ? ['ok', 'Will appears current', 'Keep the original easy to find and review it again after any move, death, marriage, or major purchase.']
+      : data.willStatus === 'old'
+        ? ['warn', 'Will exists but needs review', 'An older will can conflict with the household you have now even if it was valid when signed.']
+        : ['miss', 'No confirmed will on file', `If no will exists, ${data.stateName} intestacy rules may control more of the outcome than the family expects.`]
+  );
+
+  result.push(
+    data.trustStatus === 'yes'
+      ? ['ok', 'Probate-avoidance planning is at least started', 'The next question is whether the deed, trust funding, and beneficiary forms were actually finished.']
+      : ['warn', 'Home and titled assets still need a transfer strategy', data.homeStatus === 'renting' ? 'Without real estate the urgency may be lower, but titled assets still need a clean transfer plan.' : 'If the home is not in a trust or deed-based transfer plan, probate exposure is still worth reviewing.']
+  );
+
+  result.push(
+    data.poaStatus === 'yes'
+      ? ['ok', 'Durable power of attorney appears covered', 'That protects the family if incapacity arrives before death.']
+      : ['miss', 'Durable financial power of attorney missing or uncertain', 'Families often discover this gap only after banks refuse to talk and the court process has to begin.']
+  );
+
+  result.push(
+    data.healthStatus === 'yes'
+      ? ['ok', 'Healthcare proxy and HIPAA planning appear covered', 'Make sure the named person knows where the documents are and what the preferences are.']
+      : ['miss', 'Medical directive or HIPAA release needs attention', 'Hospitals do not run on family assumptions. The paperwork should be easy to locate.']
+  );
+
+  return {
+    note: stateGuide.note,
+    items: result
+  };
+}
+
+function buildDocStatusCards(data) {
+  return [
+    {
+      title: 'Will / trust package',
+      text: data.willStatus === 'updated'
+        ? 'A current will is indicated. Confirm the signed original is available and the named executor still makes sense.'
+        : data.willStatus === 'old'
+          ? 'The will exists but should be reviewed. Outdated names, addresses, and family structure create real confusion.'
+          : 'No confirmed will is on file. The binder should flag this clearly for the family and the attorney.',
+      tone: data.willStatus === 'updated' ? 'ok' : data.willStatus === 'old' ? 'warn' : 'miss'
+    },
+    {
+      title: 'Financial authority',
+      text: data.poaStatus === 'yes'
+        ? 'A durable financial power of attorney appears to be in place.'
+        : 'No confirmed durable power of attorney. This is one of the highest-friction gaps if incapacity happens first.',
+      tone: data.poaStatus === 'yes' ? 'ok' : 'miss'
+    },
+    {
+      title: 'Medical authority',
+      text: data.healthStatus === 'yes'
+        ? 'Healthcare directive and HIPAA planning appear to be covered.'
+        : 'Medical agent paperwork is missing or uncertain. The binder should tell the family to resolve this before the next health event.',
+      tone: data.healthStatus === 'yes' ? 'ok' : 'miss'
+    },
+    {
+      title: 'Home / probate transfer',
+      text: data.homeStatus === 'trust'
+        ? 'The residence is already described as being in a trust or deed-based transfer plan.'
+        : data.homeStatus === 'renting'
+          ? 'No primary residence ownership issue was identified, which simplifies the first-pass checklist.'
+          : 'The family should confirm title strategy on the home rather than assuming the will alone handles it.',
+      tone: data.homeStatus === 'trust' || data.homeStatus === 'renting' ? 'ok' : 'warn'
+    }
+  ];
+}
+
+function buildBinderData() {
+  const primaryName = document.getElementById('primaryName').value.trim() || 'Primary household member';
+  const spouseName = document.getElementById('spouseName').value.trim();
+  const state = document.getElementById('stateSelect').value;
+  const stateName = titleCaseState(state);
+  const county = document.getElementById('countyName').value.trim() || 'local county';
+  const primaryAge = Number(document.getElementById('primaryAge').value || 0);
+  const spouseAge = Number(document.getElementById('spouseAge').value || 0);
+  const household = getSelectedValue('household');
+  const willStatus = getSelectedValue('willStatus');
+  const trustStatus = getSelectedValue('trustStatus');
+  const poaStatus = getSelectedValue('poaStatus');
+  const healthStatus = getSelectedValue('healthStatus');
+  const documentLocation = document.getElementById('documentLocation').value.trim();
+  const homeStatus = document.getElementById('homeStatus').value;
+  const accountCount = document.getElementById('accountCount').value;
+  const financialInstitutions = document.getElementById('financialInstitutions').value.trim();
+  const digitalAccess = document.getElementById('digitalAccess').value.trim();
+  const autopayList = document.getElementById('autopayList').value.trim();
+  const keyLocations = document.getElementById('keyLocations').value.trim();
+  const primaryContactName = document.getElementById('primaryContactName').value.trim() || 'Primary family contact';
+  const primaryContactPhone = document.getElementById('primaryContactPhone').value.trim() || 'Phone not listed';
+  const attorneyName = document.getElementById('attorneyName').value.trim() || 'Estate attorney / advisor';
+  const attorneyPhone = document.getElementById('attorneyPhone').value.trim() || 'Phone not listed';
+  const survivingSpouseInstructions = document.getElementById('survivingSpouseInstructions').value.trim();
+  const familyMeetingDate = document.getElementById('familyMeetingDate').value.trim() || 'Next family review';
+
+  const avgAge = spouseAge ? Math.round((primaryAge + spouseAge) / 2) : primaryAge;
+  const urgency = getUrgencyCopy(avgAge, household);
+  const checklist = buildChecklist({ state, stateName, willStatus, trustStatus, poaStatus, healthStatus, homeStatus });
+  const docCards = buildDocStatusCards({ willStatus, poaStatus, healthStatus, homeStatus });
+
+  return {
+    primaryName,
+    spouseName,
+    state,
+    stateName,
+    county,
+    primaryAge,
+    spouseAge,
+    avgAge,
+    household,
+    willStatus,
+    trustStatus,
+    poaStatus,
+    healthStatus,
+    documentLocation,
+    homeStatus,
+    accountCount,
+    financialInstitutions,
+    digitalAccess,
+    autopayList,
+    keyLocations,
+    primaryContactName,
+    primaryContactPhone,
+    attorneyName,
+    attorneyPhone,
+    survivingSpouseInstructions,
+    familyMeetingDate,
+    urgency,
+    checklist,
+    docCards,
+    householdLabel: spouseName && household !== 'solo' ? `${primaryName} & ${spouseName}` : primaryName
+  };
+}
+
+function renderBinder(data) {
+  latestSubmission = data;
+
+  document.getElementById('binderTitle').textContent = `The “After I’m Gone” Emergency Binder for ${data.householdLabel}`;
+  document.getElementById('binderSubtitle').textContent = `Prepared for a ${data.stateName} household with a surviving-${data.household === 'solo' ? 'family' : 'spouse'} focused checklist, account inventory, and location map.`;
+  document.getElementById('metaHousehold').textContent = data.householdLabel;
+  document.getElementById('metaState').textContent = `${data.stateName} · ${data.county}`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+  document.getElementById('coverText').textContent = `This binder was built for ${data.householdLabel}. Keep it printed, tell ${data.primaryContactName} where it lives, and plan to review it again around ${data.familyMeetingDate}.`;
+  document.getElementById('urgencyHeadline').textContent = data.urgency.headline;
+  document.getElementById('urgencyCopy').textContent = data.urgency.copy;
+  document.getElementById('stateChecklistCopy').textContent = data.checklist.note;
+  document.getElementById('statePill').textContent = `${data.stateName} household`;
+  document.getElementById('accountCountPill').textContent = `${data.accountCount} accounts`;
+
+  const checklistList = document.getElementById('checklistList');
+  checklistList.innerHTML = data.checklist.items.map(([tone, title, text]) => `
+    <div class="checklist-item">
+      <div class="checkmark ${tone}">${tone === 'ok' ? '✓' : tone === 'warn' ? '!' : '×'}</div>
+      <div>
+        <strong>${title}</strong>
+        <p>${text}</p>
+      </div>
+    </div>
+  `).join('');
+
+  const docStatusGrid = document.getElementById('docStatusGrid');
+  docStatusGrid.innerHTML = data.docCards.map(card => `
+    <div class="doc-status-card">
+      <strong>${card.title}</strong>
+      <p>${card.text}</p>
+      <div class="status-tag ${card.tone}">${card.tone === 'ok' ? 'Ready / documented' : card.tone === 'warn' ? 'Needs review' : 'Missing / urgent'}</div>
+    </div>
+  `).join('');
+
+  const institutionRows = document.getElementById('institutionRows');
+  const institutionItems = parseLines(data.financialInstitutions, 'Add your first institution here');
+  institutionRows.innerHTML = institutionItems.slice(0, 6).map((item, index) => `
+    <tr>
+      <td data-label="Institution">${item}</td>
+      <td data-label="Type">${index === 0 ? 'Banking' : index === 1 ? 'Retirement' : index === 2 ? 'Brokerage / investment' : 'Policy / account'}</td>
+      <td data-label="Notes">Account number, owner, beneficiary, advisor contact</td>
+    </tr>
+  `).join('');
+
+  const digitalRows = document.getElementById('digitalRows');
+  const digitalItems = parseLines(data.digitalAccess, 'Add digital access notes here');
+  digitalRows.innerHTML = digitalItems.slice(0, 6).map((item, index) => `
+    <div class="list-row">
+      <span>${index === 0 ? 'Primary access point' : index === 1 ? 'Password storage' : index === 2 ? 'Phone / device access' : index === 3 ? 'Cloud storage / scans' : 'Digital note'}</span>
+      <span>${item}</span>
+    </div>
+  `).join('');
+
+  const autopayRows = document.getElementById('autopayRows');
+  const autopayItems = parseLines(data.autopayList, 'Add autopay and subscription notes here');
+  autopayRows.innerHTML = autopayItems.slice(0, 7).map(item => `
+    <div class="list-row">
+      <span>Recurring bill / subscription</span>
+      <span>${item}</span>
+    </div>
+  `).join('');
+
+  const contactRows = document.getElementById('contactRows');
+  contactRows.innerHTML = `
+    <tr><td data-label="Role">First call</td><td data-label="Name">${data.primaryContactName}</td><td data-label="Phone / Notes">${data.primaryContactPhone}</td></tr>
+    <tr><td data-label="Role">Estate attorney / advisor</td><td data-label="Name">${data.attorneyName}</td><td data-label="Phone / Notes">${data.attorneyPhone}</td></tr>
+    <tr><td data-label="Role">Primary physician</td><td data-label="Name">________________________</td><td data-label="Phone / Notes">________________________</td></tr>
+    <tr><td data-label="Role">CPA / tax preparer</td><td data-label="Name">________________________</td><td data-label="Phone / Notes">________________________</td></tr>
+    <tr><td data-label="Role">Insurance agent</td><td data-label="Name">________________________</td><td data-label="Phone / Notes">________________________</td></tr>
+    <tr><td data-label="Role">Funeral home / clergy / church contact</td><td data-label="Name">________________________</td><td data-label="Phone / Notes">________________________</td></tr>
+  `;
+
+  const mapDocumentRows = document.getElementById('mapDocumentRows');
+  mapDocumentRows.innerHTML = `
+    <div class="list-row"><span>Original legal documents</span><span>${data.documentLocation || 'Add exact location'}</span></div>
+    <div class="list-row"><span>Primary binder storage spot</span><span>________________________________</span></div>
+    <div class="list-row"><span>Digital scans / shared folder</span><span>${digitalItems[3] || digitalItems[0] || 'Add cloud storage details'}</span></div>
+    <div class="list-row"><span>Safe deposit box / spare key</span><span>________________________________</span></div>
+  `;
+
+  const mapItemRows = document.getElementById('mapItemRows');
+  const keyItems = parseLines(data.keyLocations, 'Add physical item locations here');
+  mapItemRows.innerHTML = keyItems.slice(0, 5).map(item => `
+    <div class="list-row">
+      <span>Physical item location</span>
+      <span>${item}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('survivingSpouseNote').textContent = data.survivingSpouseInstructions;
+}
+
+function runAnalysisAnimation(data) {
+  document.getElementById('analysisSub').textContent = `Personalizing a ${data.stateName} binder for ${data.householdLabel}.`;
+  const steps = ['analysisStep1', 'analysisStep2', 'analysisStep3', 'analysisStep4'];
+  steps.forEach(id => document.getElementById(id).classList.remove('done'));
+  steps.forEach((id, index) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('done');
+    }, (index + 1) * 380);
+  });
+}
+
+async function saveEmergencyBinderReport(data) {
+  const supabase = window.emergencyBinderSupabase;
+  if (!supabase) return null;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const payload = {
+    user_id: userId,
+    full_name: data.primaryName,
+    spouse_name: data.spouseName || null,
+    household_label: data.householdLabel,
+    household_type: data.household,
+    state_code: data.state,
+    state_name: data.stateName,
+    county_name: data.county,
+    primary_age: data.primaryAge || null,
+    spouse_age: data.spouseAge || null,
+    document_location: data.documentLocation || null,
+    home_status: data.homeStatus,
+    account_count_range: data.accountCount,
+    primary_contact_name: data.primaryContactName,
+    primary_contact_phone: data.primaryContactPhone,
+    attorney_name: data.attorneyName,
+    attorney_phone: data.attorneyPhone,
+    family_review_date: data.familyMeetingDate || null,
+    report_title: `The "After I'm Gone" Emergency Binder for ${data.householdLabel}`,
+    report_payload: data
+  };
+
+  const { data: inserted, error } = await supabase
+    .from('emergency_binder_reports')
+    .insert(payload)
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('Failed to save Emergency Binder report:', error);
+    return null;
+  }
+
+  return inserted;
+}
+
+function showGeneratedBinder(data) {
+  renderBinder(data);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(data);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('binderSection').classList.add('active');
+    document.getElementById('binderShell').classList.add('visible');
+    document.getElementById('binderShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1900);
+}
+
+function showHydratedBinder(data) {
+  renderBinder(data);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('binderSection').classList.add('active');
+  document.getElementById('binderShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedSubmission(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fieldMap = {
+    primaryName: payload.primaryName,
+    spouseName: payload.spouseName,
+    countyName: payload.county,
+    primaryAge: payload.primaryAge,
+    spouseAge: payload.spouseAge,
+    documentLocation: payload.documentLocation,
+    homeStatus: payload.homeStatus,
+    accountCount: payload.accountCount,
+    financialInstitutions: payload.financialInstitutions,
+    digitalAccess: payload.digitalAccess,
+    autopayList: payload.autopayList,
+    keyLocations: payload.keyLocations,
+    primaryContactName: payload.primaryContactName,
+    primaryContactPhone: payload.primaryContactPhone,
+    attorneyName: payload.attorneyName,
+    attorneyPhone: payload.attorneyPhone,
+    survivingSpouseInstructions: payload.survivingSpouseInstructions,
+    familyMeetingDate: payload.familyMeetingDate
+  };
+
+  Object.entries(fieldMap).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = value;
+  });
+
+  if (payload.state) {
+    const select = document.getElementById('stateSelect');
+    if (select) select.value = payload.state;
+  }
+
+  const radioGroups = ['household', 'willStatus', 'trustStatus', 'poaStatus', 'healthStatus'];
+  radioGroups.forEach((name) => {
+    const value = payload[name];
+    if (!value) return;
+    document.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
+      const checked = input.value === value;
+      input.checked = checked;
+      input.closest('.radio-card')?.classList.toggle('selected', checked);
+    });
+  });
+
+  showHydratedBinder(payload);
+  return true;
+}
+
+async function generateBinder() {
+  const data = buildBinderData();
+  await saveEmergencyBinderReport(data);
+  showGeneratedBinder(data);
+}
+
+function editBinder() {
+  document.getElementById('binderSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(4);
+}
+
+window.nextStep = nextStep;
+window.generateBinder = generateBinder;
+window.editBinder = editBinder;
+window.hydrateEmergencyBinderSubmission = hydrateSavedSubmission;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.emergencyBinderSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateEmergencyBinderSubmission) {
+  const { data: report } = await supabase
+    .from('emergency_binder_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateEmergencyBinderSubmission(report);
+  }
+}
+</script>
+</body>
+</html>

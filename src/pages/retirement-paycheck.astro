@@ -1,0 +1,1863 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Retirement Paycheck — The Dividend Income X-Ray</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-pale: #F5EDD6;
+  --gold-glow: rgba(201, 168, 76, 0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15, 31, 61, 0.08);
+  --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo {
+  text-decoration: none;
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 78% 72%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.hero h1 em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  max-width: 730px;
+  margin: 0 auto 38px;
+  font-weight: 300;
+}
+
+.hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.wizard-section,
+.analysis-section,
+.report-section {
+  padding: 52px 24px 30px;
+}
+
+.wizard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 94px;
+}
+
+.sidebar-card,
+.form-card,
+.analysis-card,
+.report-shell,
+.disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card { padding: 28px; }
+
+.sidebar-label,
+.step-label,
+.section-kicker,
+.report-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 8px 0 14px;
+}
+
+.sidebar-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 22px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+
+.step-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-glow);
+}
+
+.step-item.done .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.step-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.sidebar-note {
+  border-radius: 14px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.78);
+  padding: 18px;
+  font-size: 13px;
+}
+
+.sidebar-note strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-card { overflow: hidden; }
+
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.24);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.progress-inline {
+  color: rgba(255,255,255,0.62);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 34px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.form-sub {
+  color: rgba(255,255,255,0.64);
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.form-body {
+  padding: 30px;
+}
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--navy);
+  margin: 8px 0;
+}
+
+.step-help {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  max-width: 720px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+
+.field-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.holdings-shell {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--cream);
+  padding: 16px;
+}
+
+.holding-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.holding-row:last-child { margin-bottom: 0; }
+
+.holding-row-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.holdings-supported {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 14px;
+}
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.insight-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.insight-card strong {
+  display: block;
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.insight-card span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.btn-back,
+.btn-next,
+.btn-add,
+.btn-ghost,
+.btn-print,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back,
+.btn-ghost,
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 12px 18px;
+}
+
+.btn-next,
+.btn-add,
+.btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 13px 20px;
+}
+
+.btn-next:hover,
+.btn-add:hover,
+.btn-print:hover {
+  background: var(--gold-light);
+}
+
+.analysis-section,
+.report-section { display: none; }
+.analysis-section.active,
+.report-section.active { display: block; }
+
+.analysis-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 42px 28px;
+  text-align: center;
+}
+
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+
+.analysis-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.analysis-sub {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.analysis-steps {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.analysis-step.done .analysis-indicator {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.analysis-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-shell {
+  max-width: 1060px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 30px;
+  color: var(--white);
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+
+.report-subtitle {
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  max-width: 780px;
+}
+
+.report-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.report-meta-item {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.report-body {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.hero-summary,
+.section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.hero-summary {
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+
+.hero-grid,
+.two-col,
+.three-col,
+.calendar-grid,
+.safety-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.hero-grid {
+  grid-template-columns: 1.1fr 0.9fr;
+}
+
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.summary-title em { color: var(--gold); font-style: normal; }
+
+.summary-copy {
+  font-size: 15px;
+  color: var(--text-mid);
+}
+
+.benchmark-card {
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.benchmark-card .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.14;
+  margin: 8px 0 10px;
+}
+
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.metric-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.metric-sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.section-card { padding: 24px; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.section-copy {
+  font-size: 13px;
+  color: var(--text-light);
+  max-width: 650px;
+}
+
+.pill {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.calendar-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.month-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.month-name {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.month-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.month-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.month-list-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.month-list-item span:last-child {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.safety-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.safety-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.safety-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.ticker-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.ticker-sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.safety-badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.safety-badge.safe { background: var(--green-bg); color: var(--green); }
+.safety-badge.watch { background: var(--amber-bg); color: var(--amber); }
+.safety-badge.risk { background: var(--red-bg); color: var(--red); }
+
+.safety-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.stat-box .label {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.stat-box .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.holdings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.holdings-table th,
+.holdings-table td {
+  text-align: left;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.holdings-table th {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+}
+
+.holdings-table tr:last-child td { border-bottom: none; }
+
+.callout {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+
+.report-note {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.disclaimer {
+  max-width: 1060px;
+  margin: 0 auto 64px;
+  padding: 24px 28px 32px;
+}
+
+.disclaimer p {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 980px) {
+  .wizard-grid,
+  .hero-grid,
+  .field-grid,
+  .summary-metrics,
+  .calendar-grid,
+  .safety-grid,
+  .insight-grid,
+  .two-col,
+  .three-col {
+    grid-template-columns: 1fr;
+  }
+
+  .sticky-sidebar { position: static; }
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section,
+  .analysis-section,
+  .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card,
+  .form-body,
+  .report-body,
+  .section-card,
+  .hero-summary,
+  .disclaimer,
+  .analysis-card { padding-left: 20px; padding-right: 20px; }
+  .form-header,
+  .report-header { padding: 28px 20px; }
+  .step-question,
+  .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .report-actions,
+  .btn-row,
+  .section-head,
+  .form-header-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .holding-row {
+    grid-template-columns: 1fr;
+  }
+  .report-actions > div:last-child {
+    width: 100%;
+  }
+  .report-actions > div:last-child button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .holdings-table thead { display: none; }
+  .holdings-table,
+  .holdings-table tbody,
+  .holdings-table tr { display: block; width: 100%; }
+  .holdings-table tr {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .holdings-table tr:last-child { border-bottom: none; }
+  .holdings-table td {
+    display: grid;
+    grid-template-columns: minmax(96px, 38%) 1fr;
+    gap: 10px;
+    padding: 4px 0;
+    border-bottom: none;
+  }
+  .holdings-table td::before {
+    content: attr(data-label);
+    font-size: 11px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+  }
+  .month-list-item {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+@media print {
+  body { background: #fff; }
+  .site-header,
+  .hero,
+  .wizard-section,
+  .analysis-section,
+  .report-actions,
+  .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell {
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .hero-summary,
+  .section-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Income Analysis Tool</div>
+    <h1>Your Retirement <em>Paycheck</em> — The Dividend Income X-Ray</h1>
+    <p class="hero-sub">Turn a list of dividend holdings into a retirement income view your audience actually cares about: annual income, monthly paycheck timing, dividend safety clues, and a local Social Security benchmark comparison.</p>
+    <div class="hero-points">
+      <div class="hero-point">No account linking required</div>
+      <div class="hero-point">Monthly dividend paycheck calendar</div>
+      <div class="hero-point">Print-ready one-page summary</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Paycheck Builder</div>
+        <div class="sidebar-title">Retirees think in cash flow, not just balances.</div>
+        <div class="sidebar-copy">This tool reframes a portfolio as an income stream: when the money arrives, how dependable it looks, and how it stacks up against a local retirement benchmark.</div>
+
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Benchmark</div>
+              <div class="step-sub">Name, state, county, and local comparison framing</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Dividend Holdings</div>
+              <div class="step-sub">Enter ticker symbols and share counts</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Summary & Alerts</div>
+              <div class="step-sub">Notes, target income, and saved report output</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong>Prototype note</strong>
+          This version uses a built-in dividend dataset for common retirement holdings so the UX, saved reports, and portal flow are all in place before live market API wiring.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See what your portfolio pays you like a paycheck.</div>
+        <div class="form-sub">Enter up to 15 dividend tickers with share counts. We’ll turn them into a retirement income summary, a month-by-month paycheck calendar, and a saved report in your portal.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Who is this retirement paycheck report for?</div>
+          <div class="step-help">This sets the report header and the local Social Security comparison context used in the summary.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="monthlyIncomeGoal">Desired Monthly Income Goal</label>
+              <input class="field-input" id="monthlyIncomeGoal" type="text" placeholder="e.g. 3000">
+              <div class="field-note">Optional. Used only for the summary callout.</div>
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="insight-card">
+              <strong>What this shows</strong>
+              <span>Annual dividend income, monthly payment timing, safety clues, and local benchmark framing.</span>
+            </div>
+            <div class="insight-card">
+              <strong>What this avoids</strong>
+              <span>No balances, no account linking, no brokerage login, and no sensitive credential flow.</span>
+            </div>
+            <div class="insight-card">
+              <strong>What comes later</strong>
+              <span>Live API wiring for real yields, ex-dates, payout ratios, and dividend change monitoring.</span>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">Which dividend holdings should we analyze?</div>
+          <div class="step-help">Enter ticker symbols and approximate share counts. The prototype currently supports common retirement names like `JNJ`, `KO`, `PG`, `O`, `SCHD`, `VYM`, `XOM`, `CVX`, `ABBV`, `T`, `VZ`, `PEP`, `HD`, `MCD`, and `JPM`.</div>
+
+          <div class="holdings-shell">
+            <div id="holdingsRows"></div>
+            <div class="holding-row-actions">
+              <button class="btn-add" type="button" onclick="addHoldingRow()">Add Holding</button>
+              <button class="btn-ghost" type="button" onclick="clearHoldings()">Clear All</button>
+            </div>
+            <div class="holdings-supported">Unsupported tickers will still save in the report, but they’ll be flagged as needing live market data coverage.</div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How should we frame the summary?</div>
+          <div class="step-help">These fields shape the narrative at the top of the report and the follow-up note in the saved portal document.</div>
+
+          <div class="field-grid">
+            <div class="field-group full">
+              <label class="field-label" for="portfolioNotes">Portfolio Notes</label>
+              <textarea class="field-textarea" id="portfolioNotes" placeholder="e.g. These holdings are intended to cover groceries, utilities, and a portion of travel."></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="newsletterInterest">Alert Preference</label>
+              <select class="field-select" id="newsletterInterest">
+                <option value="" selected disabled>Select one...</option>
+                <option value="dividend-alerts">I care about dividend change alerts</option>
+                <option value="calendar-updates">I mainly care about paycheck calendar timing</option>
+                <option value="safety-watch">I mainly care about payout safety</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="incomeUse">What is this income for?</label>
+              <input class="field-input" id="incomeUse" type="text" placeholder="e.g. Supplementing Social Security">
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateReport()">Generate My Retirement Paycheck →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Retirement Paycheck</div>
+    <div class="analysis-sub" id="analysisSub">Calculating the dividend stream, payment timing, and benchmark comparison.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Validating the entered holdings and share counts...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Projecting annual dividend income and monthly payment timing...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Scoring the dividend safety profile and income gaps...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report to your portal and preparing the print-ready summary...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Dividend Income X-Ray</div>
+      <div class="report-title" id="reportTitle">Your Retirement Paycheck</div>
+      <div class="report-subtitle" id="reportSubtitle">A one-page summary of projected dividend income, monthly paycheck timing, and dividend safety indicators.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County benchmark —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="summary-title">A portfolio that pays you like a <em>retirement paycheck</em>.</div>
+            <div class="summary-copy" id="summaryCopy">This report turns your dividend holdings into a cash-flow view: how much the income stream produces, when it arrives, and where the safety profile needs more attention.</div>
+          </div>
+          <div class="benchmark-card">
+            <div class="report-kicker">Local Benchmark</div>
+            <div class="headline" id="benchmarkHeadline">How this stacks up against a local Social Security check</div>
+            <div id="benchmarkCopy">We compare your estimated dividend income stream to a county-adjusted retirement benchmark so the result feels more like a paycheck analysis than a portfolio snapshot.</div>
+          </div>
+        </div>
+
+        <div class="summary-metrics">
+          <div class="metric-card">
+            <div class="metric-label">Annual Dividend Income</div>
+            <div class="metric-value" id="annualIncomeValue">$0</div>
+            <div class="metric-sub" id="annualIncomeSub">Across all supported holdings entered</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Average Monthly Income</div>
+            <div class="metric-value" id="monthlyIncomeValue">$0</div>
+            <div class="metric-sub" id="monthlyIncomeSub">Average over 12 months</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Best Pay Month</div>
+            <div class="metric-value" id="bestMonthValue">—</div>
+            <div class="metric-sub" id="bestMonthSub">Highest projected payment month</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Coverage vs Benchmark</div>
+            <div class="metric-value" id="coverageValue">0%</div>
+            <div class="metric-sub" id="coverageSub">Compared with local benchmark</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">Monthly Paycheck Calendar</div>
+            <div class="section-copy">This is the sticky part: not just how much the portfolio pays, but when it actually shows up.</div>
+          </div>
+          <div class="pill" id="calendarPill">12-month payout view</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Dividend Safety Indicators</div>
+            <div class="section-copy">Safety is simplified here into payout ratio pressure, consecutive years of increases, and the payment pattern.</div>
+          </div>
+        </div>
+        <div class="safety-grid" id="safetyGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 3</div>
+            <div class="section-title">Holdings Included in This Report</div>
+            <div class="section-copy">Unsupported symbols are saved too, but flagged for live data coverage when the API layer is connected.</div>
+          </div>
+        </div>
+        <table class="holdings-table">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Shares</th>
+              <th>Annual Income</th>
+              <th>Yield</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="holdingsTableRows"></tbody>
+        </table>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 4</div>
+            <div class="section-title">Income Framing</div>
+            <div class="section-copy">This is the narrative layer for the user-facing PDF summary.</div>
+          </div>
+        </div>
+        <div class="callout" id="incomeCallout">Your entered holdings are being translated into a retirement paycheck summary.</div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editReport()">Edit Responses</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This retirement paycheck tool is for educational purposes only and does not constitute investment, legal, tax, or financial advice. Dividend yields, payout ratios, dividend growth streaks, and payment timing shown here are prototype estimates based on a bundled dataset for common retirement holdings, not live market data. Actual dividends can be reduced, suspended, or changed at any time. County benchmark comparisons are simplified educational benchmarks only. Always verify current company filings, fund distribution notices, and personal tax consequences before making portfolio decisions. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+const COUNTY_BENCHMARKS = {
+  FL: 1975, CA: 2050, TX: 1885, NY: 2010, NJ: 2060, AZ: 1910, NC: 1840, SC: 1805,
+  GA: 1825, TN: 1810, PA: 1900, OH: 1855, MI: 1865, IL: 1930, WA: 2015, OR: 1960
+};
+
+const DIVIDEND_DATA = {
+  JNJ: { name: 'Johnson & Johnson', annualDividendPerShare: 4.96, yield: 3.2, payoutRatio: 46, increaseYears: 62, months: [3,6,9,12] },
+  KO: { name: 'Coca-Cola', annualDividendPerShare: 1.94, yield: 3.1, payoutRatio: 74, increaseYears: 62, months: [4,7,10,12] },
+  PG: { name: 'Procter & Gamble', annualDividendPerShare: 4.03, yield: 2.4, payoutRatio: 68, increaseYears: 68, months: [2,5,8,11] },
+  O: { name: 'Realty Income', annualDividendPerShare: 3.15, yield: 5.7, payoutRatio: 78, increaseYears: 29, months: [1,2,3,4,5,6,7,8,9,10,11,12] },
+  SCHD: { name: 'Schwab U.S. Dividend Equity ETF', annualDividendPerShare: 2.68, yield: 3.4, payoutRatio: null, increaseYears: 13, months: [3,6,9,12] },
+  VYM: { name: 'Vanguard High Dividend Yield ETF', annualDividendPerShare: 3.38, yield: 3.0, payoutRatio: null, increaseYears: 12, months: [3,6,9,12] },
+  XOM: { name: 'Exxon Mobil', annualDividendPerShare: 3.80, yield: 3.2, payoutRatio: 38, increaseYears: 42, months: [3,6,9,12] },
+  CVX: { name: 'Chevron', annualDividendPerShare: 6.52, yield: 4.1, payoutRatio: 62, increaseYears: 37, months: [3,6,9,12] },
+  ABBV: { name: 'AbbVie', annualDividendPerShare: 6.56, yield: 3.9, payoutRatio: 56, increaseYears: 52, months: [2,5,8,11] },
+  T: { name: 'AT&T', annualDividendPerShare: 1.11, yield: 6.1, payoutRatio: 58, increaseYears: 3, months: [2,5,8,11] },
+  VZ: { name: 'Verizon', annualDividendPerShare: 2.66, yield: 6.4, payoutRatio: 61, increaseYears: 18, months: [2,5,8,11] },
+  PEP: { name: 'PepsiCo', annualDividendPerShare: 5.42, yield: 3.1, payoutRatio: 68, increaseYears: 52, months: [1,3,6,9] },
+  HD: { name: 'Home Depot', annualDividendPerShare: 9.00, yield: 2.5, payoutRatio: 57, increaseYears: 15, months: [3,6,9,12] },
+  MCD: { name: 'McDonald’s', annualDividendPerShare: 6.68, yield: 2.4, payoutRatio: 58, increaseYears: 47, months: [3,6,9,12] },
+  JPM: { name: 'JPMorgan Chase', annualDividendPerShare: 5.00, yield: 2.3, payoutRatio: 29, increaseYears: 14, months: [1,4,7,10] }
+};
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MAX_HOLDINGS = 15;
+const DEFAULT_HOLDING_ROWS = 8;
+
+let currentStep = 1;
+let holdingRowCount = 0;
+let latestPayload = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function titleState(code) {
+  return STATE_OPTIONS.find(([v]) => v === code)?.[1] ?? code;
+}
+
+function nextStep(step) {
+  currentStep = step;
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function buildHoldingRow(index, ticker = '', shares = '') {
+  return `
+    <div class="holding-row" data-row="${index}">
+      <div class="field-group" style="margin-bottom:0;">
+        <label class="field-label" for="ticker_${index}">Ticker Symbol</label>
+        <input class="field-input" id="ticker_${index}" type="text" maxlength="8" placeholder="e.g. JNJ" value="${ticker}">
+      </div>
+      <div class="field-group" style="margin-bottom:0;">
+        <label class="field-label" for="shares_${index}">Share Count</label>
+        <input class="field-input" id="shares_${index}" type="number" min="0" step="0.01" placeholder="e.g. 100" value="${shares}">
+      </div>
+      <button class="btn-ghost" type="button" onclick="removeHoldingRow(${index})">Remove</button>
+    </div>
+  `;
+}
+
+function renderHoldingRows(rows = []) {
+  const container = document.getElementById('holdingsRows');
+  if (!container) return;
+  if (!rows.length) {
+    holdingRowCount = DEFAULT_HOLDING_ROWS;
+    container.innerHTML = new Array(DEFAULT_HOLDING_ROWS).fill(null).map((_, index) => buildHoldingRow(index + 1)).join('');
+    return;
+  }
+
+  holdingRowCount = rows.length;
+  container.innerHTML = rows.map((row, index) => buildHoldingRow(index + 1, row.ticker || '', row.shares || '')).join('');
+}
+
+function addHoldingRow() {
+  if (holdingRowCount >= MAX_HOLDINGS) return;
+  const container = document.getElementById('holdingsRows');
+  holdingRowCount += 1;
+  container.insertAdjacentHTML('beforeend', buildHoldingRow(holdingRowCount));
+}
+
+function removeHoldingRow(index) {
+  const row = document.querySelector(`.holding-row[data-row="${index}"]`);
+  if (row) row.remove();
+}
+
+function clearHoldings() {
+  renderHoldingRows();
+}
+
+function getHoldings() {
+  const rows = [...document.querySelectorAll('.holding-row')];
+  return rows.map((row) => {
+    const index = row.dataset.row;
+    const ticker = document.getElementById(`ticker_${index}`)?.value.trim().toUpperCase() || '';
+    const shares = Number(document.getElementById(`shares_${index}`)?.value || 0);
+    return { ticker, shares };
+  }).filter((row) => row.ticker || row.shares);
+}
+
+function classifySafety(data) {
+  if (!data) return { label: 'Needs data', tone: 'risk' };
+  if (data.payoutRatio !== null && data.payoutRatio >= 80) return { label: 'Watch closely', tone: 'watch' };
+  if (data.payoutRatio !== null && data.payoutRatio >= 95) return { label: 'Higher risk', tone: 'risk' };
+  if (data.increaseYears >= 20 || data.payoutRatio === null || data.payoutRatio < 65) return { label: 'Relatively steady', tone: 'safe' };
+  return { label: 'Monitor', tone: 'watch' };
+}
+
+function getCountyBenchmark(stateCode) {
+  return COUNTY_BENCHMARKS[stateCode] || 1890;
+}
+
+function buildReportPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const stateCode = document.getElementById('stateSelect').value;
+  const stateName = titleState(stateCode);
+  const countyName = document.getElementById('countyName').value.trim();
+  const monthlyIncomeGoal = parseMoney(document.getElementById('monthlyIncomeGoal').value);
+  const portfolioNotes = document.getElementById('portfolioNotes').value.trim();
+  const newsletterInterest = document.getElementById('newsletterInterest').value;
+  const incomeUse = document.getElementById('incomeUse').value.trim();
+  const holdingsInput = getHoldings();
+
+  const holdings = holdingsInput.map((row) => {
+    const marketData = DIVIDEND_DATA[row.ticker];
+    const annualIncome = marketData ? marketData.annualDividendPerShare * row.shares : 0;
+    const quarterlyIncome = annualIncome / (marketData?.months?.length || 4);
+    const safety = classifySafety(marketData);
+    return {
+      ...row,
+      companyName: marketData?.name || 'Live API data needed',
+      annualDividendPerShare: marketData?.annualDividendPerShare ?? null,
+      annualIncome,
+      yield: marketData?.yield ?? null,
+      payoutRatio: marketData?.payoutRatio ?? null,
+      increaseYears: marketData?.increaseYears ?? null,
+      months: marketData?.months ?? [],
+      supported: Boolean(marketData),
+      quarterlyIncome,
+      safetyLabel: safety.label,
+      safetyTone: safety.tone
+    };
+  }).filter((row) => row.ticker && row.shares > 0);
+
+  const monthTotals = MONTH_NAMES.map((name, monthIndex) => {
+    const contributors = holdings
+      .filter((holding) => holding.months.includes(monthIndex + 1))
+      .map((holding) => ({
+        ticker: holding.ticker,
+        amount: holding.annualIncome / holding.months.length
+      }));
+    const total = contributors.reduce((sum, item) => sum + item.amount, 0);
+    return { month: name, total, contributors };
+  });
+
+  const annualIncome = holdings.reduce((sum, row) => sum + row.annualIncome, 0);
+  const averageMonthlyIncome = annualIncome / 12;
+  const countyBenchmark = getCountyBenchmark(stateCode);
+  const coveragePercent = countyBenchmark ? (averageMonthlyIncome / countyBenchmark) * 100 : 0;
+  const bestMonth = [...monthTotals].sort((a, b) => b.total - a.total)[0] || { month: '—', total: 0 };
+  const supportedHoldings = holdings.filter((row) => row.supported);
+  const unsupportedHoldings = holdings.filter((row) => !row.supported);
+
+  let narrative = `Based on the holdings entered, the portfolio is projecting about ${formatMoney(annualIncome)} in annual dividends, or roughly ${formatMoney(averageMonthlyIncome)} per month on average.`;
+  if (incomeUse) narrative += ` The report is framed around ${incomeUse.toLowerCase()}.`;
+  if (monthlyIncomeGoal) {
+    const gap = monthlyIncomeGoal - averageMonthlyIncome;
+    narrative += gap > 0
+      ? ` That leaves a monthly income gap of about ${formatMoney(gap)} versus the stated goal.`
+      : ` That exceeds the stated monthly goal by about ${formatMoney(Math.abs(gap))}.`;
+  }
+  if (unsupportedHoldings.length) {
+    narrative += ` ${unsupportedHoldings.length} holding${unsupportedHoldings.length > 1 ? 's need' : ' needs'} live market coverage before this becomes a complete production report.`;
+  }
+
+  return {
+    fullName,
+    stateCode,
+    stateName,
+    countyName,
+    monthlyIncomeGoal,
+    portfolioNotes,
+    newsletterInterest,
+    incomeUse,
+    holdings,
+    annualIncome,
+    averageMonthlyIncome,
+    countyBenchmark,
+    coveragePercent,
+    bestMonth,
+    monthTotals,
+    supportedCount: supportedHoldings.length,
+    unsupportedCount: unsupportedHoldings.length,
+    narrative
+  };
+}
+
+function renderReport(payload) {
+  latestPayload = payload;
+  document.getElementById('reportTitle').textContent = `Your Retirement Paycheck for ${payload.fullName || 'Your Portfolio'}`;
+  document.getElementById('reportSubtitle').textContent = `A dividend-income summary for ${payload.countyName || 'your local area'}${payload.stateName ? `, ${payload.stateName}` : ''}, with monthly paycheck timing and safety indicators.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'} · ${payload.stateName || 'State not entered'} benchmark`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryCopy').textContent = payload.portfolioNotes || payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `Estimated dividend income covers ${Math.round(payload.coveragePercent)}% of a local retirement benchmark`;
+  document.getElementById('benchmarkCopy').textContent = `Using a simplified ${payload.stateName || 'state'} county-adjusted benchmark of about ${formatMoney(payload.countyBenchmark)} per month, this income stream is currently covering about ${Math.round(payload.coveragePercent)}% of that paycheck target.`;
+
+  document.getElementById('annualIncomeValue').textContent = formatMoney(payload.annualIncome);
+  document.getElementById('monthlyIncomeValue').textContent = formatMoney(payload.averageMonthlyIncome);
+  document.getElementById('bestMonthValue').textContent = payload.bestMonth.month;
+  document.getElementById('coverageValue').textContent = `${Math.round(payload.coveragePercent)}%`;
+  document.getElementById('annualIncomeSub').textContent = `${payload.supportedCount} supported holding${payload.supportedCount === 1 ? '' : 's'} analyzed`;
+  document.getElementById('monthlyIncomeSub').textContent = payload.monthlyIncomeGoal ? `Goal entered: ${formatMoney(payload.monthlyIncomeGoal)}` : 'Average over 12 months';
+  document.getElementById('bestMonthSub').textContent = payload.bestMonth.total ? formatMoney(payload.bestMonth.total) : 'No projected payout month yet';
+  document.getElementById('coverageSub').textContent = `${formatMoney(payload.countyBenchmark)} local monthly benchmark`;
+
+  document.getElementById('calendarPill').textContent = payload.unsupportedCount ? `${payload.unsupportedCount} holding${payload.unsupportedCount > 1 ? 's' : ''} need live data` : '12-month payout view';
+
+  const calendarGrid = document.getElementById('calendarGrid');
+  calendarGrid.innerHTML = payload.monthTotals.map((month) => `
+    <div class="month-card">
+      <div class="month-name">${month.month}</div>
+      <div class="month-amount">${formatMoney(month.total)}</div>
+      <div class="month-list">
+        ${month.contributors.length ? month.contributors.map((item) => `
+          <div class="month-list-item">
+            <span>${item.ticker}</span>
+            <span>${formatMoney(item.amount)}</span>
+          </div>
+        `).join('') : `<div class="month-list-item"><span>No projected payout</span><span>—</span></div>`}
+      </div>
+    </div>
+  `).join('');
+
+  const safetyGrid = document.getElementById('safetyGrid');
+  safetyGrid.innerHTML = payload.holdings.map((holding) => `
+    <div class="safety-card">
+      <div class="safety-header">
+        <div>
+          <div class="ticker-name">${holding.ticker}</div>
+          <div class="ticker-sub">${holding.companyName}</div>
+        </div>
+        <div class="safety-badge ${holding.safetyTone}">${holding.supported ? holding.safetyLabel : 'Needs live data'}</div>
+      </div>
+      <div class="safety-stats">
+        <div class="stat-box">
+          <div class="label">Annual Income</div>
+          <div class="value">${formatMoney(holding.annualIncome)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Yield</div>
+          <div class="value">${holding.yield !== null ? `${holding.yield.toFixed(1)}%` : '—'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Payout Ratio</div>
+          <div class="value">${holding.payoutRatio !== null ? `${holding.payoutRatio}%` : 'ETF / N.A.'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">Years Raising</div>
+          <div class="value">${holding.increaseYears !== null ? holding.increaseYears : '—'}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const holdingsRows = document.getElementById('holdingsTableRows');
+  holdingsRows.innerHTML = payload.holdings.map((holding) => `
+    <tr>
+      <td data-label="Ticker">${holding.ticker}</td>
+      <td data-label="Shares">${holding.shares}</td>
+      <td data-label="Annual Income">${formatMoney(holding.annualIncome)}</td>
+      <td data-label="Yield">${holding.yield !== null ? `${holding.yield.toFixed(1)}%` : '—'}</td>
+      <td data-label="Status">${holding.supported ? holding.safetyLabel : 'Unsupported in prototype dataset'}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('incomeCallout').textContent = payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Calculating a dividend paycheck summary for ${payload.fullName || 'your portfolio'} in ${payload.stateName || 'your state'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveRetirementPaycheckReport(payload) {
+  const supabase = window.retirementPaycheckSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_code: payload.stateCode || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    holdings_count: payload.holdings.length,
+    supported_holdings_count: payload.supportedCount,
+    annual_dividend_income: payload.annualIncome,
+    average_monthly_income: payload.averageMonthlyIncome,
+    county_benchmark_monthly: payload.countyBenchmark,
+    coverage_percent: payload.coveragePercent,
+    report_title: `Your Retirement Paycheck for ${payload.fullName || 'Your Portfolio'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('retirement_paycheck_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save Retirement Paycheck report:', error);
+  }
+}
+
+function showGeneratedReport(payload) {
+  renderReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedReport(payload) {
+  renderReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fieldMap = {
+    fullName: payload.fullName,
+    countyName: payload.countyName,
+    monthlyIncomeGoal: payload.monthlyIncomeGoal ? String(payload.monthlyIncomeGoal) : '',
+    portfolioNotes: payload.portfolioNotes,
+    incomeUse: payload.incomeUse
+  };
+
+  Object.entries(fieldMap).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = value;
+  });
+
+  if (payload.stateCode) {
+    document.getElementById('stateSelect').value = payload.stateCode;
+  }
+  if (payload.newsletterInterest) {
+    document.getElementById('newsletterInterest').value = payload.newsletterInterest;
+  }
+
+  renderHoldingRows(payload.holdings?.map((holding) => ({ ticker: holding.ticker, shares: holding.shares })) || []);
+  showHydratedReport(payload);
+  return true;
+}
+
+async function generateReport() {
+  const payload = buildReportPayload();
+  await saveRetirementPaycheckReport(payload);
+  showGeneratedReport(payload);
+}
+
+function editReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+renderHoldingRows();
+
+window.nextStep = nextStep;
+window.addHoldingRow = addHoldingRow;
+window.removeHoldingRow = removeHoldingRow;
+window.clearHoldings = clearHoldings;
+window.generateReport = generateReport;
+window.editReport = editReport;
+window.hydrateRetirementPaycheckReport = hydrateSavedReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.retirementPaycheckSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateRetirementPaycheckReport) {
+  const { data: report } = await supabase
+    .from('retirement_paycheck_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateRetirementPaycheckReport(report);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,858 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Your Family's Plan Actually Ready? — Retirement Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:#0F1F3D;
+  --navy-light:#1A2D52;
+  --gold:#C9A84C;
+  --gold-light:#D4B96A;
+  --gold-pale:#F5EDD6;
+  --gold-glow:rgba(201,168,76,0.12);
+  --cream:#FAF7F0;
+  --cream-dark:#F0EBE0;
+  --white:#FFFFFF;
+  --text-dark:#1A1A1A;
+  --text-mid:#4A4A4A;
+  --text-light:#7A7A7A;
+  --red:#C0392B;
+  --red-bg:#FDF2F0;
+  --green:#27AE60;
+  --green-bg:#F0FDF4;
+  --amber:#E67E22;
+  --amber-bg:#FFF8F0;
+  --border:#E8E3D8;
+  --shadow:0 2px 20px rgba(15,31,61,0.08);
+  --shadow-lg:0 8px 40px rgba(15,31,61,0.12);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--cream);
+  color:var(--text-dark);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ═══ HEADER ═══ */
+.header{
+  background:var(--navy);
+  padding:14px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  border-bottom:2px solid var(--gold);
+}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:var(--gold);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:18px;height:18px}
+.logo-name{font-family:'Playfair Display',serif;color:var(--white);font-size:17px;font-weight:600}
+.logo-name span{color:var(--gold)}
+.nav{display:flex;gap:24px;list-style:none}
+.nav a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;transition:color .2s}
+.nav a:hover{color:var(--gold)}
+
+/* ═══ INTRO / LANDING ═══ */
+.intro{
+  background:var(--navy);
+  padding:80px 24px 100px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.intro::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 40% 20%,rgba(201,168,76,0.05) 0%,transparent 50%),
+              radial-gradient(ellipse at 60% 80%,rgba(201,168,76,0.03) 0%,transparent 50%);
+  pointer-events:none;
+}
+.intro-inner{position:relative;z-index:1;max-width:640px;margin:0 auto}
+.intro-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+  border-radius:100px;padding:7px 18px;margin-bottom:28px;
+  font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;
+}
+.intro h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,5vw,48px);font-weight:700;
+  color:var(--white);line-height:1.12;margin-bottom:18px;
+}
+.intro h1 em{font-style:normal;color:var(--gold)}
+.intro-sub{
+  font-size:17px;color:rgba(255,255,255,0.5);line-height:1.65;
+  max-width:520px;margin:0 auto 40px;font-weight:300;
+}
+.intro-stat-row{
+  display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-bottom:40px;
+}
+.intro-stat{text-align:center}
+.intro-stat-num{
+  font-family:'Playfair Display',serif;font-size:36px;font-weight:700;
+  color:var(--gold);line-height:1;
+}
+.intro-stat-label{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px}
+.start-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);color:var(--navy);border:none;
+  padding:16px 40px;border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.start-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.start-btn svg{width:18px;height:18px;fill:var(--navy)}
+.intro-note{
+  margin-top:16px;font-size:12px;color:rgba(255,255,255,0.3);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.intro-note svg{width:12px;height:12px;fill:rgba(255,255,255,0.3)}
+
+/* ═══ QUIZ ═══ */
+.quiz-section{
+  display:none;
+  min-height:100vh;
+  background:var(--cream);
+  padding:48px 24px 80px;
+}
+.quiz-container{max-width:620px;margin:0 auto}
+
+/* Progress */
+.quiz-progress{margin-bottom:32px}
+.qp-bar{height:4px;background:var(--cream-dark);border-radius:2px;overflow:hidden;margin-bottom:8px}
+.qp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;transition:width .4s ease}
+.qp-text{font-size:12px;color:var(--text-light);font-weight:500}
+
+/* Question card */
+.q-card{
+  background:var(--white);
+  border-radius:12px;
+  padding:36px;
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+}
+.q-context{
+  font-size:12px;color:var(--text-light);
+  margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;
+}
+.q-text{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:600;
+  color:var(--navy);line-height:1.3;margin-bottom:6px;
+}
+.q-why{
+  font-size:13px;color:var(--text-light);margin-bottom:24px;
+  font-style:italic;line-height:1.5;
+}
+
+/* Answer options */
+.answer-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.answer-opt{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  border:1.5px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all .2s;
+  background:var(--cream);
+}
+.answer-opt:hover{border-color:var(--gold);background:var(--gold-glow)}
+.answer-opt.selected{border-color:var(--gold);background:var(--gold-glow)}
+.answer-opt input{display:none}
+.answer-dot{
+  width:20px;height:20px;border-radius:50%;
+  border:2px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.answer-opt.selected .answer-dot{
+  border-color:var(--gold);
+  background:var(--gold);
+}
+.answer-opt.selected .answer-dot::after{
+  content:'';width:8px;height:8px;border-radius:50%;background:var(--white);
+}
+.answer-label{font-size:15px;color:var(--text-dark);font-weight:500}
+.answer-label small{display:block;font-size:12px;color:var(--text-light);font-weight:400;margin-top:2px}
+
+/* Nav buttons */
+.q-nav{display:flex;gap:12px}
+.q-back{
+  padding:14px 20px;border:1.5px solid var(--border);border-radius:6px;
+  background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:600;color:var(--text-mid);cursor:pointer;transition:all .2s;
+}
+.q-back:hover{border-color:var(--text-mid)}
+.q-next{
+  flex:1;padding:14px 24px;border:none;border-radius:6px;
+  background:var(--gold);font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:700;color:var(--navy);cursor:pointer;transition:all .2s;
+  opacity:0.4;pointer-events:none;
+}
+.q-next.enabled{opacity:1;pointer-events:all}
+.q-next.enabled:hover{background:var(--gold-light)}
+
+/* ═══ RESULTS ═══ */
+.results-section{display:none}
+
+/* Results header */
+.results-header{
+  background:var(--navy);
+  padding:56px 24px 48px;
+  text-align:center;
+  position:relative;
+}
+.results-header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.results-inner{max-width:600px;margin:0 auto}
+.rh-label{
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px;
+}
+
+/* Score ring */
+.score-ring-wrap{
+  width:160px;height:160px;margin:0 auto 24px;position:relative;
+}
+.score-ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;
+}
+.score-num{
+  font-family:'Playfair Display',serif;font-size:44px;font-weight:700;line-height:1;
+}
+.score-of{font-size:13px;color:rgba(255,255,255,0.5);margin-top:2px}
+.score-grade{
+  font-family:'Playfair Display',serif;
+  font-size:26px;font-weight:700;color:var(--white);margin-bottom:6px;
+}
+.score-line{font-size:15px;color:rgba(255,255,255,0.5);max-width:420px;margin:0 auto}
+
+/* Results body */
+.results-body{max-width:700px;margin:0 auto;padding:40px 24px 80px}
+
+/* Result items */
+.result-card{
+  background:var(--white);
+  border-radius:10px;
+  padding:24px;
+  box-shadow:0 1px 6px rgba(0,0,0,0.04);
+  border:1px solid var(--border);
+  margin-bottom:12px;
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+}
+.result-status{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-size:18px;font-weight:700;
+}
+.result-status.pass{background:rgba(39,174,96,0.1);color:var(--green)}
+.result-status.fail{background:rgba(192,57,43,0.1);color:var(--red)}
+.result-status.warn{background:rgba(230,126,34,0.1);color:var(--amber)}
+.result-status.unknown{background:rgba(122,122,122,0.1);color:var(--text-light)}
+.result-content{flex:1}
+.result-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.result-answer{font-size:12px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.result-answer.pass-text{color:var(--green)}
+.result-answer.fail-text{color:var(--red)}
+.result-answer.warn-text{color:var(--amber)}
+.result-answer.unknown-text{color:var(--text-light)}
+.result-explain{font-size:13px;color:var(--text-mid);line-height:1.55}
+.result-link{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:600;color:var(--gold);text-decoration:none;
+  margin-top:6px;transition:color .2s;
+}
+.result-link:hover{color:var(--gold-light)}
+.result-link svg{width:12px;height:12px;fill:var(--gold)}
+
+/* Share section */
+.share-card{
+  background:var(--navy);
+  border-radius:12px;
+  padding:36px;
+  text-align:center;
+  margin-top:40px;
+  position:relative;overflow:hidden;
+}
+.share-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));
+}
+.share-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;
+}
+.share-headline{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:600;color:var(--white);
+  line-height:1.35;margin-bottom:8px;max-width:460px;margin-left:auto;margin-right:auto;
+}
+.share-headline em{font-style:normal;color:var(--gold)}
+.share-sub{
+  font-size:14px;color:rgba(255,255,255,0.45);
+  margin-bottom:28px;max-width:400px;margin-left:auto;margin-right:auto;
+}
+.share-buttons{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+}
+.share-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border-radius:6px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:all .2s;border:none;
+}
+.share-btn.primary{background:var(--gold);color:var(--navy)}
+.share-btn.primary:hover{background:var(--gold-light)}
+.share-btn.outline{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,0.2)}
+.share-btn.outline:hover{border-color:var(--gold);color:var(--gold)}
+.share-btn svg{width:16px;height:16px}
+
+/* Parent-friendly version */
+.parent-card{
+  background:var(--white);
+  border-radius:12px;
+  padding:32px;
+  box-shadow:var(--shadow);
+  margin-top:24px;
+  border:2px solid var(--gold-pale);
+}
+.parent-card-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--gold-glow);border-radius:100px;padding:6px 14px;
+  font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.parent-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:600;color:var(--navy);margin-bottom:8px;
+}
+.parent-card p{font-size:14px;color:var(--text-mid);margin-bottom:20px;line-height:1.55}
+.parent-links{display:flex;flex-direction:column;gap:10px}
+.parent-link{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;border:1px solid var(--border);border-radius:8px;
+  text-decoration:none;transition:all .2s;
+  background:var(--cream);
+}
+.parent-link:hover{border-color:var(--gold);background:var(--gold-glow)}
+.parent-link-icon{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.parent-link-icon.gold{background:var(--gold-glow)}
+.parent-link-icon.navy{background:rgba(15,31,61,0.06)}
+.parent-link-icon svg{width:18px;height:18px}
+.parent-link-text{flex:1}
+.parent-link-title{font-size:14px;font-weight:600;color:var(--navy)}
+.parent-link-sub{font-size:12px;color:var(--text-light)}
+.parent-link-arrow{color:var(--text-light);font-size:18px}
+
+/* Disclaimer */
+.disclaimer{
+  max-width:700px;margin:0 auto;padding:24px 24px 40px;border-top:1px solid var(--border);
+}
+.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}
+.disclaimer strong{color:var(--text-mid)}
+
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .4s,transform .4s}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  .header{padding:12px 16px}
+  .nav{display:none}
+  .intro{padding:48px 20px 64px}
+  .intro-stat-row{gap:24px}
+  .q-card{padding:24px 20px}
+  .share-buttons{flex-direction:column;align-items:center}
+  .results-body{padding:32px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a href="/portal" class="logo">
+    <div class="logo-name">Retirement <span>Shield</span></div>
+  </a>
+  <ul class="nav">
+   
+  </ul>
+</header>
+
+<!-- ═══ INTRO ═══ -->
+<section class="intro" id="introSection">
+  <div class="intro-inner">
+    <div class="intro-badge">2-Minute Assessment for Adult Children</div>
+    <h1>Is Your Family's Plan <em>Actually Ready?</em></h1>
+    <p class="intro-sub">You don't need to be an expert. You just need to know which questions to ask. This quiz identifies the gaps in your parents' estate plan — so you can start the conversation before a crisis forces it.</p>
+
+    <div class="intro-stat-row">
+      <div class="intro-stat">
+        <div class="intro-stat-num">55%</div>
+        <div class="intro-stat-label">of Americans have<br>no estate plan at all</div>
+      </div>
+      <div class="intro-stat">
+        <div class="intro-stat-num">76%</div>
+        <div class="intro-stat-label">haven't updated<br>their plan in 5+ years</div>
+      </div>
+      <div class="intro-stat">
+        <div class="intro-stat-num">$7.4B</div>
+        <div class="intro-stat-label">in life insurance<br>goes unclaimed</div>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startQuiz()">
+      Take the 2-Minute Quiz
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <div class="intro-note">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      No login required · No data stored · Results are instant
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUIZ ═══ -->
+<section class="quiz-section" id="quizSection">
+  <div class="quiz-container">
+    <div class="quiz-progress">
+      <div class="qp-bar"><div class="qp-fill" id="qpFill" style="width:12.5%"></div></div>
+      <div class="qp-text" id="qpText">Question 1 of 8</div>
+    </div>
+    <div id="questionContainer"></div>
+  </div>
+</section>
+
+<!-- ═══ RESULTS ═══ -->
+<section class="results-section" id="resultsSection">
+  <div class="results-header">
+    <div class="results-inner">
+      <div class="rh-label">Your Family's Readiness Score</div>
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="65" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
+          <circle cx="80" cy="80" r="65" fill="none" stroke-width="12" stroke-linecap="round" id="scoreArc"
+            stroke="var(--gold)" stroke-dasharray="0 409" style="transition:stroke-dasharray 1.2s ease"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-num" id="scoreNum" style="color:var(--gold)">0</div>
+          <div class="score-of">out of 8</div>
+        </div>
+      </div>
+      <div class="score-grade" id="scoreGrade"></div>
+      <div class="score-line" id="scoreLine"></div>
+    </div>
+  </div>
+
+  <div class="results-body">
+    <div id="resultCards"></div>
+
+    <!-- Share CTA -->
+    <div class="share-card fade-up">
+      <div class="share-eyebrow">Share This With Your Parents</div>
+      <div class="share-headline">This checklist was built to <em>start a conversation</em> — not an argument.</div>
+      <div class="share-sub">Send them their state's guide. It's free, it's specific, and it gives them a place to start without feeling ambushed.</div>
+      <div class="share-buttons">
+        <a href="#" class="share-btn primary" onclick="copyLink()">
+          <svg viewBox="0 0 24 24" fill="var(--navy)"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          Copy Shareable Link
+        </a>
+        <a href="#" class="share-btn outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email to Mom & Dad
+        </a>
+      </div>
+    </div>
+
+    <!-- Resources for parents -->
+    <div class="parent-card fade-up">
+      <div class="parent-card-badge">🎯 Recommended for Your Parents</div>
+      <h3>Resources You Can Send Them Today</h3>
+      <p>These are free, state-specific, and designed for people who haven't started planning yet. No accounts, no sales calls, no pressure.</p>
+      <div class="parent-links">
+        <a href="#" class="parent-link">
+          <div class="parent-link-icon gold"><svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/></svg></div>
+          <div class="parent-link-text">
+            <div class="parent-link-title">Free State Estate Planning Guide</div>
+            <div class="parent-link-sub">Probate rules, homestead exemptions, Medicaid thresholds — all in plain English for their state.</div>
+          </div>
+          <div class="parent-link-arrow">→</div>
+        </a>
+        <a href="#" class="parent-link">
+          <div class="parent-link-icon navy"><svg viewBox="0 0 24 24" fill="var(--navy)"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+          <div class="parent-link-text">
+            <div class="parent-link-title">Emergency Binder Generator</div>
+            <div class="parent-link-sub">A printable organizer for account numbers, contacts, passwords, and instructions — everything someone would need in the first 72 hours.</div>
+          </div>
+          <div class="parent-link-arrow">→</div>
+        </a>
+        <a href="#" class="parent-link">
+          <div class="parent-link-icon gold"><svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
+          <div class="parent-link-text">
+            <div class="parent-link-title">Book a Free Clarity Call (For Them)</div>
+            <div class="parent-link-sub">15 minutes with a licensed specialist who can answer their specific questions. No cost, no obligation, no pressure.</div>
+          </div>
+          <div class="parent-link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <p><strong>Important Disclosures:</strong> This quiz is for general educational purposes only and does not constitute legal, financial, or tax advice. Results are based entirely on your self-reported answers and may not reflect your family's actual legal situation. Estate planning requirements vary by state and individual circumstances. Retirement Shield is a publisher of educational content operating under the Publisher's Exclusion to investment adviser registration. We are not a law firm and do not provide legal advice or prepare legal documents. Consult a licensed attorney in your state for specific estate planning guidance. © 2026 Retirement Shield. All rights reserved.</p>
+  </div>
+</section>
+
+<script is:inline>
+const questions = [
+  {
+    context: "The Foundation",
+    question: "Does your parent (or parents) have a will?",
+    why: "Only 24% of Americans currently have a will. Without one, the state decides who gets everything — including the house.",
+    options: [
+      { text: "Yes, and it's been updated in the last 5 years", score: 1, status: "pass", explain: "A recently updated will is the baseline. Make sure it still reflects their current wishes, especially after any life changes (remarriage, grandchildren, home sale, move to a new state)." },
+      { text: "Yes, but it hasn't been reviewed in 5+ years", score: 0.5, status: "warn", explain: "An outdated will can be worse than no will — it may reference assets they no longer own, name people who have died, or conflict with beneficiary designations on their accounts. A will drafted before a move to a new state may not even be valid." },
+      { text: "No, or I'm not sure", score: 0, status: "fail", explain: "Without a will, their state's intestacy laws decide everything. In many states, a surviving spouse doesn't automatically inherit the entire estate — especially if there are children from a prior marriage." },
+    ]
+  },
+  {
+    context: "Incapacity Protection",
+    question: "Do they have a durable power of attorney for finances?",
+    why: "A standard power of attorney is revoked the moment someone becomes incapacitated. Only a 'durable' one survives that moment.",
+    options: [
+      { text: "Yes — it specifically says 'durable'", score: 1, status: "pass", explain: "A durable financial POA means someone they trust can pay bills, manage accounts, and handle finances if they can't. Confirm the named agent is still alive, willing, and geographically accessible." },
+      { text: "They have a power of attorney, but I'm not sure if it's durable", score: 0.5, status: "warn", explain: "If the document doesn't explicitly say 'durable,' it becomes worthless at the exact moment they need it — when they're incapacitated. This is the single most common POA mistake." },
+      { text: "No, or I don't know", score: 0, status: "fail", explain: "Without a durable financial POA, no one — not a spouse, not a child — can access their bank accounts, pay their mortgage, or manage their investments if they become incapacitated. The family would need a court-appointed guardianship, which costs $5,000–$15,000 and takes months." },
+    ]
+  },
+  {
+    context: "Medical Decisions",
+    question: "Do they have a healthcare proxy (medical power of attorney)?",
+    why: "Without one, a hospital may not let you make medical decisions for them — even if you're their child.",
+    options: [
+      { text: "Yes, with a HIPAA release attached", score: 1, status: "pass", explain: "A healthcare proxy with HIPAA authorization means the named agent can both make decisions and access medical records. This is the gold standard. Confirm the named agent knows they're named and understands the responsibility." },
+      { text: "Yes, but I'm not sure about the HIPAA release", score: 0.5, status: "warn", explain: "A healthcare proxy without a HIPAA authorization creates a real gap: the agent may be able to make decisions but cannot access the medical records needed to make informed ones. This is a fixable, one-page addition." },
+      { text: "No, or I don't know", score: 0, status: "fail", explain: "Only about one in three Americans has any advance directive. Without a healthcare proxy, doctors may be legally required to continue treatments your parent never wanted — and your family may face court battles to intervene." },
+    ]
+  },
+  {
+    context: "End-of-Life Wishes",
+    question: "Do they have a living will or advance directive?",
+    why: "A healthcare proxy names who decides. A living will says what the decision should be.",
+    options: [
+      { text: "Yes, and the family knows where it is", score: 1, status: "pass", explain: "A living will that's been communicated and is physically accessible is doing its job. Make sure their doctor has a copy on file — in an emergency, the hospital will ask the doctor's office, not the family." },
+      { text: "I think so, but I'm not sure what it says or where it is", score: 0.5, status: "warn", explain: "A living will buried in a filing cabinet doesn't help anyone in an emergency. It needs to be in the Emergency Binder, with copies given to the healthcare proxy and the primary physician." },
+      { text: "No", score: 0, status: "fail", explain: "Without a living will, your family will face agonizing decisions about life support, resuscitation, and feeding tubes with no guidance — and they'll make those decisions under the worst emotional conditions imaginable." },
+    ]
+  },
+  {
+    context: "The Silent Override",
+    question: "When did they last review beneficiary designations on retirement accounts and life insurance?",
+    why: "Beneficiary designations override a will. An old designation from a first marriage can send an IRA to an ex-spouse — no matter what the will says.",
+    options: [
+      { text: "Within the last 2–3 years", score: 1, status: "pass", explain: "Good. Beneficiary designations on IRAs, 401(k)s, life insurance, and annuities pass outside the will by operation of law. A recent review means they're likely current." },
+      { text: "More than 5 years ago, or after a major life event they haven't updated for", score: 0, status: "fail", explain: "This is the number one estate planning mistake. A beneficiary designation from 2008 naming an ex-spouse will override a 2024 will naming the current spouse. The IRA goes to the ex. Every time. The fix takes 15 minutes per account." },
+      { text: "I don't know", score: 0, status: "unknown", explain: "If you don't know, they probably haven't reviewed them. This is the most important question on this quiz — and the easiest to fix. Ask them to call each financial institution and confirm who's named." },
+    ]
+  },
+  {
+    context: "Probate Exposure",
+    question: "Do they own their home? If so, is it titled in a trust or have a transfer-on-death deed?",
+    why: "A home in a single person's name with no trust and no TOD deed goes through probate — which costs 3–7% of the value and takes 9–18 months.",
+    options: [
+      { text: "It's in a trust, or they have a TOD/Lady Bird deed", score: 1, status: "pass", explain: "The home will bypass probate. This alone can save the family $10,000–$30,000+ in fees and a year or more of court proceedings." },
+      { text: "They own it, but it's just in their name (or joint tenants)", score: 0, status: "fail", explain: "Joint tenancy with right of survivorship works while one spouse is alive — but when the surviving spouse dies, it goes through full probate. Over 30 states now allow Transfer-on-Death deeds that fix this for under $100 in recording fees." },
+      { text: "I don't know how it's titled", score: 0, status: "unknown", explain: "Title determines everything about what happens to the house at death. The deed is public record — you or they can check with the county recorder's office or look it up online in many counties." },
+    ]
+  },
+  {
+    context: "The Money Question",
+    question: "Do you know where their financial accounts are — banks, brokerage, insurance, retirement?",
+    why: "$70 billion in assets goes unclaimed in the U.S. because families don't know what exists or where to find it.",
+    options: [
+      { text: "Yes — there's a list or binder with account info and contacts", score: 1, status: "pass", explain: "An organized record of accounts, policy numbers, and contacts is the single most valuable thing a family can have in the first 72 hours after a death. If they have this, they're ahead of 90% of families." },
+      { text: "I know some of it, but not all", score: 0.5, status: "warn", explain: "Partial knowledge is better than none, but missing even one account — especially a life insurance policy — can cost the family tens of thousands. The NAIC Life Insurance Policy Locator has recovered over $6 billion in unclaimed benefits since 2016." },
+      { text: "No — I wouldn't know where to start", score: 0, status: "fail", explain: "This is the most common situation families face after a death. They spend weeks calling banks, searching through mail, and guessing at account numbers while automatic payments drain the estate. An Emergency Binder solves this in one afternoon." },
+    ]
+  },
+  {
+    context: "The Conversation",
+    question: "Have you and your parents ever had a direct conversation about what happens if one of them dies or becomes incapacitated?",
+    why: "74% of adults say estate planning is important. Fewer than 30% have actually done anything about it. The conversation is the catalyst.",
+    options: [
+      { text: "Yes — we've talked about it openly and I know their wishes", score: 1, status: "pass", explain: "This is the hardest question on this quiz, and you passed it. Knowing their wishes — where documents are, who's in charge, what they want — is the difference between a coordinated response and a family crisis." },
+      { text: "We've touched on it, but never in detail", score: 0.5, status: "warn", explain: "A vague conversation is a start, but it leaves critical gaps. Do they know you're willing to help? Do you know who their attorney is? Where the documents are? Who to call first? This quiz gives you a reason to make the next conversation specific." },
+      { text: "No — it's too uncomfortable, or they won't engage", score: 0, status: "fail", explain: "You're not alone — most families avoid this. But the cost of avoidance is measurable: guardianship proceedings ($5,000–$15,000), probate delays (9–18 months), and family conflicts that can take years to resolve. This checklist is designed to make that conversation easier." },
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+
+function getQuizSummary() {
+  let total = 0;
+
+  const results = questions.map((q, idx) => {
+    const chosen = answers[idx] !== undefined ? answers[idx] : null;
+    const opt = chosen !== null ? q.options[chosen] : null;
+    if (opt) total += opt.score;
+
+    return {
+      context: q.context,
+      question: q.question,
+      selected_index: chosen,
+      selected_text: opt?.text ?? null,
+      status: opt?.status ?? 'unknown',
+      score: opt?.score ?? 0,
+      explanation: opt?.explain ?? null
+    };
+  });
+
+  const pct = total / questions.length;
+  let grade;
+  let line;
+
+  if (pct >= 0.85) {
+    grade = "Well Prepared";
+    line = "Your family appears to have the key foundations in place. Review the items flagged below to close any remaining gaps.";
+  } else if (pct >= 0.5) {
+    grade = "Partially Protected";
+    line = "Some pieces are in place, but there are meaningful gaps that could cost your family time, money, or conflict. The checklist below shows exactly where.";
+  } else {
+    grade = "Significant Gaps";
+    line = "Your family has several critical planning gaps. The good news: most of these can be addressed in a single afternoon with the right information.";
+  }
+
+  return { total, pct, grade, line, results };
+}
+
+async function saveFamilyPlanSubmission(summary) {
+  const supabase = window.familyPlanQuizSupabase;
+  if (!supabase) return;
+
+  const payload = {
+    user_id: new URLSearchParams(window.location.search).get('utm') || null,
+    score: summary.total,
+    max_score: questions.length,
+    completion_percent: summary.pct,
+    grade: summary.grade,
+    summary_line: summary.line,
+    answers: summary.results
+  };
+
+  const { error } = await supabase
+    .from('family-plan-quiz-data')
+    .insert(payload);
+
+  if (error) {
+    console.error('Failed to save Family Plan Quiz submission:', error);
+  }
+}
+
+function startQuiz() {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'block';
+  window.scrollTo({top:0,behavior:'instant'});
+  renderQuestion(0);
+}
+
+function renderQuestion(idx) {
+  currentQ = idx;
+  const q = questions[idx];
+  const isFirst = idx === 0;
+  const isLast = idx === questions.length - 1;
+  const selected = answers[idx] !== undefined ? answers[idx] : -1;
+
+  document.getElementById('qpFill').style.width = ((idx+1)/questions.length*100)+'%';
+  document.getElementById('qpText').textContent = `Question ${idx+1} of ${questions.length}`;
+
+  let html = `<div class="q-card">
+    <div class="q-context">${q.context}</div>
+    <div class="q-text">${q.question}</div>
+    <div class="q-why">${q.why}</div>
+    <div class="answer-grid">`;
+
+  q.options.forEach((opt, i) => {
+    html += `<label class="answer-opt ${selected===i?'selected':''}" onclick="selectAnswer(${i})">
+      <input type="radio" name="q${idx}" value="${i}" ${selected===i?'checked':''} />
+      <div class="answer-dot"></div>
+      <div class="answer-label">${opt.text}</div>
+    </label>`;
+  });
+
+  html += `</div><div class="q-nav">`;
+  if (!isFirst) html += `<button class="q-back" onclick="renderQuestion(${idx-1})">← Back</button>`;
+  if (isLast) {
+    html += `<button class="q-next ${selected>=0?'enabled':''}" id="nextBtn" onclick="showResults()">See My Results →</button>`;
+  } else {
+    html += `<button class="q-next ${selected>=0?'enabled':''}" id="nextBtn" onclick="renderQuestion(${idx+1})">Continue →</button>`;
+  }
+  html += `</div></div>`;
+
+  document.getElementById('questionContainer').innerHTML = html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function selectAnswer(i) {
+  answers[currentQ] = i;
+  document.querySelectorAll('.answer-opt').forEach((el,idx) => {
+    el.classList.toggle('selected', idx === i);
+  });
+  const btn = document.getElementById('nextBtn');
+  if (btn) { btn.classList.add('enabled'); }
+}
+
+function showResults() {
+  if (answers[currentQ] === undefined) return;
+
+  const summary = getQuizSummary();
+  let total = summary.total;
+  let cardsHtml = '';
+
+  questions.forEach((q, idx) => {
+    const chosen = answers[idx] !== undefined ? answers[idx] : 2;
+    const opt = q.options[chosen];
+
+    const statusIcon = opt.status === 'pass' ? '✓' : opt.status === 'fail' ? '✗' : opt.status === 'warn' ? '–' : '?';
+    const answerClass = opt.status === 'pass' ? 'pass-text' : opt.status === 'fail' ? 'fail-text' : opt.status === 'warn' ? 'warn-text' : 'unknown-text';
+    const answerLabel = opt.status === 'pass' ? 'Protected' : opt.status === 'fail' ? 'Gap Identified' : opt.status === 'warn' ? 'Needs Review' : 'Unknown — Needs Investigation';
+
+    cardsHtml += `<div class="result-card fade-up">
+      <div class="result-status ${opt.status}">${statusIcon}</div>
+      <div class="result-content">
+        <div class="result-title">${q.question}</div>
+        <div class="result-answer ${answerClass}">${answerLabel}</div>
+        <div class="result-explain">${opt.explain}</div>
+        ${opt.status !== 'pass' ? `<a href="#" class="result-link">Learn more in their State Guide <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>` : ''}
+      </div>
+    </div>`;
+  });
+
+  const pct = summary.pct;
+  const circumference = 2 * Math.PI * 65;
+  const dashLen = pct * circumference;
+
+  let scoreColor;
+  if (pct >= 0.85) {
+    scoreColor = 'var(--green)';
+  } else if (pct >= 0.5) {
+    scoreColor = 'var(--amber)';
+  } else {
+    scoreColor = 'var(--red)';
+  }
+
+  document.getElementById('quizSection').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'block';
+  window.scrollTo({top:0,behavior:'instant'});
+
+  document.getElementById('scoreGrade').textContent = summary.grade;
+  document.getElementById('scoreLine').textContent = summary.line;
+  document.getElementById('resultCards').innerHTML = cardsHtml;
+
+  // Animate score
+  setTimeout(() => {
+    document.getElementById('scoreArc').style.strokeDasharray = `${dashLen} ${circumference}`;
+    document.getElementById('scoreArc').style.stroke = scoreColor;
+    document.getElementById('scoreNum').style.color = scoreColor;
+
+    let counter = 0;
+    const target = total;
+    const step = target / 30;
+    const interval = setInterval(() => {
+      counter += step;
+      if (counter >= target) { counter = target; clearInterval(interval); }
+      document.getElementById('scoreNum').textContent = counter % 1 === 0 ? counter : counter.toFixed(1);
+    }, 30);
+  }, 200);
+
+  // Fade in cards
+  setTimeout(() => {
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 60);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    fadeEls.forEach(el => obs.observe(el));
+  }, 400);
+
+  saveFamilyPlanSubmission(summary);
+}
+
+function copyLink() {
+  // Dummy — would copy a shareable URL in production
+  const btn = event.target.closest('.share-btn');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="var(--navy)" width="16" height="16"><path d="M20 6L9 17l-5-5"/></svg> Link Copied!';
+  setTimeout(() => { btn.innerHTML = original; }, 2000);
+}
+
+window.startQuiz = startQuiz;
+window.renderQuestion = renderQuestion;
+window.selectAnswer = selectAnswer;
+window.showResults = showResults;
+window.copyLink = copyLink;
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.familyPlanQuizSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest') {
+  document.getElementById('introSection').style.display = 'none';
+  document.getElementById('quizSection').style.display = 'none';
+
+  const { data: savedQuiz } = await supabase
+    .from('family-plan-quiz-data')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (savedQuiz?.answers?.length) {
+    answers = savedQuiz.answers.map((answer) => answer.selected_index);
+    showResults();
+  }
+}
+</script>
+
+</body>
+</html>

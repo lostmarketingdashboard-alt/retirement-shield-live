@@ -1,0 +1,1579 @@
+---
+export const prerender = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Equity Intelligence Report — Retirement Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-pale: #F5EDD6;
+  --gold-glow: rgba(201, 168, 76, 0.15);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --red-alert: #C0392B;
+  --red-bg: #FDF2F0;
+  --green-ok: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15, 31, 61, 0.08);
+  --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 80px 32px 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 100px;
+  padding: 8px 20px;
+  margin-bottom: 32px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.hero-badge svg { width: 14px; height: 14px; fill: var(--gold); }
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.65;
+  max-width: 620px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+}
+
+.address-form {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.address-input-wrap {
+  display: flex;
+  background: var(--white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.25), 0 0 0 1px rgba(201,168,76,0.2);
+  transition: box-shadow 0.3s;
+}
+
+.address-input-wrap:focus-within {
+  box-shadow: 0 4px 30px rgba(0,0,0,0.25), 0 0 0 2px var(--gold);
+}
+
+.address-input-wrap .icon-wrap {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: var(--text-light);
+}
+
+.address-input-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 18px 4px;
+  font-size: 16px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-dark);
+  background: transparent;
+}
+
+.address-input-wrap input::placeholder { color: #B0B0B0; }
+
+.address-btn {
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  padding: 0 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.address-btn:hover:not(:disabled) { background: var(--gold-light); }
+.address-btn:disabled { cursor: wait; opacity: 0.75; }
+
+.input-helper-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.form-note {
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.form-note svg { width: 12px; height: 12px; fill: rgba(255,255,255,0.35); }
+
+.inline-error {
+  display: none;
+  margin-top: 14px;
+  background: rgba(192,57,43,0.14);
+  border: 1px solid rgba(192,57,43,0.35);
+  color: #ffd4cf;
+  border-radius: 8px;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.trust-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.44);
+}
+
+.trust-item svg { width: 16px; height: 16px; fill: var(--gold); opacity: 0.6; }
+
+.analyzing-section {
+  display: none;
+  background: var(--navy);
+  padding: 100px 32px 120px;
+  text-align: center;
+  min-height: 100vh;
+  position: relative;
+}
+
+.analyzing-content { max-width: 480px; margin: 0 auto; position: relative; z-index: 1; }
+
+.analyzing-house {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 48px;
+  position: relative;
+}
+
+.house-outline {
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(201,168,76,0.3);
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.house-outline svg {
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: scanDown 2s ease-in-out infinite;
+}
+
+@keyframes scanDown {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140px;
+  height: 140px;
+  margin: -70px 0 0 -70px;
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 50%;
+  animation: pulseOut 2s ease-out infinite;
+}
+
+.pulse-ring:nth-child(2) { animation-delay: 0.6s; }
+.pulse-ring:nth-child(3) { animation-delay: 1.2s; }
+
+@keyframes pulseOut {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.analyzing-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.analyzing-address {
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 48px;
+  font-weight: 500;
+}
+
+.analysis-steps { text-align: left; }
+
+.analysis-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  opacity: 0.3;
+  transition: opacity 0.4s;
+}
+
+.analysis-step.active { opacity: 1; }
+.analysis-step.done { opacity: 0.6; }
+.analysis-step.error { opacity: 1; }
+
+.step-indicator {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(201,168,76,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.analysis-step.active .step-indicator {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.1);
+}
+
+.analysis-step.done .step-indicator {
+  border-color: var(--green-ok);
+  background: rgba(39,174,96,0.15);
+}
+
+.analysis-step.error .step-indicator {
+  border-color: var(--red-alert);
+  background: rgba(192,57,43,0.12);
+}
+
+.step-indicator .spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+.analysis-step.active .spinner { display: block; }
+
+.step-indicator .check,
+.step-indicator .cross {
+  display: none;
+  width: 12px;
+  height: 12px;
+}
+
+.analysis-step.done .check { display: block; fill: var(--green-ok); }
+.analysis-step.error .cross { display: block; fill: var(--red-alert); }
+
+.step-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+}
+
+.analysis-step.active .step-text,
+.analysis-step.error .step-text { color: var(--white); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.report-section { display: none; padding: 0; }
+
+.report-header {
+  background: var(--navy);
+  padding: 60px 32px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+
+.report-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.report-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.report-label::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.report-address {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 28px;
+}
+
+.report-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.report-meta-item {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.report-meta-item strong {
+  color: rgba(255,255,255,0.74);
+  font-weight: 500;
+}
+
+.report-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+.valuation-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.val-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.val-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+
+.val-card.primary::before { background: var(--gold); }
+.val-card.secondary::before { background: var(--navy); }
+
+.val-card-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.val-card-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.val-card-sub {
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.val-card-sub .change {
+  color: var(--green-ok);
+  font-weight: 600;
+}
+
+.val-card-sub .change.down {
+  color: var(--red-alert);
+}
+
+.report-block { margin-bottom: 40px; }
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.block-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gold-glow);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-icon svg { width: 18px; height: 18px; fill: var(--gold); }
+
+.block-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.data-item {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+}
+
+.data-item.full { grid-column: 1 / -1; }
+
+.data-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.data-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  font-family: 'Playfair Display', serif;
+}
+
+.data-note {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.alert-card {
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.alert-card.danger {
+  background: var(--red-bg);
+  border: 1px solid rgba(192,57,43,0.15);
+}
+
+.alert-card.warning {
+  background: var(--amber-bg);
+  border: 1px solid rgba(230,126,34,0.15);
+}
+
+.alert-card.safe {
+  background: var(--green-bg);
+  border: 1px solid rgba(39,174,96,0.15);
+}
+
+.alert-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.alert-card.danger .alert-icon { background: rgba(192,57,43,0.12); color: var(--red-alert); }
+.alert-card.warning .alert-icon { background: rgba(230,126,34,0.12); color: var(--amber); }
+.alert-card.safe .alert-icon { background: rgba(39,174,96,0.12); color: var(--green-ok); }
+
+.alert-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.alert-card.danger .alert-title { color: var(--red-alert); }
+.alert-card.warning .alert-title { color: var(--amber); }
+.alert-card.safe .alert-title { color: var(--green-ok); }
+
+.alert-text {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.55;
+}
+
+.equity-viz {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+.donut-wrap {
+  width: 160px;
+  height: 160px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.donut-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donut-pct {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.donut-label-small {
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.equity-breakdown { flex: 1; }
+
+.equity-breakdown h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+.breakdown-row:last-child { border-bottom: none; }
+
+.breakdown-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.breakdown-label {
+  font-size: 14px;
+  color: var(--text-mid);
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.breakdown-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: right;
+}
+
+.comp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.comp-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.comp-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.comp-list {
+  display: grid;
+  gap: 12px;
+}
+
+.comp-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.comp-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.comp-price {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.comp-distance {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.comp-address {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.comp-meta {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.empty-state {
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.snapshot-card {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-top: 48px;
+}
+
+.snapshot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+
+.snapshot-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.snapshot-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+  max-width: 620px;
+  margin: 0 auto 12px;
+}
+
+.snapshot-headline em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.snapshot-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.56);
+  margin-bottom: 32px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.snapshot-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+}
+
+.snapshot-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+.snapshot-cta svg { width: 16px; height: 16px; fill: var(--navy); }
+
+.report-disclaimer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 48px;
+  border-top: 1px solid var(--border);
+}
+
+.disclaimer-text {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer-text strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 48px 20px 64px; }
+  .hero-sub { font-size: 16px; }
+  .address-input-wrap { flex-direction: column; }
+  .address-btn { padding: 16px; }
+  .trust-row { gap: 16px; }
+  .valuation-hero,
+  .data-grid,
+  .comp-grid { grid-template-columns: 1fr; }
+  .equity-viz { flex-direction: column; text-align: center; }
+  .report-body { padding: 32px 20px 60px; }
+  .report-header { padding: 40px 20px 32px; }
+  .snapshot-card { padding: 32px 20px; }
+  .report-meta { gap: 16px; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero" id="step1">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7V17L12 22L22 17V7L12 2Z"/></svg>
+      Live RentCast Data
+    </div>
+    <h1>See What Your Home Is <em>Actually Worth</em> Right Now</h1>
+    <p class="hero-sub">Enter a U.S. property address and we will pull the matched RentCast property record, live value estimate, rent estimate, and comparable properties into a single report. Every figure shown below is either returned by RentCast or calculated directly from RentCast fields.</p>
+
+    <div class="address-form">
+      <div class="address-input-wrap">
+        <div class="icon-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <input type="text" id="addressInput" placeholder="Street, City, State, Zip" />
+        <button class="address-btn" id="analyzeButton" onclick="startAnalysis()">Analyze My Home</button>
+      </div>
+
+      <div class="input-helper-grid">
+        <div class="form-note" style="justify-content: flex-start;">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Private RentCast API key stays server-side.
+        </div>
+      </div>
+
+      <div class="inline-error" id="formError"></div>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        RentCast property records
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        Live AVM + rent estimate
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        Comparable sales + rentals
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analyzing-section" id="step2">
+  <div class="analyzing-content">
+    <div class="analyzing-house">
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="pulse-ring"></div>
+      <div class="house-outline">
+        <div class="scan-line"></div>
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+    </div>
+    <div class="analyzing-title">Building Your Property Report</div>
+    <div class="analyzing-address" id="analyzingAddress">742 Evergreen Terrace, Springfield, IL 62704</div>
+
+    <div class="analysis-steps">
+      <div class="analysis-step" id="astep1">
+        <div class="step-indicator">
+          <div class="spinner"></div>
+          <svg class="check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <svg class="cross" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        </div>
+        <div class="step-text">Searching the RentCast property database...</div>
+      </div>
+      <div class="analysis-step" id="astep2">
+        <div class="step-indicator">
+          <div class="spinner"></div>
+          <svg class="check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <svg class="cross" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        </div>
+        <div class="step-text">Calculating the live value estimate...</div>
+      </div>
+      <div class="analysis-step" id="astep3">
+        <div class="step-indicator">
+          <div class="spinner"></div>
+          <svg class="check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <svg class="cross" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        </div>
+        <div class="step-text">Calculating long-term rent potential...</div>
+      </div>
+      <div class="analysis-step" id="astep4">
+        <div class="step-indicator">
+          <div class="spinner"></div>
+          <svg class="check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <svg class="cross" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        </div>
+        <div class="step-text">Loading comparable sales and rentals...</div>
+      </div>
+      <div class="analysis-step" id="astep5">
+        <div class="step-indicator">
+          <div class="spinner"></div>
+          <svg class="check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+          <svg class="cross" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+        </div>
+        <div class="step-text">Assembling your home equity report...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="step3">
+  <div class="report-header">
+    <div class="report-header-inner">
+      <div class="report-label">Home Equity Intelligence Report</div>
+      <div class="report-title" id="reportTitle">742 Evergreen Terrace</div>
+      <div class="report-address" id="reportAddress">Springfield, Sangamon County, IL 62704</div>
+      <div class="report-meta">
+        <div class="report-meta-item">Generated: <strong id="generatedAt">April 10, 2026</strong></div>
+        <div class="report-meta-item">Data sources: <strong id="dataSources">RentCast property records and AVM endpoints</strong></div>
+        <div class="report-meta-item">Report ID: <strong id="reportId">RS-HEQ-2026-04-7842</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-body">
+    <div class="valuation-hero fade-up">
+      <div class="val-card primary">
+        <div class="val-card-label">Estimated Home Value</div>
+        <div class="val-card-number" id="estimatedValue">$0</div>
+        <div class="val-card-sub" id="estimatedValueSub">Live value estimate from RentCast.</div>
+      </div>
+      <div class="val-card secondary">
+        <div class="val-card-label">Monthly Rental Potential</div>
+        <div class="val-card-number" id="estimatedRent">$0</div>
+        <div class="val-card-sub" id="estimatedRentSub">Long-term rent estimate from comparable rentals.</div>
+      </div>
+    </div>
+
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 21H3V3h18v18zM7 17h2V7H7v10zm4 0h2v-6h-2v6zm4 0h2V4h-2v13z"/></svg>
+        </div>
+        <div class="block-title">RentCast Valuation Summary</div>
+      </div>
+
+      <div class="equity-viz">
+        <div class="donut-wrap">
+          <svg viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="60" fill="none" stroke="#E8E3D8" stroke-width="20"/>
+            <circle id="equityDonutPrimary" cx="80" cy="80" r="60" fill="none" stroke="#C9A84C" stroke-width="20" stroke-dasharray="0 377" stroke-dashoffset="0" stroke-linecap="round"/>
+            <circle id="equityDonutSecondary" cx="80" cy="80" r="60" fill="none" stroke="#0F1F3D" stroke-width="20" stroke-dasharray="377 377" stroke-dashoffset="0" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-center">
+            <div class="donut-pct" id="equityPercent">--</div>
+            <div class="donut-label-small" id="equityPercentLabel">Value range spread</div>
+          </div>
+        </div>
+        <div class="equity-breakdown">
+          <h4 id="equityHeadline">This section shows how wide the RentCast value range is around the point estimate.</h4>
+          <div class="breakdown-row">
+            <div class="breakdown-label"><div class="breakdown-dot" style="background: var(--gold)"></div>Value estimate</div>
+            <div class="breakdown-val" id="equityMarketValue">$0</div>
+          </div>
+          <div class="breakdown-row">
+            <div class="breakdown-label"><div class="breakdown-dot" style="background: var(--navy)"></div>Low estimate</div>
+            <div class="breakdown-val" id="equityMortgage">--</div>
+          </div>
+          <div class="breakdown-row">
+            <div class="breakdown-label"><div class="breakdown-dot" style="background: var(--cream-dark)"></div>High estimate</div>
+            <div class="breakdown-val" id="equityValue">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card warning" id="equityAlert">
+        <div class="alert-icon">i</div>
+        <div>
+          <div class="alert-title" id="equityAlertTitle">Value range is from RentCast AVM bounds</div>
+          <div class="alert-text" id="equityAlertText">Because you asked for RentCast-only data, this report no longer guesses at owner equity. True equity would require current mortgage payoff data from another source.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 5h18v14H3V5zm2 2v10h14V7H5zm2 2h4v2H7V9zm0 4h8v2H7v-2z"/></svg>
+        </div>
+        <div class="block-title">Property Record Snapshot</div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-item">
+          <div class="data-label">Property Type</div>
+          <div class="data-value" id="propertyType">--</div>
+          <div class="data-note">Matched directly from the RentCast property record.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Beds / Baths</div>
+          <div class="data-value" id="bedsBaths">--</div>
+          <div class="data-note">Interior layout used to anchor the valuation model.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Interior Size</div>
+          <div class="data-value" id="squareFootage">--</div>
+          <div class="data-note">Living area square footage on the matched property record.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Lot Size</div>
+          <div class="data-value" id="lotSize">--</div>
+          <div class="data-note">Lot size is shown when available in the underlying record.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Year Built</div>
+          <div class="data-value" id="yearBuilt">--</div>
+          <div class="data-note">Original construction year returned by RentCast.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">County / APN</div>
+          <div class="data-value" id="countyAndApn">--</div>
+          <div class="data-note">Parcel identifier is shown when the property record includes it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z"/></svg>
+        </div>
+        <div class="block-title">Value and Income Signals</div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-item">
+          <div class="data-label">Estimated Value Range</div>
+          <div class="data-value" id="valueRange">--</div>
+          <div class="data-note" id="valueRangeNote">Range based on the AVM response.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Estimated Rent Range</div>
+          <div class="data-value" id="rentRange">--</div>
+          <div class="data-note" id="rentRangeNote">Range based on the rent AVM response.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Gross Yield Estimate</div>
+          <div class="data-value" id="grossYield">--</div>
+          <div class="data-note">Annual rent divided by estimated value. This is a rough yield, not net cash flow.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Price per Square Foot</div>
+          <div class="data-value" id="pricePerFoot">--</div>
+          <div class="data-note">Estimated value normalized by the subject's recorded living area.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Last Recorded Sale</div>
+          <div class="data-value" id="lastSaleValue">--</div>
+          <div class="data-note" id="lastSaleNote">The most recent sale event returned on the property record.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Value Change Since Sale</div>
+          <div class="data-value" id="appreciationValue">--</div>
+          <div class="data-note" id="appreciationNote">Difference between the AVM and the last recorded sale price when available.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/></svg>
+        </div>
+        <div class="block-title">Comparable Properties</div>
+      </div>
+
+      <div class="comp-grid">
+        <div class="comp-card">
+          <h4 id="salesCompHeading">Comparable sales</h4>
+          <div class="comp-list" id="salesCompsList">
+            <div class="empty-state">Sales comparables will appear here after the RentCast value request completes.</div>
+          </div>
+        </div>
+        <div class="comp-card">
+          <h4 id="rentCompHeading">Comparable rentals</h4>
+          <div class="comp-list" id="rentCompsList">
+            <div class="empty-state">Rental comparables will appear here after the RentCast rent request completes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="snapshot-card fade-up">
+      <div class="snapshot-eyebrow">Actionable Next Step</div>
+      <div class="snapshot-headline" id="summaryHeadline">This report now shows only RentCast-backed property, valuation, rent, and comparable data.</div>
+      <div class="snapshot-sub" id="summarySub">If you later want true owner equity instead of market-value intelligence, we can add a second source for mortgage payoff data. For now, every number on this page comes from RentCast or direct math on RentCast responses.</div>
+      <a href="#step1" class="snapshot-cta">
+        Run Another Address
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="report-disclaimer">
+    <div class="disclaimer-text">
+      <strong>Important disclosure:</strong> This page now uses live RentCast data for property records, value estimates, rent estimates, and comparable properties. Derived metrics on the page are calculated directly from those RentCast responses. Automated valuations are still estimates and can differ from an appraisal, lender payoff, or broker opinion. Because this report is RentCast-only, it does not claim to know mortgage payoff or true owner equity.
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+const steps = ['astep1', 'astep2', 'astep3', 'astep4', 'astep5'];
+
+function resetStepClasses() {
+  steps.forEach((id) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active', 'done', 'error');
+  });
+}
+
+function setActiveStep(index) {
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active', 'done', 'error');
+    if (i < index) el.classList.add('done');
+    if (i === index) el.classList.add('active');
+  });
+}
+
+function failStep(index) {
+  steps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+    if (i < index) el.classList.add('done');
+    if (i === index) el.classList.add('error');
+  });
+}
+
+function formatCurrency(value, compact = false) {
+  if (value == null || Number.isNaN(Number(value))) return '--';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+    notation: compact ? 'compact' : 'standard'
+  }).format(Number(value));
+}
+
+function formatNumber(value) {
+  if (value == null || Number.isNaN(Number(value))) return '--';
+  return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Number(value));
+}
+
+function formatPercent(value) {
+  if (value == null || Number.isNaN(Number(value))) return '--';
+  return `${Number(value).toFixed(1)}%`;
+}
+
+function formatDate(value) {
+  if (!value) return '--';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '--';
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+}
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function buildCompMarkup(items, emptyMessage) {
+  if (!items || !items.length) {
+    return `<div class="empty-state">${emptyMessage}</div>`;
+  }
+
+  return items.map((item) => `
+    <div class="comp-item">
+      <div class="comp-item-top">
+        <div class="comp-price">${item.priceLabel || '--'}</div>
+        <div class="comp-distance">${item.distanceLabel || 'Distance unavailable'}</div>
+      </div>
+      <div class="comp-address">${item.address || 'Comparable property'}</div>
+      <div class="comp-meta">${item.meta || 'No additional details returned.'}</div>
+    </div>
+  `).join('');
+}
+
+function animateFadeIns() {
+  const fadeEls = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), index * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach((el) => observer.observe(el));
+}
+
+function revealReportSection() {
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  animateFadeIns();
+}
+
+function updateEquityVisualization(valueEstimate, lowEstimate, highEstimate) {
+  const circumference = 377;
+  const marketValue = Number(valueEstimate) || 0;
+  const low = Number(lowEstimate) || 0;
+  const high = Number(highEstimate) || 0;
+  const spreadPct = marketValue > 0 && high >= low ? ((high - low) / marketValue) * 100 : 0;
+  const midpointPosition = marketValue > 0 ? ((marketValue - low) / Math.max(high - low, 1)) * 100 : 0;
+  const primaryArc = Math.round((Math.min(Math.max(midpointPosition, 0), 100) / 100) * circumference);
+  const secondaryArc = Math.max(circumference - primaryArc, 0);
+
+  setText('equityMarketValue', formatCurrency(marketValue));
+  setText('equityMortgage', formatCurrency(low));
+  setText('equityValue', formatCurrency(high));
+  setText('equityPercent', formatPercent(spreadPct));
+  setText('equityPercentLabel', 'Value range spread');
+  setText('equityHeadline', 'The point estimate sits inside the low-to-high range returned by RentCast.');
+  setText('equityAlertTitle', 'AVM range reflects estimate uncertainty');
+  setText('equityAlertText', `RentCast returned a value range from ${formatCurrency(low)} to ${formatCurrency(high)} around a point estimate of ${formatCurrency(marketValue)}.`);
+
+  document.getElementById('equityDonutPrimary').setAttribute('stroke-dasharray', `${primaryArc} ${circumference}`);
+  document.getElementById('equityDonutSecondary').setAttribute('stroke-dasharray', `${secondaryArc} ${circumference}`);
+  document.getElementById('equityDonutSecondary').setAttribute('stroke-dashoffset', `-${primaryArc}`);
+}
+
+function applyReport(data) {
+  setText('reportTitle', data.property.shortAddress || data.property.addressLine || data.requestedAddress);
+  setText('reportAddress', data.property.fullAddress || data.requestedAddress);
+  setText('generatedAt', data.generatedAtLabel);
+  setText('dataSources', data.dataSourcesLabel);
+  setText('reportId', data.reportId);
+
+  setText('estimatedValue', formatCurrency(data.value.estimate));
+  setText('estimatedValueSub', data.value.summary || 'Live value estimate from RentCast.');
+  setText('estimatedRent', formatCurrency(data.rent.estimate));
+  setText('estimatedRentSub', data.rent.summary || 'Long-term rent estimate from comparable rentals.');
+
+  setText('propertyType', data.property.propertyType || '--');
+  setText('bedsBaths', data.property.bedsBaths || '--');
+  setText('squareFootage', data.property.squareFootageLabel || '--');
+  setText('lotSize', data.property.lotSizeLabel || '--');
+  setText('yearBuilt', data.property.yearBuiltLabel || '--');
+  setText('countyAndApn', data.property.countyApnLabel || '--');
+
+  setText('valueRange', data.value.rangeLabel || '--');
+  setText('valueRangeNote', data.value.rangeNote || 'Range based on the AVM response.');
+  setText('rentRange', data.rent.rangeLabel || '--');
+  setText('rentRangeNote', data.rent.rangeNote || 'Range based on the rent AVM response.');
+  setText('grossYield', data.derived.grossYieldLabel || '--');
+  setText('pricePerFoot', data.derived.pricePerSquareFootLabel || '--');
+  setText('lastSaleValue', data.property.lastSaleLabel || '--');
+  setText('lastSaleNote', data.property.lastSaleNote || 'The most recent sale event returned on the property record.');
+  setText('appreciationValue', data.derived.appreciationLabel || '--');
+  setText('appreciationNote', data.derived.appreciationNote || 'Difference between the AVM and the last recorded sale price when available.');
+
+  setText('salesCompHeading', `Comparable sales (${data.value.comparableCountLabel})`);
+  setText('rentCompHeading', `Comparable rentals (${data.rent.comparableCountLabel})`);
+  document.getElementById('salesCompsList').innerHTML = buildCompMarkup(
+    data.value.comparables,
+    'RentCast did not return sale comparables for this address.'
+  );
+  document.getElementById('rentCompsList').innerHTML = buildCompMarkup(
+    data.rent.comparables,
+    'RentCast did not return rental comparables for this address.'
+  );
+
+  setText('summaryHeadline', data.summary.headline);
+  setText('summarySub', data.summary.subline);
+
+  updateEquityVisualization(data.value.estimate, data.value.low, data.value.high);
+}
+
+async function saveHomeEquityReport(data) {
+  const supabase = window.homeEquitySupabase;
+  if (!supabase) return;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+
+  if (!userId) return;
+
+  const { error } = await supabase
+    .from('home_equity_reports')
+    .insert({
+      user_id: userId,
+      report_id: data.reportId,
+      requested_address: data.requestedAddress,
+      short_address: data.property.shortAddress || null,
+      full_address: data.property.fullAddress || null,
+      property_type: data.property.propertyType || null,
+      estimated_value: data.value.estimate ?? null,
+      estimated_rent: data.rent.estimate ?? null,
+      report_payload: data
+    });
+
+  if (error) {
+    console.error('Failed to save Home Equity report:', error);
+  }
+}
+
+async function hydrateLatestSavedReport() {
+  const supabase = window.homeEquitySupabase;
+  if (!supabase) return false;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+
+  if (!userId) return false;
+
+  const { data: savedReport, error } = await supabase
+    .from('home_equity_reports')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !savedReport?.report_payload) {
+    return false;
+  }
+
+  const addressInput = document.getElementById('addressInput');
+  if (addressInput && savedReport.requested_address) {
+    addressInput.value = savedReport.requested_address;
+  }
+
+  applyReport(savedReport.report_payload);
+  revealReportSection();
+  return true;
+}
+
+async function startAnalysis() {
+  const address = document.getElementById('addressInput').value.trim();
+  const formError = document.getElementById('formError');
+  const analyzeButton = document.getElementById('analyzeButton');
+
+  formError.style.display = 'none';
+  formError.textContent = '';
+
+  if (!address) {
+    formError.textContent = 'Enter a full U.S. property address before running the report.';
+    formError.style.display = 'block';
+    return;
+  }
+
+  analyzeButton.disabled = true;
+  document.getElementById('analyzingAddress').textContent = address;
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step3').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  resetStepClasses();
+  setActiveStep(0);
+
+  try {
+    const progressTimers = [
+      setTimeout(() => setActiveStep(1), 450),
+      setTimeout(() => setActiveStep(2), 900),
+      setTimeout(() => setActiveStep(3), 1350),
+      setTimeout(() => setActiveStep(4), 1800)
+    ];
+
+    const response = await fetch('/api/rentcast/home-equity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address })
+    });
+
+    progressTimers.forEach((timer) => clearTimeout(timer));
+
+    if (!response.ok) {
+      const errorPayload = await response.json().catch(() => ({}));
+      throw new Error(errorPayload.error || 'The RentCast request failed.');
+    }
+
+    const payload = await response.json();
+    setActiveStep(5);
+    applyReport(payload);
+    await saveHomeEquityReport(payload);
+
+    setTimeout(() => {
+      steps.forEach((id) => document.getElementById(id).classList.remove('active'));
+      steps.forEach((id) => document.getElementById(id).classList.add('done'));
+      revealReportSection();
+    }, 250);
+  } catch (error) {
+    failStep(0);
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    formError.textContent = error.message || 'Unable to generate the report right now.';
+    formError.style.display = 'block';
+  } finally {
+    analyzeButton.disabled = false;
+  }
+}
+
+window.startAnalysis = startAnalysis;
+window.hydrateLatestSavedHomeEquityReport = hydrateLatestSavedReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.homeEquitySupabase = supabase;
+
+const reportMode = new URLSearchParams(window.location.search).get('report');
+
+if (reportMode === 'latest' && window.hydrateLatestSavedHomeEquityReport) {
+  await window.hydrateLatestSavedHomeEquityReport();
+}
+</script>
+</body>
+</html>

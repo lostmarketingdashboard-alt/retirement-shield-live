@@ -55,6 +55,12 @@ export const ssr = false;
         return
       }
 
+      if (profile.role === 'user' && !profile.paid) {
+        await supabase.auth.signOut()
+        window.location.href = '/login?payment=required'
+        return
+      }
+
       initializePortal(user, profile)
     })
 
@@ -141,6 +147,7 @@ export const ssr = false;
   <button class="tab" data-tab="team">Your Team</button>
   <button class="tab" data-tab="timeline">Timeline</button>
   <button class="tab" data-tab="documents">Documents</button>
+  <button class="tab" data-tab="tools">Tools</button>
 `}
             </div>
             <div class="tab-underline"></div>
@@ -283,7 +290,71 @@ export const ssr = false;
         }
 
         // --- DOCUMENTS TAB FUNCTIONALITY ---
-        function renderDocuments() {
+        async function renderDocuments() {
+          const { data: familyPlanQuizReport } = await supabase
+            .from('family-plan-quiz-data')
+            .select('created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: widowsPlaybookReport } = await supabase
+            .from('widows_playbook_reports')
+            .select('created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const widowsReportResolved = widowsPlaybookReport || (await supabase
+            .from('widows-playbook-data')
+            .select('created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()).data
+
+          const { data: homeEquityReport } = await supabase
+            .from('home_equity_reports')
+            .select('created_at, full_address')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: emergencyBinderReport } = await supabase
+            .from('emergency_binder_reports')
+            .select('created_at, report_title, household_label, state_name')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: retirementPaycheckReport } = await supabase
+            .from('retirement_paycheck_reports')
+            .select('created_at, report_title, full_name, county_name, state_name')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: retirementRunwayReport } = await supabase
+            .from('retirement_runway_reports')
+            .select('created_at, report_title, full_name, county_name, state_name')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: incomeShieldReport } = await supabase
+            .from('income_shield_reports')
+            .select('created_at, report_title, full_name, county_name, state_name')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
           contentDiv.innerHTML = `
             <div class="doc-card">
               <div class="doc-header">
@@ -306,11 +377,221 @@ export const ssr = false;
                 <button class="view-pdf-btn" id="viewPdfBtn">View My PDF</button>
               </div>
             </div>
+
+            ${familyPlanQuizReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🛡️</div>
+                  <div>
+                    <h3>Is Your Family's Plan Actually Ready?</h3>
+                    <div class="doc-meta">Generated ${new Date(familyPlanQuizReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · Family Readiness Quiz Results</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your completed Family Plan Quiz is saved and ready to review.
+                    Open it to jump directly to the finished results.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewFamilyPlanQuizBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${widowsReportResolved ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🕊️</div>
+                  <div>
+                    <h3>The Widow's Playbook</h3>
+                    <div class="doc-meta">Generated ${new Date(widowsReportResolved.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · Surviving Spouse Financial Survival Report</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Widow's Playbook report is ready to review. Open it to jump
+                    directly to the completed report with your previously entered information.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewWidowsPlaybookBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${homeEquityReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🏠</div>
+                  <div>
+                    <h3>Home Equity Intelligence Report</h3>
+                    <div class="doc-meta">Generated ${new Date(homeEquityReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${homeEquityReport.full_address ?? 'Saved RentCast property report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Home Equity Intelligence Report is ready to review.
+                    Open it to jump directly to the latest RentCast-backed report for this property.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewHomeEquityBtn">Open Report</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${emergencyBinderReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📘</div>
+                  <div>
+                    <h3>The "After I'm Gone" Emergency Binder</h3>
+                    <div class="doc-meta">Generated ${new Date(emergencyBinderReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${emergencyBinderReport.household_label ?? emergencyBinderReport.state_name ?? 'Saved binder report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Emergency Binder is ready to review.
+                    Open it to jump directly to the completed binder report with your saved responses.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewEmergencyBinderBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${retirementPaycheckReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">💵</div>
+                  <div>
+                    <h3>Your Retirement Paycheck</h3>
+                    <div class="doc-meta">Generated ${new Date(retirementPaycheckReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${retirementPaycheckReport.full_name ?? retirementPaycheckReport.county_name ?? 'Saved dividend income report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Dividend Income X-Ray is ready to review.
+                    Open it to jump directly to the completed retirement paycheck report.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewRetirementPaycheckBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${retirementRunwayReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🛫</div>
+                  <div>
+                    <h3>The Retirement Runway</h3>
+                    <div class="doc-meta">Generated ${new Date(retirementRunwayReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${retirementRunwayReport.full_name ?? retirementRunwayReport.county_name ?? 'Saved runway report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Retirement Runway report is ready to review.
+                    Open it to jump directly to the completed money-lasts-until summary.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewRetirementRunwayBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${incomeShieldReport ? `
+              <div class="doc-card" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🧱</div>
+                  <div>
+                    <h3>The Income Shield</h3>
+                    <div class="doc-meta">Generated ${new Date(incomeShieldReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${incomeShieldReport.full_name ?? incomeShieldReport.county_name ?? 'Saved income stress report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Income Shield report is ready to review.
+                    Open it to jump directly to the completed retirement income stress test.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewIncomeShieldBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
           `
           const pdfBtn = document.getElementById('viewPdfBtn')
           if (pdfBtn) {
             pdfBtn.addEventListener('click', () => {
               window.location.href = `/EstatePlanningAssessmentpdf/${user.id}`
+            })
+          }
+
+          const familyPlanQuizBtn = document.getElementById('viewFamilyPlanQuizBtn')
+          if (familyPlanQuizBtn) {
+            familyPlanQuizBtn.addEventListener('click', () => {
+              window.location.href = `/family-plan-quiz?utm=${user.id}&report=latest`
+            })
+          }
+
+          const widowsPlaybookBtn = document.getElementById('viewWidowsPlaybookBtn')
+          if (widowsPlaybookBtn) {
+            widowsPlaybookBtn.addEventListener('click', () => {
+              window.location.href = `/widows-playbook?utm=${user.id}&report=latest`
+            })
+          }
+
+          const homeEquityBtn = document.getElementById('viewHomeEquityBtn')
+          if (homeEquityBtn) {
+            homeEquityBtn.addEventListener('click', () => {
+              window.location.href = `/home-equity?utm=${user.id}&report=latest`
+            })
+          }
+
+          const emergencyBinderBtn = document.getElementById('viewEmergencyBinderBtn')
+          if (emergencyBinderBtn) {
+            emergencyBinderBtn.addEventListener('click', () => {
+              window.location.href = `/emergency-binder-generator?utm=${user.id}&report=latest`
+            })
+          }
+
+          const retirementPaycheckBtn = document.getElementById('viewRetirementPaycheckBtn')
+          if (retirementPaycheckBtn) {
+            retirementPaycheckBtn.addEventListener('click', () => {
+              window.location.href = `/retirement-paycheck?utm=${user.id}&report=latest`
+            })
+          }
+
+          const retirementRunwayBtn = document.getElementById('viewRetirementRunwayBtn')
+          if (retirementRunwayBtn) {
+            retirementRunwayBtn.addEventListener('click', () => {
+              window.location.href = `/retirement-runway?utm=${user.id}&report=latest`
+            })
+          }
+
+          const incomeShieldBtn = document.getElementById('viewIncomeShieldBtn')
+          if (incomeShieldBtn) {
+            incomeShieldBtn.addEventListener('click', () => {
+              window.location.href = `/income-shield-test?utm=${user.id}&report=latest`
             })
           }
         }
@@ -400,6 +681,274 @@ export const ssr = false;
           `
         }
 
+        async function renderTools() {
+          const { data: familyPlanQuizReport } = await supabase
+            .from('family-plan-quiz-data')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: widowsPlaybookReport } = await supabase
+            .from('widows_playbook_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const widowsReportResolved = widowsPlaybookReport || (await supabase
+            .from('widows-playbook-data')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()).data
+
+          const { data: homeEquityReport } = await supabase
+            .from('home_equity_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: emergencyBinderReport } = await supabase
+            .from('emergency_binder_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: retirementPaycheckReport } = await supabase
+            .from('retirement_paycheck_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: retirementRunwayReport } = await supabase
+            .from('retirement_runway_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          const { data: incomeShieldReport } = await supabase
+            .from('income_shield_reports')
+            .select('id')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <div class="doc-header">
+                <div class="doc-icon">🧰</div>
+                <div>
+                  <h3>Tools</h3>
+                  <div class="doc-meta">Helpful retirement tools for your plan</div>
+                </div>
+              </div>
+
+              <div class="doc-body tools-body">
+                <div class="tools-grid">
+                  ${[
+                    {
+                      icon: '🛡️',
+                      name: `Is Your Family's Plan Actually Ready?`,
+                      description: '',
+                      action: familyPlanQuizReport ? 'Completed' : 'Open Tool',
+                      href: familyPlanQuizReport ? '' : `/family-plan-quiz?utm=${user.id}`,
+                      completed: Boolean(familyPlanQuizReport),
+                      targetTab: familyPlanQuizReport ? 'documents' : '',
+                      restartHref: familyPlanQuizReport ? `/family-plan-quiz?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '🕊️',
+                      name: `The Widow's Playbook — The Surviving Spouse Financial Survival Report`,
+                      description: '',
+                      action: widowsReportResolved ? 'Completed' : 'Open Tool',
+                      href: widowsReportResolved ? '' : `/widows-playbook?utm=${user.id}`,
+                      completed: Boolean(widowsReportResolved),
+                      targetTab: widowsReportResolved ? 'documents' : '',
+                      restartHref: widowsReportResolved ? `/widows-playbook?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '🏠',
+                      name: `What's Your Home Really Doing For Your Retirement? — The Home Equity Intelligence Report`,
+                      description: '',
+                      action: homeEquityReport ? 'Completed' : 'Open Tool',
+                      href: homeEquityReport ? '' : `/home-equity?utm=${user.id}`,
+                      completed: Boolean(homeEquityReport),
+                      targetTab: homeEquityReport ? 'documents' : '',
+                      restartHref: homeEquityReport ? `/home-equity?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '📘',
+                      name: `The "After I'm Gone" Emergency Binder Generator`,
+                      description: '',
+                      action: emergencyBinderReport ? 'Completed' : 'Open Tool',
+                      href: emergencyBinderReport ? '' : `/emergency-binder-generator?utm=${user.id}`,
+                      completed: Boolean(emergencyBinderReport),
+                      targetTab: emergencyBinderReport ? 'documents' : '',
+                      restartHref: emergencyBinderReport ? `/emergency-binder-generator?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '💵',
+                      name: 'Your Retirement Paycheck — The Dividend Income X-Ray',
+                      description: '',
+                      action: retirementPaycheckReport ? 'Completed' : 'Open Tool',
+                      href: retirementPaycheckReport ? '' : `/retirement-paycheck?utm=${user.id}`,
+                      completed: Boolean(retirementPaycheckReport),
+                      targetTab: retirementPaycheckReport ? 'documents' : '',
+                      restartHref: retirementPaycheckReport ? `/retirement-paycheck?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '🛫',
+                      name: 'The Retirement Runway — Personalized Money-Lasts-Until Tracker',
+                      description: '',
+                      action: retirementRunwayReport ? 'Completed' : 'Open Tool',
+                      href: retirementRunwayReport ? '' : `/retirement-runway?utm=${user.id}`,
+                      completed: Boolean(retirementRunwayReport),
+                      targetTab: retirementRunwayReport ? 'documents' : '',
+                      restartHref: retirementRunwayReport ? `/retirement-runway?utm=${user.id}` : ''
+                    },
+
+                    {
+                      icon: '🧱',
+                      name: 'The Income Shield — Retirement Income Stress Test & Rebalancing Alerts',
+                      description: '',
+                      action: incomeShieldReport ? 'Completed' : 'Open Tool',
+                      href: incomeShieldReport ? '' : `/income-shield-test?utm=${user.id}`,
+                      completed: Boolean(incomeShieldReport),
+                      targetTab: incomeShieldReport ? 'documents' : '',
+                      restartHref: incomeShieldReport ? `/income-shield-test?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '🔎',
+                      name: 'Unclaimed Property Finder',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '📉',
+                      name: 'The Inflation Erosion Visualizer',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '🗓️',
+                      name: 'RMD Calendar + Tax Impact Estimator',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                   
+                    
+                  
+                    {
+                      icon: '📍',
+                      name: 'Should You Move? — The Retirement Relocation Calculator',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    
+                    {
+                      icon: '📄',
+                      name: 'Is Your Annuity Ripping You Off? — The Annuity X-Ray Report',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '⚖️',
+                      name: 'The Inheritance Collision Report — The Blended Family Estate Conflict Detector',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '⏱️',
+                      name: 'The 72-Hour Checklist — The Personalized After-Death Action Plan',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '📰',
+                      name: 'The Shield Brief — Your Monthly Retirement Intelligence Report',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '📈',
+                      name: 'Dividend Watch — Retirement Income Portfolio Monitor',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '⚠️',
+                      name: 'IRMAA Guard — Medicare Premium Surcharge Early Warning System',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    },
+                    {
+                      icon: '🏛️',
+                      name: 'Estate Watch — State Law Change Tracker & Plan Review Alerts',
+                      description: 'Coming soon',
+                      action: 'Coming Soon'
+                    }
+                  ].map(tool => `
+                    <article class="tool-card">
+                      <div class="tool-card-top">
+                        <div class="tool-card-head">
+                          <div class="tool-badge">${tool.icon}</div>
+                          ${tool.completed ? `<button class="tool-restart-btn" data-restart-href="${tool.restartHref ?? ''}">Restart</button>` : ''}
+                        </div>
+                        <div class="tool-copy">
+                          <h4>${tool.name}</h4>
+                          <p>${tool.description}</p>
+                        </div>
+                      </div>
+                      <button class="launch-tool-btn ${tool.completed ? 'completed' : ''}" data-tool="${tool.name}" data-href="${tool.href ?? ''}" data-target-tab="${tool.targetTab ?? ''}">${tool.completed ? '✓ Completed' : tool.action}</button>
+                    </article>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `
+
+          document.querySelectorAll('.launch-tool-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              if (btn.dataset.targetTab === 'documents') {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+                const documentsTab = document.querySelector('.tab[data-tab="documents"]')
+                if (documentsTab) documentsTab.classList.add('active')
+                await renderDocuments()
+                return
+              }
+
+              if (btn.dataset.href) {
+                window.location.href = btn.dataset.href
+                return
+              }
+
+              const toolName = btn.dataset.tool
+              alert(`${toolName} is coming soon.`)
+            })
+          })
+
+          document.querySelectorAll('.tool-restart-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              if (btn.dataset.restartHref) {
+                window.location.href = btn.dataset.restartHref
+              }
+            })
+          })
+        }
+
         function attachEvents() {
           document.querySelectorAll('.plan-header').forEach(h => {
             h.onclick = () => {
@@ -460,6 +1009,7 @@ export const ssr = false;
             if (type === 'documents') renderDocuments()
             if (type === 'team') renderTeam()
             if (type === 'timeline') renderTimeline()
+            if (type === 'tools') renderTools()
           })
         })
       }
@@ -1790,6 +2340,77 @@ modal.querySelectorAll('textarea').forEach(field => {
     width: 100%;
   }
 
+  .tools-body {
+    padding-top: 0;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .tool-card {
+    min-height: 0;
+    padding: 16px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .tool-card-top {
+    gap: 12px;
+  }
+
+  .tool-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tool-copy {
+    width: 100%;
+  }
+
+  .tool-copy h4 {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .tool-restart-btn {
+    align-self: flex-start;
+  }
+
+  .tool-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .tool-copy h4 {
+    font-size: 17px;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  .tool-copy p {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .launch-tool-btn {
+    width: 100%;
+    padding: 13px 16px;
+    font-size: 13px;
+    border-radius: 14px;
+  }
+
+  .tool-restart-btn {
+    padding: 7px 12px;
+    font-size: 11px;
+    margin-left: 0;
+  }
+
   /* ADMIN USERS */
   .user-row {
     flex-direction: column !important;
@@ -2442,6 +3063,134 @@ modal.querySelectorAll('textarea').forEach(field => {
       box-shadow: 0 10px 30px rgba(200,130,26,.3);
     }
 
+    .tools-body {
+      padding-top: 8px;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .tool-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 244px;
+      padding: 22px;
+      border-radius: 18px;
+      border: 1px solid var(--rule-light);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(245,240,232,0.96) 100%);
+      box-shadow: 0 16px 40px rgba(13,27,42,0.08);
+    }
+
+    .tool-card-top {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .tool-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 16px;
+    }
+
+    .tool-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      background: linear-gradient(135deg, rgba(13,27,42,0.08), rgba(200,130,26,0.2));
+      box-shadow: inset 0 0 0 1px rgba(200,130,26,0.18);
+    }
+
+    .tool-copy h4 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      line-height: 1.35;
+      font-family: 'Playfair Display', serif;
+      color: var(--navy);
+    }
+
+    .tool-copy p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .launch-tool-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      box-shadow: 0 14px 30px rgba(13,27,42,0.2);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    }
+
+    .launch-tool-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow: 0 18px 36px rgba(13,27,42,0.24);
+    }
+
+    .launch-tool-btn.completed {
+      background: linear-gradient(135deg, #2d6a4f 0%, #40916c 100%);
+      box-shadow: 0 14px 30px rgba(45,106,79,0.22);
+    }
+
+    .launch-tool-btn.completed:hover {
+      box-shadow: 0 18px 36px rgba(45,106,79,0.28);
+    }
+
+    .launch-tool-btn:active {
+      transform: translateY(0);
+    }
+
+    .tool-restart-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(26,46,69,0.18);
+      background: linear-gradient(135deg, #d88924 0%, #e8a840 100%);
+      color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 10px 22px rgba(216,137,36,0.22);
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .tool-restart-btn:hover {
+      border-color: #c8821a;
+      color: var(--white);
+      background: linear-gradient(135deg, #c8821a 0%, #d88924 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(216,137,36,0.28);
+    }
+
     /* =========================
        BUTTON STYLING (ADMIN)
     ========================== */
@@ -2482,6 +3231,162 @@ modal.querySelectorAll('textarea').forEach(field => {
       background: #932f2f;
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(0,0,0,.15);
+    }
+
+    @media (max-width: 768px) {
+      .portal-nav {
+        height: auto;
+        padding: 18px 16px 18px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        background:
+          radial-gradient(circle at top, rgba(232,168,64,0.12), transparent 38%),
+          linear-gradient(180deg, #0f1d2d 0%, #132338 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 16px 40px rgba(7,14,22,0.28);
+      }
+
+      .nav-left {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+        padding: 0;
+        margin-bottom: 8px;
+      }
+
+      .shield-icon {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--amber-light), var(--amber));
+        box-shadow: 0 0 0 6px rgba(232,168,64,0.12);
+      }
+
+      .brand {
+        font-size: 20px;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        text-align: center;
+      }
+
+      .nav-right {
+        grid-column: 1 / -1;
+        width: min(90vw, calc(100vw - 32px));
+        max-width: min(90vw, calc(100vw - 32px));
+        display: block;
+        margin: 0 auto;
+        justify-self: stretch;
+        align-self: stretch;
+        min-width: 0;
+      }
+
+      .user-menu {
+        grid-column: 1 / -1;
+        width: min(90vw, calc(100vw - 32px));
+        max-width: min(90vw, calc(100vw - 32px));
+        min-width: 0;
+        box-sizing: border-box;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 12px 14px;
+        align-items: center;
+        padding: 14px;
+        border-radius: 22px;
+        margin: 0 auto;
+        justify-self: stretch;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.05) 100%);
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      }
+
+      .avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 15px;
+        box-shadow: 0 0 0 4px rgba(232,168,64,0.14);
+      }
+
+      .user-info {
+        display: flex;
+        min-width: 0;
+      }
+
+      .user-name {
+        font-size: 16px;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .user-role {
+        font-size: 10px;
+        letter-spacing: 1.4px;
+        margin-top: 4px;
+      }
+
+      .logout-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 42px;
+        border-radius: 14px;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--white);
+        border-color: rgba(232,168,64,0.28);
+        background: rgba(232,168,64,0.08);
+      }
+
+      .content-wrap {
+        padding: 0 12px;
+        margin: 24px auto 56px;
+      }
+
+      .doc-card {
+        padding: 22px 16px;
+        border-radius: 18px;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .tool-card {
+        min-height: 0;
+        padding: 16px;
+        gap: 14px;
+      }
+
+      .tool-card-head {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .tool-copy {
+        width: 100%;
+      }
+
+      .tool-copy h4 {
+        font-size: 17px;
+        line-height: 1.35;
+        margin-bottom: 6px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .tool-restart-btn {
+        align-self: flex-start;
+        margin-left: 0;
+      }
+
+      .launch-tool-btn {
+        width: 100%;
+      }
     }
 </style>
 </body>

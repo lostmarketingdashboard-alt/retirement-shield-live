@@ -1,0 +1,2491 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Widow's Playbook — Retirement Shield</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-pale: #F5EDD6;
+  --gold-glow: rgba(201, 168, 76, 0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --blue: #2980B9;
+  --blue-bg: #EBF5FB;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15, 31, 61, 0.08);
+  --shadow-lg: 0 8px 40px rgba(15, 31, 61, 0.12);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════ */
+.site-header {
+  background: var(--navy);
+  padding: 0 32px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.shield-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(15,31,61,0.08);
+}
+
+.shield-icon::before {
+  content: '';
+  width: 14px;
+  height: 16px;
+  background: var(--navy);
+  clip-path: polygon(50% 0%, 92% 18%, 86% 72%, 50% 100%, 14% 72%, 8% 18%);
+}
+
+.brand {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.brand span { color: var(--gold); }
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+/* ═══════════════════════════════════════
+   STEP 1: INTAKE FORM
+   ═══════════════════════════════════════ */
+.intake-section {
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.intake-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(201,168,76,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(201,168,76,0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.intake-container {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  width: 100%;
+}
+
+.intake-header { text-align: center; margin-bottom: 40px; }
+
+.intake-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 100px;
+  padding: 8px 20px;
+  margin-bottom: 24px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.intake-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.intake-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.intake-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
+  max-width: 460px;
+  margin: 0 auto;
+  font-weight: 300;
+}
+
+/* Form card */
+.form-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 36px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+}
+
+.form-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+}
+
+.progress-dot {
+  flex: 1;
+  height: 3px;
+  background: var(--cream-dark);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.progress-dot.active { background: var(--gold); }
+.progress-dot.done { background: var(--navy); }
+
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+
+/* Form elements */
+.field-group { margin-bottom: 20px; }
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.field-input:focus { border-color: var(--gold); }
+
+.field-help {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+:global(#sourceSpecificFields) {
+  margin-top: 18px;
+  width: 100%;
+  max-width: 340px;
+}
+
+:global(#sourceSpecificFields .field-label) {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+:global(#sourceSpecificFields .field-row) {
+  display: block;
+}
+
+:global(#sourceSpecificFields .field-group) {
+  margin-bottom: 14px;
+}
+
+:global(#sourceSpecificFields .field-input) {
+  width: 100%;
+  max-width: 340px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-dark);
+  background: var(--cream);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  min-height: 0;
+  height: 48px;
+  line-height: 1.2;
+}
+
+:global(#sourceSpecificFields .field-input:focus) {
+  border-color: var(--gold);
+  box-shadow: none;
+}
+
+:global(#sourceSpecificFields .field-input::placeholder) {
+  color: var(--text-light);
+}
+
+:global(#sourceSpecificFields .field-help) {
+  margin-top: 8px;
+  max-width: 340px;
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.55;
+}
+
+:global(#sourceSpecificFields .ss-input-label) {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-mid);
+  margin-bottom: 5px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+select.field-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237A7A7A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+/* Radio cards */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.radio-card {
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  background: var(--cream);
+}
+
+.radio-card:hover { border-color: var(--gold); }
+
+.radio-card.selected {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.radio-card input { display: none; }
+
+.radio-card-icon { font-size: 22px; margin-bottom: 4px; }
+
+.radio-card-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.radio-card-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* Buttons */
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn-back {
+  padding: 14px 24px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover { border-color: var(--text-mid); }
+
+.btn-next {
+  flex: 1;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 6px;
+  background: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-next:hover { background: var(--gold-light); }
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.form-footer svg { width: 12px; height: 12px; fill: rgba(255,255,255,0.3); }
+
+/* ═══════════════════════════════════════
+   STEP 2: ANALYZING
+   ═══════════════════════════════════════ */
+.analyzing-section {
+  display: none;
+  background: var(--navy);
+  padding: 100px 32px 120px;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.analyzing-content { max-width: 480px; margin: 0 auto; }
+
+.heart-monitor {
+  width: 200px;
+  height: 100px;
+  margin: 0 auto 48px;
+  position: relative;
+}
+
+.heart-monitor svg {
+  width: 100%;
+  height: 100%;
+}
+
+.monitor-line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawLine 3s ease-in-out infinite;
+}
+
+@keyframes drawLine {
+  0% { stroke-dashoffset: 600; }
+  50% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -600; }
+}
+
+.monitor-glow {
+  fill: none;
+  stroke: rgba(201,168,76,0.2);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawLine 3s ease-in-out infinite;
+}
+
+.analyzing-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.analyzing-sub {
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 48px;
+  font-weight: 500;
+}
+
+.analysis-steps { text-align: left; }
+
+.a-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  opacity: 0.25;
+  transition: opacity 0.4s;
+}
+
+.a-step.active { opacity: 1; }
+.a-step.done { opacity: 0.55; }
+
+.a-step-ind {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(201,168,76,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.a-step.active .a-step-ind { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+.a-step.done .a-step-ind { border-color: var(--green); background: rgba(39,174,96,0.12); }
+
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+
+.a-step.active .spinner { display: block; }
+
+.check-svg {
+  display: none;
+  width: 12px; height: 12px;
+  fill: none;
+  stroke: var(--green);
+  stroke-width: 3;
+}
+
+.a-step.done .check-svg { display: block; }
+
+.a-step-text { font-size: 14px; color: rgba(255,255,255,0.6); }
+.a-step.active .a-step-text { color: var(--white); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════
+   STEP 3: THE REPORT
+   ═══════════════════════════════════════ */
+.report-section { display: none; }
+
+/* Report header — darker, more serious */
+.report-header {
+  background: linear-gradient(180deg, #0A1628 0%, var(--navy) 100%);
+  padding: 64px 32px 52px;
+  position: relative;
+}
+
+.report-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 20%, var(--gold) 80%, transparent 100%);
+}
+
+.rh-inner { max-width: 900px; margin: 0 auto; }
+
+.rh-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rh-label::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.rh-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.rh-title em { font-style: italic; color: var(--gold); }
+
+.rh-address {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 28px;
+}
+
+.rh-meta {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+}
+
+.rh-meta strong { color: rgba(255,255,255,0.6); font-weight: 500; }
+
+/* Report body */
+.report-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+/* Income drop hero */
+.income-drop-hero {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 36px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.income-drop-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, var(--red), var(--amber));
+}
+
+.idh-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+
+.idh-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 24px;
+}
+
+.income-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  height: 200px;
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+
+.income-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.bar-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.bar-amount.reduced { color: var(--red); }
+
+.bar-visual {
+  width: 100%;
+  max-width: 120px;
+  border-radius: 6px 6px 0 0;
+  transition: height 1s ease-out;
+  position: relative;
+}
+
+.bar-visual.before {
+  background: linear-gradient(180deg, var(--gold), #B8942F);
+  height: 0;
+}
+
+.bar-visual.after {
+  background: linear-gradient(180deg, var(--red), #962D22);
+  height: 0;
+}
+
+.bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-top: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.drop-callout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--red-bg);
+  border-radius: 8px;
+  border: 1px solid rgba(192,57,43,0.12);
+}
+
+.drop-arrow {
+  width: 40px;
+  height: 40px;
+  background: rgba(192,57,43,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--red);
+  font-weight: 700;
+}
+
+.drop-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.drop-text strong {
+  color: var(--red);
+  font-size: 22px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+.drop-text span { display: block; font-size: 12px; color: var(--text-light); }
+
+/* Sections */
+.report-block { margin-bottom: 40px; }
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.block-icon {
+  width: 36px; height: 36px;
+  background: var(--gold-glow);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-icon svg { width: 18px; height: 18px; fill: var(--gold); }
+.block-icon.danger { background: rgba(192,57,43,0.08); }
+.block-icon.danger svg { fill: var(--red); }
+.block-icon.blue { background: rgba(41,128,185,0.08); }
+.block-icon.blue svg { fill: var(--blue); }
+
+.block-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* Data grid */
+.data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.data-item {
+  background: var(--white);
+  border-radius: 8px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+}
+
+.data-item.full { grid-column: 1 / -1; }
+
+.data-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+
+.data-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  font-family: 'Playfair Display', serif;
+}
+
+.data-note {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+  line-height: 1.55;
+}
+
+/* Alert cards */
+.alert-card {
+  border-radius: 8px;
+  padding: 18px 22px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.alert-card.danger { background: var(--red-bg); border: 1px solid rgba(192,57,43,0.12); }
+.alert-card.warning { background: var(--amber-bg); border: 1px solid rgba(230,126,34,0.12); }
+.alert-card.safe { background: var(--green-bg); border: 1px solid rgba(39,174,96,0.12); }
+.alert-card.info { background: var(--blue-bg); border: 1px solid rgba(41,128,185,0.12); }
+
+.alert-icon {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.alert-card.danger .alert-icon { background: rgba(192,57,43,0.1); color: var(--red); }
+.alert-card.warning .alert-icon { background: rgba(230,126,34,0.1); color: var(--amber); }
+.alert-card.safe .alert-icon { background: rgba(39,174,96,0.1); color: var(--green); }
+.alert-card.info .alert-icon { background: rgba(41,128,185,0.1); color: var(--blue); }
+
+.alert-title { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.alert-card.danger .alert-title { color: var(--red); }
+.alert-card.warning .alert-title { color: var(--amber); }
+.alert-card.safe .alert-title { color: var(--green); }
+.alert-card.info .alert-title { color: var(--blue); }
+
+.alert-text { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+
+/* 72-hour checklist */
+.checklist-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.checklist-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.checklist-card .period {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.check-item:last-child { border-bottom: none; }
+
+.check-box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.check-text { font-size: 14px; color: var(--text-mid); }
+.check-text strong { color: var(--navy); font-weight: 600; }
+.check-text .why {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* Timeline visual */
+.ss-timeline {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.ss-timeline h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--navy);
+  margin-bottom: 20px;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.timeline-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.timeline-dot::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 5px;
+  width: 2px;
+  height: 28px;
+  background: var(--border);
+}
+
+.timeline-row:last-child .timeline-dot::after { display: none; }
+
+.tl-content { flex: 1; }
+
+.tl-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.tl-detail {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.tl-amount {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Bottom CTA */
+.cta-card {
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 44px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-top: 48px;
+}
+
+.cta-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+
+.cta-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.cta-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+  max-width: 540px;
+  margin: 0 auto 10px;
+}
+
+.cta-headline em { font-style: italic; color: var(--gold); }
+
+.cta-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 28px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 32px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cta-btn.primary {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.cta-btn.primary:hover { background: var(--gold-light); }
+
+.cta-btn.secondary {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.2);
+}
+
+.cta-btn.secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+.cta-btn svg { width: 16px; height: 16px; }
+
+/* Disclaimer */
+.report-disclaimer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 32px 48px;
+  border-top: 1px solid var(--border);
+}
+
+.disclaimer-text {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer-text strong { color: var(--text-mid); }
+
+/* Fade */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; min-height: 0; }
+  .brand { font-size: 18px; }
+  .intake-section { padding: 32px 16px; }
+  .form-card { padding: 24px 20px; }
+  .field-row { grid-template-columns: 1fr; }
+  .radio-group { grid-template-columns: 1fr 1fr; }
+  .data-grid { grid-template-columns: 1fr; }
+  .income-bars { gap: 16px; height: 160px; padding: 0; }
+  .report-body { padding: 32px 20px 60px; }
+  .report-header { padding: 40px 20px 36px; }
+  .cta-card { padding: 32px 20px; }
+  .cta-buttons { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <a href="/portal" class="nav-left">
+
+    <span class="brand">Retirement <span>Shield</span></span>
+  </a>
+
+</header>
+
+<!-- ═══ STEP 1: INTAKE FORM ═══ -->
+<section class="intake-section" id="step1">
+  <div class="intake-container">
+    <div class="intake-header">
+      <div class="intake-badge">Surviving Spouse Financial Report</div>
+      <h1 class="intake-title">The Widow's <em>Playbook</em></h1>
+      <p class="intake-sub">Answer four questions. We'll show you exactly what happens financially when one spouse dies — the income drop, the legal exposure, and the documents you'll need in the first 72 hours.</p>
+    </div>
+
+    <div class="form-card">
+      <div class="form-progress">
+        <div class="progress-dot active" id="pd1"></div>
+        <div class="progress-dot" id="pd2"></div>
+        <div class="progress-dot" id="pd3"></div>
+        <div class="progress-dot" id="pd4"></div>
+      </div>
+
+      <!-- Step 1: State + Names -->
+      <div class="form-step active" id="fs1">
+        <div class="step-label">Step 1 of 4</div>
+        <div class="step-question">Where do you live?</div>
+        <div class="field-group">
+          <label class="field-label">Your First Name</label>
+          <input type="text" class="field-input" id="firstName" value="Margaret" placeholder="First name" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">State of Primary Residence</label>
+          <select class="field-input" id="stateSelect">
+            <option value="">Select your state...</option>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="FL" selected>Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn-next" onclick="nextStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Ages -->
+      <div class="form-step" id="fs2">
+        <div class="step-label">Step 2 of 4</div>
+        <div class="step-question">How old are you and your spouse?</div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Your Age</label>
+            <input type="number" class="field-input" id="yourAge" value="67" placeholder="e.g. 67" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Spouse's Age</label>
+            <input type="number" class="field-input" id="spouseAge" value="71" placeholder="e.g. 71" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Who is the primary income earner?</label>
+          <div class="radio-group">
+            <label class="radio-card selected" onclick="selectRadio(this)">
+              <input type="radio" name="earner" value="spouse" checked />
+              <div class="radio-card-text">My Spouse</div>
+            </label>
+            <label class="radio-card" onclick="selectRadio(this)">
+              <input type="radio" name="earner" value="me" />
+              <div class="radio-card-text">Me</div>
+            </label>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="nextStep(1)">← Back</button>
+          <button class="btn-next" onclick="nextStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Income -->
+      <div class="form-step" id="fs3">
+        <div class="step-label">Step 3 of 4</div>
+        <div class="step-question">What's your combined household income?</div>
+        <div class="field-group">
+          <label class="field-label">Approximate Combined Monthly Income</label>
+          <input type="text" inputmode="numeric" class="field-input" id="monthlyIncome" value="$5,400" placeholder="e.g. $5,400" />
+          <div class="field-help">Enter your total monthly household income. We’ll format it for you automatically.</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Estimated Home Value (if owned)</label>
+          <input type="text" inputmode="numeric" class="field-input" id="homeValue" value="$340,000" placeholder="e.g. $340,000" />
+          <div class="field-help">Use an approximate current market value. You can enter numbers with or without commas.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="nextStep(2)">← Back</button>
+          <button class="btn-next" onclick="nextStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Income Source -->
+      <div class="form-step" id="fs4">
+        <div class="step-label">Step 4 of 4</div>
+        <div class="step-question">Where does most of your income come from?</div>
+        <div class="radio-group">
+          <label class="radio-card selected" onclick="selectRadio(this)">
+            <input type="radio" name="source" value="ss" checked />
+            <div class="radio-card-icon">🏛</div>
+            <div class="radio-card-text">Social Security</div>
+            <div class="radio-card-sub">Both spouses</div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="source" value="pension" />
+            <div class="radio-card-icon">📋</div>
+            <div class="radio-card-text">Pension</div>
+            <div class="radio-card-sub">Government or private</div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="source" value="investments" />
+            <div class="radio-card-icon">📈</div>
+            <div class="radio-card-text">Investments</div>
+            <div class="radio-card-sub">IRA/401k/dividends</div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this)">
+            <input type="radio" name="source" value="employment" />
+            <div class="radio-card-icon">💼</div>
+            <div class="radio-card-text">Employment</div>
+            <div class="radio-card-sub">Still working</div>
+          </label>
+        </div>
+        <div class="field-group" id="sourceSpecificFields" style="margin-top:18px;"></div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="nextStep(3)">← Back</button>
+          <button class="btn-next" onclick="generateReport()">Generate My Report →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Your information is used only for this report. Nothing is stored or shared.
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STEP 2: ANALYZING ═══ -->
+<section class="analyzing-section" id="step2">
+  <div class="analyzing-content">
+    <div class="heart-monitor">
+      <svg viewBox="0 0 200 80">
+        <path class="monitor-glow" d="M0 40 L30 40 L40 40 L50 15 L60 65 L70 30 L80 45 L90 40 L120 40 L130 40 L140 20 L150 60 L160 35 L170 42 L200 40"/>
+        <path class="monitor-line" d="M0 40 L30 40 L40 40 L50 15 L60 65 L70 30 L80 45 L90 40 L120 40 L130 40 L140 20 L150 60 L160 35 L170 42 L200 40"/>
+      </svg>
+    </div>
+    <div class="analyzing-title">Building Your Survival Report</div>
+    <div class="analyzing-sub" id="analyzingName">Personalized for Margaret · Florida</div>
+
+    <div class="analysis-steps">
+      <div class="a-step" id="as1">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text">Modeling Social Security survivor benefit...</div>
+      </div>
+      <div class="a-step" id="as2">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text">Calculating household income impact...</div>
+      </div>
+      <div class="a-step" id="as3">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text" id="analysisStateText">Loading Florida property and title laws...</div>
+      </div>
+      <div class="a-step" id="as4">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text">Checking Medicaid exposure for surviving spouse...</div>
+      </div>
+      <div class="a-step" id="as5">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text">Compiling your 72-hour action checklist...</div>
+      </div>
+      <div class="a-step" id="as6">
+        <div class="a-step-ind"><div class="spinner"></div><svg class="check-svg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <div class="a-step-text">Generating personalized PDF report...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STEP 3: THE REPORT ═══ -->
+<section class="report-section" id="step3">
+
+  <div class="report-header">
+    <div class="rh-inner">
+      <div class="rh-label">The Widow's Playbook — Surviving Spouse Financial Survival Report</div>
+      <div class="rh-title">Prepared for <em id="reportPreparedName">Margaret</em></div>
+      <div class="rh-address" id="reportSummary">State of Florida · Age 67 · Spouse Age 71 · Primary Income: Social Security</div>
+      <div class="rh-meta">
+        <div>Generated: <strong id="reportDate">April 9, 2026</strong></div>
+        <div>Sources: <strong id="reportSources">SSA Benefit Tables · FL Title XLII · CMS 2026</strong></div>
+        <div>Report ID: <strong id="reportId">RS-WPB-2026-04-3917</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-body">
+
+    <!-- INCOME DROP HERO -->
+    <div class="income-drop-hero fade-up">
+      <div class="idh-label">Critical Finding</div>
+      <div class="idh-title">If your spouse dies, your household income drops immediately.</div>
+
+      <div class="income-bars">
+        <div class="income-bar-group">
+          <div class="bar-amount" id="bothAliveAmount">$5,400</div>
+          <div class="bar-visual before" id="barBefore"></div>
+          <div class="bar-label">Both Alive</div>
+        </div>
+        <div class="income-bar-group">
+          <div class="bar-amount reduced" id="survivingAmount">$3,240</div>
+          <div class="bar-visual after" id="barAfter"></div>
+          <div class="bar-label">Surviving Spouse</div>
+        </div>
+      </div>
+
+      <div class="drop-callout">
+        <div class="drop-arrow">↓</div>
+        <div class="drop-text">
+          <strong id="incomeDropAmount">–$2,160/month</strong>
+          <span id="incomeDropDetail">40% income reduction · $25,920 less per year</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL SECURITY BREAKDOWN -->
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg></div>
+        <div class="block-title" id="incomeAnalysisTitle">Social Security Survivor Benefit Analysis</div>
+      </div>
+
+      <div class="ss-timeline">
+        <h4>How Your Benefits Change at Death</h4>
+        <div class="timeline-row">
+          <div class="timeline-dot" style="background: var(--gold);"></div>
+          <div class="tl-content">
+            <div class="tl-label">Today: Both Spouses Receiving Benefits</div>
+            <div class="tl-detail">Your benefit: <span class="tl-amount" id="yourBenefitAmount" style="color:var(--navy);">$1,800/mo</span> + Spouse's benefit: <span class="tl-amount" id="spouseBenefitAmount" style="color:var(--navy);">$2,640/mo</span></div>
+          </div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot" style="background: var(--red);"></div>
+          <div class="tl-content">
+            <div class="tl-label">After Spouse's Death: Smaller Check Eliminated</div>
+            <div class="tl-detail" id="survivorBenefitText">SSA pays one-time $255 lump sum death benefit. Spouse's check stops. You keep the <em>higher</em> of the two — <span class="tl-amount" id="survivorBenefitAmount" style="color:var(--green);">$2,640/mo</span> as your survivor benefit.</div>
+          </div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-dot" style="background: var(--amber);"></div>
+          <div class="tl-content">
+            <div class="tl-label">Net Monthly Loss</div>
+            <div class="tl-detail" id="lossBenefitText">Your original $1,800 benefit is replaced by $0. You keep one check, not two. <span class="tl-amount" id="lostBenefitAmount" style="color:var(--red);">–$1,800/mo gone permanently.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert-card danger">
+        <div class="alert-icon">!</div>
+        <div>
+          <div class="alert-title">The "Two Checks to One" Trap</div>
+          <div class="alert-text" id="trapAlertText">Most couples don't realize that Social Security survivor benefits replace the lower check entirely — not supplement it. At $2,160/month less in total household income (including other sources), your fixed expenses remain the same: mortgage, insurance, utilities, property tax. The income gap compounds immediately.</div>
+        </div>
+      </div>
+
+      <div class="alert-card info">
+        <div class="alert-icon">i</div>
+        <div>
+          <div class="alert-title">Delaying Could Have Increased This Number</div>
+          <div class="alert-text">If the higher-earning spouse had delayed claiming until age 70, the survivor benefit would have been approximately 76% higher than the age-62 amount. This decision is locked once benefits begin — but understanding the math now helps plan around the gap.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLORIDA-SPECIFIC PROPERTY -->
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="var(--gold)" stroke-width="1.5"/></svg></div>
+        <div class="block-title" id="propertyBlockTitle">What Happens to Your Home (Florida)</div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-item">
+          <div class="data-label">Homestead Exemption</div>
+          <div class="data-value" style="color:var(--green);">Unlimited</div>
+          <div class="data-note" id="homesteadNote">Florida offers unlimited value homestead protection from unsecured creditors (Art. X, §4, FL Constitution). Your $340,000 home is fully protected while you live in it.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Title Transfer at Death</div>
+          <div class="data-value" id="titleTransferValue">Life Estate</div>
+          <div class="data-note" id="titleTransferNote">Under FL intestacy, the surviving spouse receives a life estate in the homestead with remainder to descendants — not full ownership. If your children are from a prior marriage, this creates a "divided interest" situation.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label" id="planningToolLabel">Lady Bird Deed Available</div>
+          <div class="data-value" id="planningToolValue" style="color:var(--green);">Yes ✓</div>
+          <div class="data-note" id="planningToolNote">Florida is one of only 5 states allowing Enhanced Life Estate (Lady Bird) Deeds. This bypasses probate AND shields the home from Medicaid estate recovery. Recording cost: typically under $50.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Probate Required?</div>
+          <div class="data-value" id="probateStatus" style="color:var(--amber);">Likely</div>
+          <div class="data-note" id="probateNote">FL small estate threshold is $75,000. Your home value of $340,000 will likely trigger formal probate administration (FL Title XLII) unless a trust or Lady Bird Deed is in place.</div>
+        </div>
+      </div>
+
+      <div class="alert-card warning" style="margin-top: 14px;">
+        <div class="alert-icon">⚠</div>
+        <div>
+          <div class="alert-title" id="propertyAlertTitle">Florida Homestead Descent Restriction</div>
+          <div class="alert-text" id="propertyAlertText">Florida's constitution restricts how a married homeowner can dispose of the homestead at death. If you have children from a prior marriage, the surviving spouse cannot inherit the home outright — only a life estate. This means you can live there but cannot sell it, refinance it, or use the equity without court involvement. This catches Florida couples off guard constantly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDICAID EXPOSURE -->
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon danger"><svg viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg></div>
+        <div class="block-title">Medicaid Exposure as Surviving Spouse</div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-item">
+          <div class="data-label">Individual Asset Limit</div>
+          <div class="data-value" id="assetLimitValue">$2,000</div>
+          <div class="data-note" id="assetLimitNote">Once your spouse dies, CSRA spousal protections no longer apply. If you later need nursing home care, your countable assets must be at or below $2,000 to qualify for Medicaid.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label" id="incomeCapLabel">Income Cap (Florida)</div>
+          <div class="data-value" id="incomeCapValue">$2,982/mo</div>
+          <div class="data-note" id="incomeCapNote">Florida is an "income cap" state. If your survivor income of $2,640/mo is your only source, you are currently below the cap. Any additional income (pension, part-time work) could push you over — requiring a Miller Trust.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Home Equity Limit</div>
+          <div class="data-value" id="homeEquityValue">$752,000</div>
+          <div class="data-note" id="homeEquityNote">Your home equity of $340,000 is below the 2026 minimum cap. Your residence would be exempt from Medicaid asset counting while you live in it.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Look-Back Period</div>
+          <div class="data-value" id="lookbackValue">60 Months</div>
+          <div class="data-note" id="lookbackNote">Florida enforces a full 5-year look-back on asset transfers. If you give away assets now and need Medicaid within 5 years, those transfers create a penalty period of ineligibility.</div>
+        </div>
+      </div>
+
+      <div class="alert-card danger" style="margin-top: 14px;">
+        <div class="alert-icon">!</div>
+        <div>
+          <div class="alert-title">Medicaid Estate Recovery (MERP) Risk</div>
+          <div class="alert-text" id="merpAlertText">If you receive Medicaid-funded long-term care as a surviving single individual, Florida can pursue estate recovery against probate assets after your death. Without a Lady Bird Deed or trust, your $340,000 home is the primary recovery target. Average Florida nursing home cost: $9,338/month. One year of care = $112,000 in potential MERP claims against your estate.</div>
+        </div>
+      </div>
+
+      <div class="alert-card safe">
+        <div class="alert-icon">✓</div>
+        <div>
+          <div class="alert-title">Lady Bird Deed Is Your Best Defense</div>
+          <div class="alert-text" id="defenseAlertText">Because Florida follows "probate-only" estate recovery, a Lady Bird Deed keeps the home out of probate at death — effectively shielding it from MERP. This is a $50 recording fee that can protect $340,000 in equity.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 72-HOUR CHECKLIST -->
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon blue"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg></div>
+        <div class="block-title">The First 72 Hours: What the Surviving Spouse Must Do</div>
+      </div>
+
+      <div class="checklist-card">
+        <h4>Hours 0–24: Immediate Actions</h4>
+        <div class="period">Within the first day</div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Obtain 10–15 certified death certificates</strong><span class="why">Every bank, insurer, and government agency requires an original. Funeral home can order these. Expect to need more than you think — ordering extra now saves weeks of reordering later.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Do NOT deposit, cash, or spend any joint account funds yet</strong><span class="why">Banks may freeze joint accounts upon notification of death. Depositing a Social Security check after date of death creates a clawback liability.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Secure the home and all physical property</strong><span class="why">Change exterior codes if applicable. Locate the will, trust documents, safe deposit box keys, and insurance policies. Photograph contents of any shared safe deposit box before touching anything.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Do NOT publish detailed obituary information yet</strong><span class="why">"Ghosting" identity theft — fraudsters mine obituaries for personal details to open credit in the deceased's name. Place a deceased alert with Equifax, Experian, and TransUnion first.</span></div>
+        </div>
+      </div>
+
+      <div class="checklist-card">
+        <h4>Hours 24–48: Financial Notifications</h4>
+        <div class="period">Day two</div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Notify Social Security at 1-800-772-1213</strong><span class="why">SSA must be notified immediately. Any benefits deposited after date of death will be clawed back — often causing overdraft fees on joint accounts with active auto-payments.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>File for the $255 lump-sum death benefit</strong><span class="why">This must be filed within 2 years of death. It's small, but it's yours. File during the notification call.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Contact all life insurance companies</strong><span class="why">$7.4 billion in life insurance remains unclaimed nationally. If you're unsure of all policies, use the NAIC Life Insurance Policy Locator at locator.naic.org — it has recovered over $6 billion since 2016.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Cancel all recurring subscriptions and auto-payments</strong><span class="why">Streaming services, gym memberships, and utilities can drain hundreds from the estate in the first 90 days if left running on the deceased's accounts.</span></div>
+        </div>
+      </div>
+
+      <div class="checklist-card">
+        <h4>Hours 48–72: Legal & Estate</h4>
+        <div class="period">Day three</div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Locate the will and/or trust documents</strong><span class="why" id="willChecklistText">Florida requires the original will to be filed with the circuit court within 10 days of learning of the death (FL Stat. §732.901). Copies may not be accepted.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong id="attorneyChecklistTitle">Contact an estate planning attorney in Florida</strong><span class="why" id="attorneyChecklistText">Many initial consultations are free. You need to understand whether formal probate is required, whether a Lady Bird Deed is already in place, and what your rights are under Florida's homestead laws.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Review all beneficiary designations on IRAs, 401(k)s, and annuities</strong><span class="why">These pass outside the will — they override everything. If your spouse named an ex-spouse or deceased parent as beneficiary and never updated it, the money goes there, not to you.</span></div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text"><strong>Check your state's unclaimed property database</strong><span class="why" id="unclaimedPropertyText">Americans are owed $70 billion in unclaimed funds. Average successful claim: $2,080. Check FloridaTreasureHunt.gov for FL. Free and takes five minutes.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRITICAL DEADLINES -->
+    <div class="report-block fade-up">
+      <div class="block-header">
+        <div class="block-icon danger"><svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg></div>
+        <div class="block-title">Deadlines You Cannot Miss</div>
+      </div>
+
+      <div class="data-grid">
+        <div class="data-item">
+          <div class="data-label">Inherited IRA Depletion</div>
+          <div class="data-value" style="color:var(--red);">10 Years</div>
+          <div class="data-note">Non-spouse beneficiaries (your children) must fully empty inherited IRAs within 10 years. If your spouse had started RMDs, annual withdrawals in years 1–9 are also mandatory. Missing a year = 25% penalty on the undistributed amount.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Qualified Disclaimer</div>
+          <div class="data-value" style="color:var(--red);">9 Months</div>
+          <div class="data-note">If you or an heir wants to refuse an inheritance (to redirect it or reduce estate tax exposure), it must be done within 9 months of death. No extensions. No exceptions. After that, refusal = taxable gift.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">Federal Estate Tax Return</div>
+          <div class="data-value">9 Months</div>
+          <div class="data-note">Due 9 months after death if the estate exceeds $13.99M (2026). Even if below, filing to "port" your spouse's unused exemption to you requires this return.</div>
+        </div>
+        <div class="data-item">
+          <div class="data-label">FL Will Filing</div>
+          <div class="data-value" style="color:var(--amber);">10 Days</div>
+          <div class="data-note" id="willDeadlineText">Florida law requires the original will to be deposited with the clerk of the circuit court within 10 days of learning of the decedent's death.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM CTA -->
+    <div class="cta-card fade-up">
+      <div class="cta-eyebrow" id="ctaEyebrow">Your Next Step, Margaret</div>
+      <div class="cta-headline" id="ctaHeadline">This report identified <em>3 active vulnerabilities</em> in your surviving spouse scenario.</div>
+      <div class="cta-sub" id="ctaSub">A 15-minute clarity call with a licensed specialist can tell you which one to address first — and whether a single document (a Lady Bird Deed, a beneficiary update, or a Miller Trust) could close the gap entirely.</div>
+      <div class="cta-buttons">
+        <a href="#" class="cta-btn primary">
+          Book a Free Clarity Call
+          <svg viewBox="0 0 24 24" fill="var(--navy)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#" class="cta-btn secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download PDF Report
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="report-disclaimer">
+    <div class="disclaimer-text">
+      <strong>Important Disclosures:</strong> This report is provided for educational purposes only and does not constitute legal, financial, tax, or investment advice. Social Security benefit estimates are based on general SSA survivor benefit rules and user-provided income data; actual benefits depend on earnings history, claiming age, and other factors that require direct verification with the Social Security Administration. State-specific legal information is based on statutes current as of the report generation date and may have changed. Medicaid eligibility thresholds are based on 2026 CMS published figures. Retirement Shield is a publisher of educational content operating under the Publisher's Exclusion to investment adviser registration (<em>Lowe v. SEC</em>, 1985). We do not prepare legal documents, provide estate planning advice, or offer specific Medicaid planning recommendations. Consult a licensed attorney in your state for legal matters and a qualified financial advisor for personalized financial guidance. © 2026 Retirement Shield. All rights reserved.
+    </div>
+  </div>
+
+</section>
+
+<script is:inline>
+let currentStep = 1;
+
+const currencyFields = ['monthlyIncome', 'homeValue'];
+const statePropertyLinks = {
+  AL: 'alabama unclaimed property search',
+  AK: 'alaska unclaimed property search',
+  AZ: 'arizona unclaimed property search',
+  AR: 'arkansas unclaimed property search',
+  CA: 'california unclaimed property search',
+  CO: 'colorado unclaimed property search',
+  CT: 'connecticut unclaimed property search',
+  DE: 'delaware unclaimed property search',
+  FL: 'FloridaTreasureHunt.gov',
+  GA: 'georgia unclaimed property search',
+  HI: 'hawaii unclaimed property search',
+  ID: 'idaho unclaimed property search',
+  IL: 'illinois unclaimed property search',
+  IN: 'indiana unclaimed property search',
+  IA: 'iowa unclaimed property search',
+  KS: 'kansas unclaimed property search',
+  KY: 'kentucky unclaimed property search',
+  LA: 'louisiana unclaimed property search',
+  ME: 'maine unclaimed property search',
+  MD: 'maryland unclaimed property search',
+  MA: 'massachusetts unclaimed property search',
+  MI: 'michigan unclaimed property search',
+  MN: 'minnesota unclaimed property search',
+  MS: 'mississippi unclaimed property search',
+  MO: 'missouri unclaimed property search',
+  MT: 'montana unclaimed property search',
+  NE: 'nebraska unclaimed property search',
+  NV: 'nevada unclaimed property search',
+  NH: 'new hampshire unclaimed property search',
+  NJ: 'new jersey unclaimed property search',
+  NM: 'new mexico unclaimed property search',
+  NY: 'new york unclaimed property search',
+  NC: 'north carolina unclaimed property search',
+  ND: 'north dakota unclaimed property search',
+  OH: 'ohio unclaimed property search',
+  OK: 'oklahoma unclaimed property search',
+  OR: 'oregon unclaimed property search',
+  PA: 'pennsylvania unclaimed property search',
+  RI: 'rhode island unclaimed property search',
+  SC: 'south carolina unclaimed property search',
+  SD: 'south dakota unclaimed property search',
+  TN: 'tennessee unclaimed property search',
+  TX: 'texas unclaimed property search',
+  UT: 'utah unclaimed property search',
+  VT: 'vermont unclaimed property search',
+  VA: 'virginia unclaimed property search',
+  WA: 'washington unclaimed property search',
+  WV: 'west virginia unclaimed property search',
+  WI: 'wisconsin unclaimed property search',
+  WY: 'wyoming unclaimed property search'
+};
+
+function parseCurrency(value) {
+  const digits = String(value || '').replace(/[^\d.]/g, '');
+  const parsed = Number.parseFloat(digits);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatCurrency(value, decimals = 0) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  }).format(value);
+}
+
+function formatCurrencyCompact(value) {
+  return `${formatCurrency(value)}/mo`;
+}
+
+function formatCurrencyInput(event) {
+  const numeric = parseCurrency(event.target.value);
+  event.target.value = numeric ? formatCurrency(numeric) : '';
+}
+
+function getSelectedState() {
+  const stateSelect = document.getElementById('stateSelect');
+  return {
+    code: stateSelect.value || '',
+    name: stateSelect.options[stateSelect.selectedIndex]?.text || ''
+  };
+}
+
+function getSelectedValue(name) {
+  return document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+const DEFAULT_FEDERAL_RULES = {
+  source_label: 'SSA survivor guidance · state probate dataset · Medicaid dataset',
+  social_security: {
+    lump_sum_death_benefit: 255
+  },
+  medicaid: {
+    default_asset_limit: 2000,
+    default_lookback_months: 60
+  }
+};
+
+function interpolateTemplate(template, values) {
+  return String(template || '').replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] ?? '');
+}
+
+async function loadWidowsRules(stateCode, stateName) {
+  const supabase = window.widowsPlaybookSupabase;
+  const fallback = {
+    federal: DEFAULT_FEDERAL_RULES,
+    state: {
+      state_code: stateCode,
+      state_name: stateName,
+      rule_version: 'fallback',
+      is_verified: false,
+      rules_payload: {}
+    }
+  };
+
+  if (!supabase || !stateCode) return fallback;
+
+  const [{ data: federalRows }, { data: stateRow }] = await Promise.all([
+    supabase
+      .from('widows_playbook_federal_rules')
+      .select('*')
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false }),
+    supabase
+      .from('widows_playbook_state_rules')
+      .select('*')
+      .eq('state_code', stateCode)
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+  ]);
+
+  const federal = (federalRows || []).reduce((acc, row) => {
+    acc[row.rule_key] = row.rule_payload;
+    return acc;
+  }, {});
+
+  return {
+    federal: {
+      ...DEFAULT_FEDERAL_RULES,
+      ...federal
+    },
+    state: stateRow || fallback.state
+  };
+}
+
+function getStateSpecificCopy(stateCode, stateName, homeValue, survivorIncome, stateRuleRecord) {
+  const homeText = formatCurrency(homeValue);
+  const survivorText = formatCurrencyCompact(survivorIncome);
+  const generic = {
+    propertyTitle: `What Happens to Your Home (${stateName})`,
+    homesteadNote: `${stateName} has its own homestead, creditor, and probate rules. With an estimated home value of ${homeText}, a local estate planning attorney should confirm exactly how title, exemptions, and creditor protections apply in your state.`,
+    titleTransferValue: 'State review needed',
+    titleTransferNote: `Surviving spouse title rights differ in ${stateName}. A local review should confirm whether the spouse inherits outright, receives a life estate, or depends on deed structure and descendants.`,
+    planningToolLabel: 'State planning tool',
+    planningToolValue: 'Review',
+    planningToolNote: `The probate-avoidance tool available in ${stateName} depends on local deed, trust, and beneficiary rules.`,
+    probateStatus: homeValue >= 100000 ? 'Possible' : 'Maybe Not',
+    probateNote: `With an estimated home value of ${homeText}, your estate may still need probate depending on how title is held, whether beneficiaries are named, and whether transfer-on-death tools are available in ${stateName}.`,
+    propertyAlertTitle: `${stateName} Title And Inheritance Rules Matter`,
+    propertyAlertText: `The surviving spouse's rights to stay in the home, sell it, refinance it, or inherit it outright can vary materially in ${stateName}. That makes title review one of the first legal steps after a spouse's death.`,
+    incomeCapLabel: `Medicaid Income Rules (${stateName})`,
+    incomeCapValue: 'State review',
+    incomeCapNote: `Medicaid long-term-care eligibility rules vary by state. If your estimated survivor income is ${survivorText}, ${stateName}-specific income, asset, and trust rules should be reviewed before assuming coverage will be available.`,
+    assetLimitValue: '$2,000',
+    assetLimitNote: 'The surviving spouse is eventually assessed under individual Medicaid financial rules once spousal protections no longer apply.',
+    homeEquityValue: 'State review',
+    homeEquityNote: `At an estimated home value of ${homeText}, home equity may or may not be excluded for Medicaid purposes depending on occupancy, state caps, and title structure.`,
+    lookbackValue: '60 Months',
+    lookbackNote: `${stateName} long-term-care transfer rules should be confirmed against current Medicaid guidance before any gifts or transfers are made.`,
+    merpAlertText: `If the surviving spouse later needs Medicaid-funded long-term care, estate recovery rules in ${stateName} may put probate assets at risk. A home worth about ${homeText} deserves a state-specific review before a crisis hits.`,
+    defenseAlertText: `The strongest defense is usually the right mix of title planning, beneficiary coordination, and updated estate documents in ${stateName}.`,
+    willChecklistText: `Locate the original will or trust package quickly. Filing deadlines and probate procedures differ in ${stateName}, so having the original documents ready can save critical time.`,
+    attorneyChecklistTitle: `Contact an estate planning attorney in ${stateName}`,
+    attorneyChecklistText: `A local attorney can confirm how probate, title transfer, homestead protections, and any state-specific planning tools apply to your family in ${stateName}.`,
+    unclaimedPropertyText: `Americans are owed $70 billion in unclaimed funds. Average successful claim: $2,080. Check ${statePropertyLinks[stateCode] || `${stateName} unclaimed property search`} for your state. Free and takes five minutes.`,
+    willDeadlineText: `${stateName} has its own deadlines and local procedures for filing original wills and opening probate. Confirm the exact filing window with local counsel immediately after death.`,
+    sources: `SSA Survivor Estimates · ${stateCode} probate review needed · CMS 2026`
+  };
+
+  if (stateCode === 'FL') {
+    return {
+      propertyTitle: 'What Happens to Your Home (Florida)',
+      homesteadNote: `Florida offers unlimited value homestead protection from unsecured creditors (Art. X, §4, FL Constitution). Your ${homeText} home is fully protected while you live in it.`,
+      titleTransferValue: 'Life Estate',
+      titleTransferNote: 'Under FL intestacy, the surviving spouse receives a life estate in the homestead with remainder to descendants — not full ownership. If your children are from a prior marriage, this creates a divided-interest situation.',
+      planningToolLabel: 'Lady Bird Deed Available',
+      planningToolValue: 'Yes ✓',
+      planningToolNote: 'Florida is one of only 5 states allowing Enhanced Life Estate (Lady Bird) Deeds. This bypasses probate and can shield the home from Medicaid estate recovery.',
+      probateStatus: homeValue >= 75000 ? 'Likely' : 'Possible',
+      probateNote: `FL small estate threshold is $75,000. Your home value of ${homeText} will ${homeValue >= 75000 ? 'likely' : 'sometimes'} trigger formal probate administration (FL Title XLII) unless a trust or Lady Bird Deed is in place.`,
+      propertyAlertTitle: 'Florida Homestead Descent Restriction',
+      propertyAlertText: `Florida's constitution restricts how a married homeowner can dispose of the homestead at death. With a home worth about ${homeText}, title structure matters because the surviving spouse may not inherit the property outright in every family situation.`,
+      incomeCapLabel: 'Income Cap (Florida)',
+      incomeCapValue: '$2,982/mo',
+      incomeCapNote: `Florida is an "income cap" state. If your survivor income is about ${survivorText}, you ${survivorIncome <= 2982 ? 'appear to be below' : 'may be above'} the current cap and may need additional Medicaid planning if long-term care becomes necessary.`,
+      assetLimitValue: '$2,000',
+      assetLimitNote: 'Once your spouse dies, spousal resource protections no longer apply. If you later need nursing home care, your countable assets generally must be reduced to the individual limit.',
+      homeEquityValue: '$752,000',
+      homeEquityNote: `Your home equity of about ${homeText} is below the 2026 minimum cap. Your residence would generally be exempt from Medicaid asset counting while you live in it.`,
+      lookbackValue: '60 Months',
+      lookbackNote: 'Florida enforces a full 5-year look-back on asset transfers. Gifts made inside that period can trigger Medicaid ineligibility.',
+      merpAlertText: `If you receive Medicaid-funded long-term care as a surviving single individual, Florida can pursue estate recovery against probate assets after your death. Without a Lady Bird Deed or trust, a home worth about ${homeText} can become the primary recovery target.`,
+      defenseAlertText: `Because Florida follows "probate-only" estate recovery, a Lady Bird Deed can keep the home out of probate at death and help shield roughly ${homeText} in equity.`,
+      willChecklistText: 'Florida requires the original will to be filed with the circuit court within 10 days of learning of the death (FL Stat. §732.901). Copies may not be accepted.',
+      attorneyChecklistTitle: 'Contact an estate planning attorney in Florida',
+      attorneyChecklistText: 'Many initial consultations are free. You need to understand whether formal probate is required, whether a Lady Bird Deed is already in place, and what your rights are under Florida homestead law.',
+      unclaimedPropertyText: 'Americans are owed $70 billion in unclaimed funds. Average successful claim: $2,080. Check FloridaTreasureHunt.gov for FL. Free and takes five minutes.',
+      willDeadlineText: 'Florida law requires the original will to be deposited with the clerk of the circuit court within 10 days of learning of the decedent\'s death.',
+      sources: 'SSA Benefit Tables · FL Title XLII · CMS 2026'
+    };
+  }
+
+  const dbRules = stateRuleRecord?.rules_payload || {};
+
+  return {
+    ...generic,
+    ...(stateCode === 'FL' ? {} : {}),
+    ...Object.fromEntries(
+      Object.entries(dbRules).map(([key, value]) => {
+        if (typeof value !== 'string') return [key, value];
+        return [key, interpolateTemplate(value, {
+          stateName,
+          homeText,
+          survivorText
+        })];
+      })
+    )
+  };
+}
+
+function renderSourceSpecificFields() {
+  const source = getSelectedValue('source') || 'ss';
+  const wrap = document.getElementById('sourceSpecificFields');
+  if (!wrap) return;
+
+  if (source === 'ss') {
+    wrap.innerHTML = `
+      <label class="field-label">Monthly Social Security Benefit Inputs</label>
+      <div class="field-group">
+        <label class="ss-input-label" for="yourSSBenefit">Your Benefit</label>
+        <input type="text" inputmode="numeric" class="field-input" id="yourSSBenefit" placeholder="$1,800" />
+      </div>
+      <div class="field-group">
+        <label class="ss-input-label" for="spouseSSBenefit">Spouse Benefit</label>
+        <input type="text" inputmode="numeric" class="field-input" id="spouseSSBenefit" placeholder="$2,640" />
+      </div>
+      <div class="field-help">Enter actual monthly SSA benefits if known. If left blank, the report will estimate the split from your household income.</div>
+    `;
+    ['yourSSBenefit', 'spouseSSBenefit'].forEach((fieldId) => {
+      const input = document.getElementById(fieldId);
+      if (!input) return;
+      input.addEventListener('blur', formatCurrencyInput);
+      input.addEventListener('focus', () => {
+        const numeric = parseCurrency(input.value);
+        input.value = numeric ? String(Math.round(numeric)) : '';
+      });
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/[^\d.]/g, '');
+      });
+    });
+    return;
+  }
+
+  const messages = {
+    pension: 'We will estimate survivor income using a conservative pension-survivor assumption until you add actual pension option details.',
+    investments: 'We will estimate post-death spendable income conservatively unless you later add actual account balances and yield data.',
+    employment: 'We will estimate how much cash flow disappears after one paycheck ends unless you later add employer survivor benefits or insurance.'
+  };
+
+  wrap.innerHTML = `<div class="field-help">${messages[source] || ''}</div>`;
+}
+
+function getIncomeModel(formData, federalRules) {
+  const { monthlyIncome, primaryEarner, source, yourSSBenefit, spouseSSBenefit } = formData;
+  const primaryShare = primaryEarner === 'me' ? 0.62 : 0.38;
+  const yourCurrent = monthlyIncome * primaryShare;
+  const spouseCurrent = monthlyIncome - yourCurrent;
+
+  let visibleYourCurrent = yourCurrent;
+  let visibleSpouseCurrent = spouseCurrent;
+  let survivingIncome = Math.max(yourCurrent, spouseCurrent);
+  let survivorText = 'the higher monthly benefit';
+  let narrative = 'Social Security survivor rules usually preserve the higher check and eliminate the lower one.';
+  let analysisTitle = 'Primary Income Survivor Analysis';
+  let isEstimated = true;
+
+  if (source === 'ss') {
+    const fallbackYour = primaryEarner === 'me' ? monthlyIncome * 0.62 : monthlyIncome * 0.38;
+    const fallbackSpouse = monthlyIncome - fallbackYour;
+    const actualYour = yourSSBenefit > 0 ? yourSSBenefit : fallbackYour;
+    const actualSpouse = spouseSSBenefit > 0 ? spouseSSBenefit : fallbackSpouse;
+    const continuingOtherIncome = Math.max(monthlyIncome - (actualYour + actualSpouse), 0);
+    const survivorBase = Math.max(actualYour, actualSpouse);
+
+    visibleYourCurrent = actualYour;
+    visibleSpouseCurrent = actualSpouse;
+    survivingIncome = survivorBase + continuingOtherIncome;
+    survivorText = `one Social Security check plus any continuing non-SSA income`;
+    narrative = 'SSA survivor rules generally mean the surviving spouse keeps the higher check, not both checks.';
+    analysisTitle = 'Social Security Survivor Benefit Analysis';
+    isEstimated = !(yourSSBenefit > 0 && spouseSSBenefit > 0);
+  }
+
+  if (source === 'pension') {
+    const retainedSpouseShare = primaryEarner === 'spouse' ? 0.35 : 0.15;
+    survivingIncome = yourCurrent + spouseCurrent * retainedSpouseShare;
+    survivorText = 'your income plus a reduced survivor pension';
+    narrative = 'Many pensions reduce or eliminate the deceased spouse’s payment unless a survivor option was elected.';
+    analysisTitle = 'Pension Survivor Income Analysis';
+  } else if (source === 'investments') {
+    survivingIncome = monthlyIncome * 0.88;
+    survivorText = 'most portfolio income, after likely account and tax friction';
+    narrative = 'Investment income is often more portable, but taxes, required distributions, and account retitling can still reduce spendable cash flow.';
+    analysisTitle = 'Investment Income Continuity Analysis';
+  } else if (source === 'employment') {
+    const retainedSpouseShare = primaryEarner === 'spouse' ? 0.15 : 0.05;
+    survivingIncome = yourCurrent + spouseCurrent * retainedSpouseShare;
+    survivorText = 'your own income plus only limited replacement from the deceased spouse’s earnings';
+    narrative = 'Employment income usually stops quickly unless there is life insurance, survivor pay, or disability-style replacement built in.';
+    analysisTitle = 'Employment Income Continuity Analysis';
+  }
+
+  survivingIncome = clamp(survivingIncome, monthlyIncome * 0.15, monthlyIncome);
+  const monthlyDrop = Math.max(monthlyIncome - survivingIncome, 0);
+  const annualDrop = monthlyDrop * 12;
+  const dropPct = monthlyIncome > 0 ? Math.round((monthlyDrop / monthlyIncome) * 100) : 0;
+
+  return {
+    yourCurrent: visibleYourCurrent,
+    spouseCurrent: visibleSpouseCurrent,
+    survivingIncome,
+    monthlyDrop,
+    annualDrop,
+    dropPct,
+    survivorText,
+    narrative,
+    analysisTitle,
+    isEstimated,
+    lumpSumDeathBenefit: federalRules?.social_security?.lump_sum_death_benefit ?? 255
+  };
+}
+
+function populateReport(data) {
+  const {
+    name,
+    stateName,
+    stateCode,
+    yourAge,
+    spouseAge,
+    homeValue,
+    primaryEarner,
+    sourceLabel,
+    monthlyIncome,
+    model
+  } = data;
+
+  const stateCopy = getStateSpecificCopy(stateCode, stateName, homeValue, model.survivingIncome, data.stateRuleRecord);
+  const generatedDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  const reportId = `RS-WPB-${new Date().toISOString().slice(0, 10)}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+  document.getElementById('analyzingName').textContent = `Personalized for ${name} · ${stateName}`;
+  document.getElementById('analysisStateText').textContent = `Loading ${stateName} property and title laws...`;
+  document.getElementById('reportPreparedName').textContent = name;
+  document.getElementById('reportSummary').textContent = `State of ${stateName} · Age ${yourAge} · Spouse Age ${spouseAge} · Primary Income: ${sourceLabel}`;
+  document.getElementById('reportDate').textContent = generatedDate;
+  document.getElementById('reportSources').textContent = data.sourcesLabel || stateCopy.sources;
+  document.getElementById('reportId').textContent = reportId;
+  document.getElementById('incomeAnalysisTitle').textContent = model.analysisTitle;
+
+  document.getElementById('bothAliveAmount').textContent = formatCurrency(monthlyIncome);
+  document.getElementById('survivingAmount').textContent = formatCurrency(model.survivingIncome);
+  document.getElementById('incomeDropAmount').textContent = `-${formatCurrency(model.monthlyDrop)}/month`;
+  document.getElementById('incomeDropDetail').textContent = `${model.dropPct}% income reduction · ${formatCurrency(model.annualDrop)} less per year`;
+
+  document.getElementById('yourBenefitAmount').textContent = formatCurrencyCompact(model.yourCurrent);
+  document.getElementById('spouseBenefitAmount').textContent = formatCurrencyCompact(model.spouseCurrent);
+  document.getElementById('survivorBenefitAmount').textContent = formatCurrencyCompact(model.survivingIncome);
+  document.getElementById('lostBenefitAmount').textContent = `-${formatCurrencyCompact(monthlyIncome - model.survivingIncome)} gone permanently.`;
+
+  document.getElementById('survivorBenefitText').innerHTML = `After a spouse's death, the survivor usually ends up living on ${model.survivorText} — <span class="tl-amount" style="color:var(--green);">${formatCurrencyCompact(model.survivingIncome)}</span> in this ${model.isEstimated ? 'estimate' : 'calculation'}. SSA's one-time death benefit is <span class="tl-amount" style="color:var(--navy);">${formatCurrency(model.lumpSumDeathBenefit)}</span>.`;
+  document.getElementById('lossBenefitText').innerHTML = `${primaryEarner === 'spouse' ? 'The higher-earning spouse’s income disappears' : 'The household still loses one income stream'} and you keep only the remaining survivor cash flow. <span class="tl-amount" style="color:var(--red);">-${formatCurrencyCompact(model.monthlyDrop)} gone permanently.</span>`;
+  document.getElementById('trapAlertText').textContent = `${model.narrative} Based on the numbers you entered, the household cash-flow drop is about ${formatCurrency(model.monthlyDrop)} per month. ${model.isEstimated ? 'Because exact benefit statements were not entered, this remains an estimate.' : 'Because actual monthly benefits were entered, this section is much closer to a true survivor-benefit analysis.'}`;
+
+  document.getElementById('propertyBlockTitle').textContent = stateCopy.propertyTitle;
+  document.getElementById('homesteadNote').textContent = stateCopy.homesteadNote;
+  document.getElementById('titleTransferValue').textContent = stateCopy.titleTransferValue;
+  document.getElementById('titleTransferNote').textContent = stateCopy.titleTransferNote;
+  document.getElementById('planningToolLabel').textContent = stateCopy.planningToolLabel;
+  document.getElementById('planningToolValue').textContent = stateCopy.planningToolValue;
+  document.getElementById('planningToolNote').textContent = stateCopy.planningToolNote;
+  document.getElementById('probateStatus').textContent = stateCopy.probateStatus;
+  document.getElementById('probateNote').textContent = stateCopy.probateNote;
+  document.getElementById('propertyAlertTitle').textContent = stateCopy.propertyAlertTitle;
+  document.getElementById('propertyAlertText').textContent = stateCopy.propertyAlertText;
+  document.getElementById('assetLimitValue').textContent = stateCopy.assetLimitValue;
+  document.getElementById('assetLimitNote').textContent = stateCopy.assetLimitNote;
+  document.getElementById('incomeCapLabel').textContent = stateCopy.incomeCapLabel;
+  document.getElementById('incomeCapValue').textContent = stateCopy.incomeCapValue;
+  document.getElementById('incomeCapNote').textContent = stateCopy.incomeCapNote;
+  document.getElementById('homeEquityValue').textContent = stateCopy.homeEquityValue;
+  document.getElementById('homeEquityNote').textContent = stateCopy.homeEquityNote;
+  document.getElementById('lookbackValue').textContent = stateCopy.lookbackValue;
+  document.getElementById('lookbackNote').textContent = stateCopy.lookbackNote;
+  document.getElementById('merpAlertText').textContent = stateCopy.merpAlertText;
+  document.getElementById('defenseAlertText').textContent = stateCopy.defenseAlertText;
+  document.getElementById('willChecklistText').textContent = stateCopy.willChecklistText;
+  document.getElementById('attorneyChecklistTitle').textContent = stateCopy.attorneyChecklistTitle;
+  document.getElementById('attorneyChecklistText').textContent = stateCopy.attorneyChecklistText;
+  document.getElementById('unclaimedPropertyText').textContent = stateCopy.unclaimedPropertyText;
+  document.getElementById('willDeadlineText').textContent = stateCopy.willDeadlineText;
+
+  const risks = Math.max(1, [
+    model.dropPct >= 45,
+    homeValue >= 250000,
+    stateCode === 'FL' || sourceLabel === 'Pension' || sourceLabel === 'Employment'
+  ].filter(Boolean).length);
+
+  document.getElementById('ctaEyebrow').textContent = `Your Next Step, ${name}`;
+  document.getElementById('ctaHeadline').innerHTML = `This report identified <em>${risks} active vulnerabilit${risks === 1 ? 'y' : 'ies'}</em> in your surviving spouse scenario.`;
+  document.getElementById('ctaSub').textContent = `A 15-minute clarity call can help you prioritize the estimated ${formatCurrency(model.monthlyDrop)} monthly income gap, a home worth about ${formatCurrency(homeValue)}, and the legal planning steps most relevant in ${stateName}.`;
+}
+
+function getFormData() {
+  const name = document.getElementById('firstName').value.trim();
+  const monthlyIncome = parseCurrency(document.getElementById('monthlyIncome').value);
+  const homeValue = parseCurrency(document.getElementById('homeValue').value);
+  const yourAge = Number.parseInt(document.getElementById('yourAge').value, 10);
+  const spouseAge = Number.parseInt(document.getElementById('spouseAge').value, 10);
+  const { code: stateCode, name: stateName } = getSelectedState();
+  const primaryEarner = getSelectedValue('earner') || 'spouse';
+  const source = getSelectedValue('source') || 'ss';
+  const sourceLabel = {
+    ss: 'Social Security',
+    pension: 'Pension',
+    investments: 'Investments',
+    employment: 'Employment'
+  }[source] || 'Social Security';
+
+  return {
+    rawName: name,
+    name: name || 'You',
+    stateCode,
+    stateName: stateName || 'Your State',
+    monthlyIncome,
+    homeValue,
+    yourAge,
+    spouseAge,
+    primaryEarner,
+    source,
+    sourceLabel,
+    yourSSBenefit: parseCurrency(document.getElementById('yourSSBenefit')?.value || 0),
+    spouseSSBenefit: parseCurrency(document.getElementById('spouseSSBenefit')?.value || 0)
+  };
+}
+
+function validateFormData(data) {
+  if (!data.rawName) return 'Please enter your first name.';
+  if (!data.stateCode) return 'Please select your state of primary residence.';
+  if (!Number.isFinite(data.yourAge) || data.yourAge < 18 || data.yourAge > 100) return 'Please enter a valid age for yourself.';
+  if (!Number.isFinite(data.spouseAge) || data.spouseAge < 18 || data.spouseAge > 100) return 'Please enter a valid age for your spouse.';
+  if (data.monthlyIncome <= 0) return 'Please enter your combined monthly income.';
+  if (data.homeValue <= 0) return 'Please enter an estimated home value.';
+  return '';
+}
+
+function updateMoneyInputs() {
+  currencyFields.forEach((fieldId) => {
+    const input = document.getElementById(fieldId);
+    if (!input) return;
+    input.addEventListener('blur', formatCurrencyInput);
+    input.addEventListener('focus', () => {
+      const numeric = parseCurrency(input.value);
+      input.value = numeric ? String(Math.round(numeric)) : '';
+    });
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^\d.]/g, '');
+    });
+  });
+}
+
+function setMoneyBarHeights(monthlyIncome, survivingIncome) {
+  const maxHeight = 180;
+  const afterHeight = Math.max(18, Math.round((survivingIncome / Math.max(monthlyIncome, 1)) * maxHeight));
+  document.getElementById('barBefore').style.height = `${maxHeight}px`;
+  document.getElementById('barAfter').style.height = `${afterHeight}px`;
+}
+
+function hydrateSavedSubmission(record) {
+  const payload = record.form_payload || {};
+  const formData = {
+    rawName: record.full_name || payload.full_name || '',
+    name: record.full_name || payload.full_name || 'You',
+    stateCode: record.state_code || payload.state_code || '',
+    stateName: record.state_name || payload.state_name || 'Your State',
+    monthlyIncome: Number(record.combined_monthly_income ?? payload.combined_monthly_income ?? 0),
+    homeValue: Number(record.home_value ?? payload.home_value ?? 0),
+    yourAge: Number(record.your_age ?? payload.your_age ?? 0),
+    spouseAge: Number(record.spouse_age ?? payload.spouse_age ?? 0),
+    primaryEarner: record.primary_earner || payload.primary_earner || 'spouse',
+    source: record.income_source || payload.income_source || 'ss',
+    yourSSBenefit: Number(record.your_ss_benefit ?? payload.your_ss_benefit ?? 0),
+    spouseSSBenefit: Number(record.spouse_ss_benefit ?? payload.spouse_ss_benefit ?? 0),
+    sourceLabel: {
+      ss: 'Social Security',
+      pension: 'Pension',
+      investments: 'Investments',
+      employment: 'Employment'
+    }[record.income_source || payload.income_source || 'ss']
+  };
+
+  const firstNameInput = document.getElementById('firstName');
+  const stateSelect = document.getElementById('stateSelect');
+  const yourAgeInput = document.getElementById('yourAge');
+  const spouseAgeInput = document.getElementById('spouseAge');
+  const monthlyIncomeInput = document.getElementById('monthlyIncome');
+  const homeValueInput = document.getElementById('homeValue');
+
+  if (firstNameInput) firstNameInput.value = formData.name;
+  if (stateSelect && formData.stateCode) stateSelect.value = formData.stateCode;
+  if (yourAgeInput && formData.yourAge) yourAgeInput.value = String(formData.yourAge);
+  if (spouseAgeInput && formData.spouseAge) spouseAgeInput.value = String(formData.spouseAge);
+  if (monthlyIncomeInput && formData.monthlyIncome) monthlyIncomeInput.value = formatCurrency(formData.monthlyIncome);
+  if (homeValueInput && formData.homeValue) homeValueInput.value = formatCurrency(formData.homeValue);
+
+  document.querySelectorAll('input[name="earner"]').forEach((input) => {
+    input.checked = input.value === formData.primaryEarner;
+    input.closest('.radio-card')?.classList.toggle('selected', input.checked);
+  });
+
+  document.querySelectorAll('input[name="source"]').forEach((input) => {
+    input.checked = input.value === formData.source;
+    input.closest('.radio-card')?.classList.toggle('selected', input.checked);
+  });
+
+  renderSourceSpecificFields();
+
+  const yourSSInput = document.getElementById('yourSSBenefit');
+  const spouseSSInput = document.getElementById('spouseSSBenefit');
+  if (yourSSInput && formData.yourSSBenefit) yourSSInput.value = formatCurrency(formData.yourSSBenefit);
+  if (spouseSSInput && formData.spouseSSBenefit) spouseSSInput.value = formatCurrency(formData.spouseSSBenefit);
+
+  const model = getIncomeModel(formData, DEFAULT_FEDERAL_RULES);
+  populateReport({ ...formData, model, stateRuleRecord: record.state_rule_snapshot || null, sourcesLabel: record.sources_label || null });
+
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'block';
+  document.querySelectorAll('.fade-up').forEach((el) => el.classList.add('visible'));
+  setMoneyBarHeights(formData.monthlyIncome, model.survivingIncome);
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function saveReportSubmission(data, model) {
+  const supabase = window.widowsPlaybookSupabase;
+  if (!supabase) return;
+
+  const rulesBundle = await loadWidowsRules(data.stateCode, data.stateName);
+  const stateRuleRecord = rulesBundle.state;
+  const sourcesLabel = [
+    'SSA official survivor guidance',
+    stateRuleRecord?.is_verified ? `${data.stateCode} verified state rules` : `${data.stateCode} fallback state rules`,
+    'Medicaid rules dataset'
+  ].join(' · ');
+
+  const payload = {
+    user_id: new URLSearchParams(window.location.search).get('utm') || null,
+    full_name: data.name,
+    state_code: data.stateCode,
+    state_name: data.stateName,
+    your_age: data.yourAge,
+    spouse_age: data.spouseAge,
+    primary_earner: data.primaryEarner,
+    income_source: data.source,
+    combined_monthly_income: data.monthlyIncome,
+    home_value: data.homeValue,
+    your_ss_benefit: data.yourSSBenefit || null,
+    spouse_ss_benefit: data.spouseSSBenefit || null,
+    survivor_income_estimate: model.survivingIncome,
+    monthly_income_drop: model.monthlyDrop,
+    annual_income_drop: model.annualDrop,
+    state_rule_version: stateRuleRecord?.rule_version || null,
+    state_rule_snapshot: stateRuleRecord || null,
+    sources_label: sourcesLabel,
+    form_payload: {
+      full_name: data.name,
+      state_code: data.stateCode,
+      state_name: data.stateName,
+      your_age: data.yourAge,
+      spouse_age: data.spouseAge,
+      primary_earner: data.primaryEarner,
+      income_source: data.source,
+      combined_monthly_income: data.monthlyIncome,
+      home_value: data.homeValue,
+      your_ss_benefit: data.yourSSBenefit || null,
+      spouse_ss_benefit: data.spouseSSBenefit || null
+    }
+  };
+
+  const { error } = await supabase
+    .from('widows_playbook_reports')
+    .insert(payload);
+
+  if (error) {
+    console.error('Failed to save Widow\'s Playbook submission:', error);
+  }
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('fs' + step).classList.add('active');
+
+  document.querySelectorAll('.progress-dot').forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i + 1 < step) d.classList.add('done');
+    else if (i + 1 === step) d.classList.add('active');
+  });
+
+  currentStep = step;
+}
+
+function selectRadio(card) {
+  const group = card.closest('.radio-group');
+  group.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  card.querySelector('input').checked = true;
+  if (card.querySelector('input')?.name === 'source') {
+    renderSourceSpecificFields();
+  }
+}
+
+async function generateReport() {
+  const formData = getFormData();
+  const validationError = validateFormData(formData);
+
+  if (validationError) {
+    alert(validationError);
+    return;
+  }
+
+  const rulesBundle = await loadWidowsRules(formData.stateCode, formData.stateName);
+  const model = getIncomeModel(formData, rulesBundle.federal);
+  await saveReportSubmission(formData, model);
+  populateReport({
+    ...formData,
+    model,
+    stateRuleRecord: rulesBundle.state,
+    sourcesLabel: [
+      'SSA official survivor guidance',
+      rulesBundle.state?.is_verified ? `${formData.stateCode} verified state rules` : `${formData.stateCode} fallback state rules`,
+      'Medicaid rules dataset'
+    ].join(' · ')
+  });
+
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+
+  const steps = ['as1','as2','as3','as4','as5','as6'];
+  let idx = 0;
+
+  function activate(i) {
+    if (i > 0) {
+      document.getElementById(steps[i-1]).classList.remove('active');
+      document.getElementById(steps[i-1]).classList.add('done');
+    }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+    }
+  }
+
+  activate(0);
+  const delays = [1000, 900, 1200, 1100, 800, 1000];
+  let total = 0;
+
+  for (let i = 1; i <= steps.length; i++) {
+    total += delays[i-1];
+    setTimeout(() => {
+      if (i < steps.length) {
+        activate(i);
+      } else {
+        document.getElementById(steps[steps.length-1]).classList.remove('active');
+        document.getElementById(steps[steps.length-1]).classList.add('done');
+
+        setTimeout(() => {
+          document.getElementById('step2').style.display = 'none';
+          document.getElementById('step3').style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'auto' });
+
+          // Animate income bars
+          setTimeout(() => {
+            const formData = getFormData();
+            const model = getIncomeModel(formData, DEFAULT_FEDERAL_RULES);
+            setMoneyBarHeights(formData.monthlyIncome, model.survivingIncome);
+          }, 300);
+
+          // Fade-in
+          const fadeEls = document.querySelectorAll('.fade-up');
+          const obs = new IntersectionObserver((entries) => {
+            entries.forEach((e, i) => {
+              if (e.isIntersecting) {
+                setTimeout(() => e.target.classList.add('visible'), i * 80);
+                obs.unobserve(e.target);
+              }
+            });
+          }, { threshold: 0.1 });
+          fadeEls.forEach(el => obs.observe(el));
+        }, 500);
+      }
+    }, total);
+  }
+}
+
+updateMoneyInputs();
+renderSourceSpecificFields();
+currencyFields.forEach((fieldId) => {
+  const input = document.getElementById(fieldId);
+  if (input && input.value) input.value = formatCurrency(parseCurrency(input.value));
+});
+
+window.nextStep = nextStep;
+window.selectRadio = selectRadio;
+window.generateReport = generateReport;
+window.hydrateSavedSubmission = hydrateSavedSubmission;
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.widowsPlaybookSupabase = supabase;
+
+const utm = new URLSearchParams(window.location.search).get('utm')
+const reportMode = new URLSearchParams(window.location.search).get('report')
+
+if (utm) {
+  if (reportMode === 'latest') {
+    let { data: report } = await supabase
+      .from('widows_playbook_reports')
+      .select('*')
+      .eq('user_id', utm)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (!report) {
+      const fallback = await supabase
+        .from('widows-playbook-data')
+        .select('*')
+        .eq('user_id', utm)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      report = fallback.data
+    }
+
+    if (report && window.hydrateSavedSubmission) {
+      window.hydrateSavedSubmission(report)
+    } else {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', utm)
+        .single()
+
+      if (profile?.full_name) {
+        const firstNameInput = document.getElementById('firstName')
+        if (firstNameInput && !firstNameInput.dataset.prefilled) {
+          firstNameInput.value = profile.full_name
+          firstNameInput.dataset.prefilled = 'true'
+        }
+      }
+    }
+  } else {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', utm)
+      .single()
+
+    if (profile?.full_name) {
+      const firstNameInput = document.getElementById('firstName')
+      if (firstNameInput && !firstNameInput.dataset.prefilled) {
+        firstNameInput.value = profile.full_name
+        firstNameInput.dataset.prefilled = 'true'
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>
