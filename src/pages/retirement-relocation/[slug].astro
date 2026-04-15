@@ -1,0 +1,107 @@
+---
+export const prerender = false;
+import { createClient } from '@supabase/supabase-js';
+
+const { slug } = Astro.params;
+const supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+
+const { data: report } = await supabase
+  .from('retirement_relocation_reports')
+  .select('*')
+  .eq('share_slug', slug)
+  .maybeSingle();
+
+const payload = report?.report_payload;
+const title = payload
+  ? `Retirement Relocation Comparison: ${payload.current?.stateName || 'Current'} to ${payload.destinations?.map((d) => d.stateName).filter(Boolean).join(' / ')}`
+  : 'Retirement Relocation Comparison';
+const description = payload?.summary?.headline || 'A saved retirement relocation comparison built from property, tax, longevity, and estate-planning data.';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0F1F3D;--gold:#C9A84C;--cream:#FAF7F0;--white:#fff;--text:#1A1A1A;--muted:#6e6b66;--border:#E8E3D8}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.6}
+    .header{background:var(--navy);padding:16px 24px;border-bottom:2px solid var(--gold)}
+    .brand{font-family:'Playfair Display',serif;color:#fff;text-decoration:none;font-size:20px;font-weight:700}
+    .brand span{color:var(--gold)}
+    .hero{background:var(--navy);color:#fff;padding:56px 24px 64px}
+    .hero-inner,.shell{max-width:1080px;margin:0 auto}
+    .eyebrow{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:16px}
+    h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);line-height:1.1;margin-bottom:14px}
+    .sub{max-width:760px;color:rgba(255,255,255,.72);font-size:17px}
+    .shell{padding:28px 24px 64px;display:grid;gap:22px}
+    .card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:24px}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .metric,.dest{background:#faf7f0;border:1px solid var(--border);border-radius:14px;padding:16px}
+    .label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);font-weight:700;margin-bottom:6px}
+    .value{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:8px}
+    .small{font-size:13px;color:var(--muted)}
+    .dest h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:8px}
+    .dest-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);margin-top:10px}
+    .dest-row strong{color:var(--navy)}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="header"><div class="hero-inner"><a class="brand" href="/">Retirement <span>Shield</span></a></div></div>
+  {payload ? (
+    <>
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="eyebrow">Saved Relocation Report</div>
+          <h1>{payload.summary?.headline || 'Retirement relocation comparison'}</h1>
+          <div class="sub">{payload.summary?.subline}</div>
+        </div>
+      </section>
+      <main class="shell">
+        <section class="card">
+          <div class="eyebrow" style="color:var(--gold)">Current Baseline</div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);margin-bottom:14px">{payload.current?.fullAddress}</h2>
+          <div class="grid">
+            <div class="metric"><div class="label">Home Value</div><div class="value">{payload.current?.homeValueLabel}</div><div class="small">RentCast-backed estimate</div></div>
+            <div class="metric"><div class="label">Cost Index</div><div class="value" style="font-size:24px">{payload.current?.rppLabel}</div><div class="small">Budget-adjusted spend {payload.current?.budgetAdjustedLabel}</div></div>
+            <div class="metric"><div class="label">Life Expectancy</div><div class="value" style="font-size:24px">{payload.current?.lifeExpectancyLabel}</div><div class="small">{payload.current?.countyName}</div></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="eyebrow" style="color:var(--gold)">Destinations</div>
+          <div class="grid">
+            {payload.comparisons?.map((comp) => (
+              <div class="dest">
+                <div class="label">Destination</div>
+                <h3>{comp.candidate?.city || comp.candidate?.stateName}</h3>
+                <div class="small">{comp.candidate?.fullAddress}</div>
+                <div class="dest-row"><span>Home equity shift</span><strong>{comp.equityShiftLabel}</strong></div>
+                <div class="dest-row"><span>Annual cost shift</span><strong>{comp.annualBudgetDeltaLabel}</strong></div>
+                <div class="dest-row"><span>Annual state-tax shift</span><strong>{comp.annualTaxDeltaLabel}</strong></div>
+                <div class="dest-row"><span>Longevity delta</span><strong>{comp.longevityDeltaLabel}</strong></div>
+                <div class="dest-row"><span>Complexity delta</span><strong>{comp.complexityDeltaLabel}</strong></div>
+                <div class="dest-row"><span>First-year impact</span><strong>{comp.firstYearImpactLabel}</strong></div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
+  ) : (
+    <main class="shell">
+      <section class="card">
+        <div class="eyebrow" style="color:var(--gold)">Not Found</div>
+        <h1 style="color:var(--navy);font-size:40px">This relocation report could not be found.</h1>
+        <p style="margin-top:12px;color:var(--muted)">The share link may be incorrect or the report may not have been saved yet.</p>
+      </section>
+    </main>
+  )}
+</body>
+</html>

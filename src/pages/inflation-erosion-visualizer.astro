@@ -1,0 +1,1510 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Inflation Erosion Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo { text-decoration: none; }
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 18px;
+  font-weight: 600;
+}
+.logo-text span { color: var(--gold); }
+
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+
+.hero h1 em { color: var(--gold); font-style: normal; }
+
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 0 auto 38px;
+  font-weight: 300;
+}
+
+.hero-points {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.wizard-section,
+.analysis-section,
+.report-section {
+  padding: 52px 24px 30px;
+}
+
+.wizard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.sticky-sidebar { position: sticky; top: 94px; }
+
+.sidebar-card,
+.form-card,
+.analysis-card,
+.report-shell,
+.disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card { padding: 28px; }
+
+.sidebar-label,
+.step-label,
+.section-kicker,
+.report-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 8px 0 14px;
+}
+
+.sidebar-copy {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 22px;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+
+.step-item.active {
+  border-color: rgba(201,168,76,0.4);
+  background: var(--gold-glow);
+}
+
+.step-item.done .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.step-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.sidebar-note {
+  border-radius: 14px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.78);
+  padding: 18px;
+  font-size: 13px;
+}
+
+.sidebar-note strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.form-card { overflow: hidden; }
+
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.24);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.progress-inline {
+  color: rgba(255,255,255,0.62);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.form-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 34px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+.form-sub {
+  color: rgba(255,255,255,0.64);
+  font-size: 15px;
+  max-width: 760px;
+}
+
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--navy);
+  margin: 8px 0;
+}
+
+.step-help {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  max-width: 720px;
+}
+
+.field-grid,
+.insight-grid,
+.metric-grid,
+.compare-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.insight-grid,
+.metric-grid,
+.compare-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+
+.field-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.field-note {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.btn-back,
+.btn-next,
+.btn-print,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back,
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 13px 18px;
+}
+
+.btn-next,
+.btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 13px 20px;
+}
+
+.btn-next:hover,
+.btn-print:hover {
+  background: var(--gold-light);
+}
+
+.analysis-section,
+.report-section { display: none; }
+.analysis-section.active,
+.report-section.active { display: block; }
+
+.analysis-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 42px 28px;
+  text-align: center;
+}
+
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+
+.analysis-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.analysis-sub {
+  font-size: 15px;
+  color: var(--text-light);
+  margin-bottom: 28px;
+}
+
+.analysis-steps {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.analysis-step.done .analysis-indicator {
+  background: var(--gold);
+  color: var(--navy);
+}
+
+.analysis-text {
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 30px;
+  color: var(--white);
+}
+
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+
+.report-subtitle {
+  color: rgba(255,255,255,0.72);
+  font-size: 15px;
+  max-width: 780px;
+}
+
+.report-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.report-meta-item,
+.pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.report-body {
+  padding: 28px;
+  display: grid;
+  gap: 22px;
+}
+
+.hero-summary,
+.section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.hero-summary {
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 22px;
+}
+
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+
+.summary-title em { color: var(--gold); font-style: normal; }
+
+.summary-copy {
+  font-size: 15px;
+  color: var(--text-mid);
+}
+
+.summary-benchmark {
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.14;
+  margin: 8px 0 10px;
+}
+
+.metric-card,
+.compare-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.metric-label,
+.compare-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.metric-value,
+.compare-card .value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.metric-sub,
+.compare-card .sub {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.section-card { padding: 24px; }
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.section-copy {
+  font-size: 13px;
+  color: var(--text-light);
+  max-width: 650px;
+}
+
+.pill {
+  background: var(--cream);
+  border-color: var(--border);
+  color: var(--navy);
+}
+
+.chart-wrap {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-mid);
+}
+
+.legend-line {
+  width: 28px;
+  height: 3px;
+  border-radius: 999px;
+}
+
+.callout {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+
+.report-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+
+.report-note {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.disclaimer {
+  max-width: 1080px;
+  margin: 0 auto 64px;
+  padding: 24px 28px 32px;
+}
+
+.disclaimer p {
+  font-size: 11px;
+  color: var(--text-light);
+  line-height: 1.7;
+}
+
+.disclaimer strong { color: var(--text-mid); }
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 980px) {
+  .wizard-grid,
+  .field-grid,
+  .insight-grid,
+  .metric-grid,
+  .compare-grid,
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .sticky-sidebar { position: static; }
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section,
+  .analysis-section,
+  .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card,
+  .form-body,
+  .report-body,
+  .section-card,
+  .hero-summary,
+  .analysis-card,
+  .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header,
+  .report-header { padding: 28px 20px; }
+  .step-question,
+  .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row,
+  .section-head,
+  .report-actions,
+  .form-header-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .report-actions > div:last-child { width: 100%; }
+  .report-actions > div:last-child button { width: 100%; }
+}
+
+@media print {
+  body { background: #fff; }
+  .site-header,
+  .hero,
+  .wizard-section,
+  .analysis-section,
+  .report-actions,
+  .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell {
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .hero-summary,
+  .section-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Inflation + Longevity Tool</div>
+    <h1>The Inflation <em>Erosion</em> Visualizer</h1>
+    <p class="hero-sub">Answer the question retirees actually feel in their stomach: “What will my monthly budget really cost when I’m 85?” This tool projects future spending needs year by year and extends the curve through the user’s likely longevity horizon.</p>
+    <div class="hero-points">
+      <div class="hero-point">Personalized inflation curve</div>
+      <div class="hero-point">County longevity framing</div>
+      <div class="hero-point">Screenshot-shareable chart + saved report</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Erosion Builder</div>
+        <div class="sidebar-title">Inflation does not need to spike once to hurt. It just needs time.</div>
+        <div class="sidebar-copy">This report makes the erosion visible year by year so the user can see how much longer they may need to fund a much larger monthly budget.</div>
+
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Longevity</div>
+              <div class="step-sub">Name, county, state, and age</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Budget Inputs</div>
+              <div class="step-sub">Current monthly budget and category notes</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Inflation View</div>
+              <div class="step-sub">Target age, inflation assumptions, and report framing</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-note">
+          <strong>Prototype note</strong>
+          This version uses bundled CPI-style assumptions and state longevity benchmarks so the whole product flow is live before the FRED integration is wired.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See what today’s budget becomes later in retirement.</div>
+        <div class="form-sub">Enter the current monthly budget, then we’ll project its inflation-adjusted future cost to age 85 and through the user’s likely planning horizon.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Whose future budget are we visualizing?</div>
+          <div class="step-help">These inputs set the report identity and the longevity horizon used to extend the chart.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="currentAge">Current Age</label>
+              <input class="field-input" id="currentAge" type="number" min="45" max="100" placeholder="e.g. 67">
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="metric-card">
+              <div class="metric-label">What this makes visible</div>
+              <div class="metric-sub">Purchasing power erosion is easier to ignore in words than on a curve.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Why it spreads</div>
+              <div class="metric-sub">“My $5,000 budget becomes what by 85?” is an emotionally sticky question.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What comes later</div>
+              <div class="metric-sub">Live FRED CPI feeds and updated county longevity benchmarks.</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What monthly budget are we protecting from erosion?</div>
+          <div class="step-help">Keep it simple: use the real monthly budget you want future income to preserve.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="monthlyBudget">Current Monthly Budget</label>
+              <input class="field-input" id="monthlyBudget" type="text" placeholder="e.g. 5000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="budgetPriority">Most Important Budget Category</label>
+              <input class="field-input" id="budgetPriority" type="text" placeholder="e.g. Healthcare and housing">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="budgetNotes">Budget Notes</label>
+              <textarea class="field-textarea" id="budgetNotes" placeholder="e.g. We want enough room for healthcare, travel, home upkeep, and helping grandchildren."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How should we frame the inflation curve?</div>
+          <div class="step-help">This determines the chart horizon, the headline number, and the explanatory narrative.</div>
+
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="targetAge">Target Age for Headline</label>
+              <input class="field-input" id="targetAge" type="number" min="70" max="100" placeholder="e.g. 85">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="inflationRate">Annual Inflation Assumption %</label>
+              <input class="field-input" id="inflationRate" type="text" placeholder="e.g. 3.0">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stressInflationRate">Higher Inflation Stress %</label>
+              <input class="field-input" id="stressInflationRate" type="text" placeholder="e.g. 5.5">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="planningGoal">What is this chart mainly for?</label>
+              <select class="field-select" id="planningGoal">
+                <option value="" selected disabled>Select one...</option>
+                <option value="income">Income replacement planning</option>
+                <option value="annuity">Annuity / guaranteed income education</option>
+                <option value="withdrawal">Withdrawal-rate planning</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateInflationReport()">Generate My Inflation Curve →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Inflation Curve</div>
+    <div class="analysis-sub" id="analysisSub">Projecting year-by-year purchasing-power erosion across the likely planning horizon.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Checking the current monthly budget and target age inputs...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Applying the baseline and stress inflation assumptions across time...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Extending the planning horizon through the local longevity benchmark...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the chart to your portal and preparing the print-ready report...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Purchasing Power Tracker</div>
+      <div class="report-title" id="reportTitle">The Inflation Erosion Visualizer</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved year-by-year projection of what the current monthly budget may really cost later in retirement.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County frame —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="summary-title">Your budget does not stay still. It drifts upward every year, whether income keeps up or not.</div>
+            <div class="summary-copy" id="summaryCopy">This chart visualizes how much more monthly income may be needed to preserve today’s lifestyle later in retirement.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="report-kicker">Headline Number</div>
+            <div class="headline" id="benchmarkHeadline">What today’s budget becomes by age 85</div>
+            <div id="benchmarkCopy">The user-facing headline from the report appears here with the longevity framing.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Current Monthly Budget</div>
+            <div class="metric-value" id="currentBudgetValue">$0</div>
+            <div class="metric-sub">The spending number entered today</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Budget at Target Age</div>
+            <div class="metric-value" id="targetBudgetValue">$0</div>
+            <div class="metric-sub" id="targetBudgetSub">What this budget may cost at the selected target age</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Budget at Longevity Horizon</div>
+            <div class="metric-value" id="longevityBudgetValue">$0</div>
+            <div class="metric-sub" id="longevityBudgetSub">Projected need at the local planning horizon</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">Year-by-Year Erosion Curve</div>
+            <div class="section-copy">The gold line is the baseline inflation path. The navy line shows the higher-inflation stress path.</div>
+          </div>
+          <div class="pill" id="chartPill">Baseline + stress view</div>
+        </div>
+        <div class="chart-wrap">
+          <svg id="erosionChart" viewBox="0 0 900 360" width="100%" height="auto" aria-label="Inflation erosion chart"></svg>
+          <div class="chart-legend">
+            <div class="legend-item"><span class="legend-line" style="background: var(--gold);"></span><span>Baseline inflation path</span></div>
+            <div class="legend-item"><span class="legend-line" style="background: var(--navy);"></span><span>Higher-inflation stress path</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Comparison Points</div>
+            <div class="section-copy">These are the three numbers people screenshot and share: now, target age, and planning horizon.</div>
+          </div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Summary</div>
+            <div class="section-title">Inflation erosion narrative</div>
+            <div class="section-copy">A plain-English explanation of what the line really means for retirement income planning.</div>
+          </div>
+        </div>
+        <div class="callout" id="erosionCallout">Your inflation erosion summary will appear here.</div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editInflationReport()">Edit Responses</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This visualizer is for educational purposes only and does not constitute financial, legal, tax, or actuarial advice. Inflation assumptions shown here are prototype planning assumptions and are not live forecasts. Longevity framing is illustrative and based on bundled state-level planning assumptions in this version. Actual inflation, healthcare expenses, tax changes, and household spending patterns can materially change the real future cost of retirement. Use this report as a planning prompt and consult a qualified professional before making decisions. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+const STATE_LONGEVITY = {
+  CA: 84.0, FL: 83.2, NY: 83.4, NJ: 83.8, WA: 83.2, MA: 84.1, MD: 82.8, CO: 82.6,
+  OR: 82.7, AZ: 82.1, TX: 80.9, NC: 80.7, GA: 80.1, PA: 81.3, OH: 79.8, MI: 79.9,
+  TN: 78.9, SC: 79.4, AL: 77.9, LA: 76.8
+};
+
+let latestInflationPayload = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parsePercent(value, fallback = 0) {
+  const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function stateName(code) {
+  return STATE_OPTIONS.find(([v]) => v === code)?.[1] ?? code;
+}
+
+function getLongevityAge(stateCode, currentAge) {
+  const target = STATE_LONGEVITY[stateCode] || 81.5;
+  return Math.max(target, currentAge + 8);
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function buildInflationSeries(startAge, endAge, monthlyBudget, rate) {
+  const years = [];
+  for (let age = startAge; age <= endAge; age += 1) {
+    const yearOffset = age - startAge;
+    const monthlyCost = monthlyBudget * Math.pow(1 + rate / 100, yearOffset);
+    years.push({ age, monthlyCost });
+  }
+  return years;
+}
+
+function buildInflationPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const stateCode = document.getElementById('stateSelect').value;
+  const stateFullName = stateName(stateCode);
+  const countyName = document.getElementById('countyName').value.trim();
+  const currentAge = Number(document.getElementById('currentAge').value || 0);
+  const monthlyBudget = parseMoney(document.getElementById('monthlyBudget').value);
+  const budgetPriority = document.getElementById('budgetPriority').value.trim();
+  const budgetNotes = document.getElementById('budgetNotes').value.trim();
+  const targetAge = Number(document.getElementById('targetAge').value || 85);
+  const inflationRate = parsePercent(document.getElementById('inflationRate').value, 3);
+  const stressInflationRate = parsePercent(document.getElementById('stressInflationRate').value, 5.5);
+  const planningGoal = document.getElementById('planningGoal').value;
+
+  const longevityAge = getLongevityAge(stateCode, currentAge);
+  const finalAge = Math.max(targetAge, Math.ceil(longevityAge));
+  const baselineSeries = buildInflationSeries(currentAge, finalAge, monthlyBudget, inflationRate);
+  const stressSeries = buildInflationSeries(currentAge, finalAge, monthlyBudget, stressInflationRate);
+  const targetPoint = baselineSeries.find((point) => point.age === targetAge) || baselineSeries[baselineSeries.length - 1];
+  const longevityPoint = baselineSeries.find((point) => point.age === Math.ceil(longevityAge)) || baselineSeries[baselineSeries.length - 1];
+
+  const narrative = `A ${formatMoney(monthlyBudget)} monthly budget today grows to about ${formatMoney(targetPoint.monthlyCost)} by age ${targetAge} at a ${inflationRate.toFixed(1)}% inflation assumption. If this household needs the budget to last through roughly age ${longevityAge.toFixed(1)} in ${countyName || stateFullName || 'their area'}, the same lifestyle could require about ${formatMoney(longevityPoint.monthlyCost)} per month. ${budgetNotes ? budgetNotes : 'That is why retirement income planning has to keep pace with cost growth, not just today’s spending.'}`;
+
+  return {
+    fullName,
+    stateCode,
+    stateName: stateFullName,
+    countyName,
+    currentAge,
+    monthlyBudget,
+    budgetPriority,
+    budgetNotes,
+    targetAge,
+    inflationRate,
+    stressInflationRate,
+    planningGoal,
+    longevityAge,
+    baselineSeries,
+    stressSeries,
+    targetBudget: targetPoint.monthlyCost,
+    longevityBudget: longevityPoint.monthlyCost,
+    narrative
+  };
+}
+
+function drawChart(payload) {
+  const svg = document.getElementById('erosionChart');
+  const width = 900;
+  const height = 360;
+  const padding = { top: 24, right: 24, bottom: 44, left: 70 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const allValues = [...payload.baselineSeries, ...payload.stressSeries].map((point) => point.monthlyCost);
+  const maxValue = Math.max(...allValues);
+  const minAge = payload.currentAge;
+  const maxAge = payload.baselineSeries[payload.baselineSeries.length - 1].age;
+
+  function x(age) {
+    return padding.left + ((age - minAge) / Math.max(1, maxAge - minAge)) * chartWidth;
+  }
+
+  function y(value) {
+    return padding.top + chartHeight - (value / maxValue) * chartHeight;
+  }
+
+  function pathFor(series) {
+    return series.map((point, index) => `${index === 0 ? 'M' : 'L'} ${x(point.age).toFixed(2)} ${y(point.monthlyCost).toFixed(2)}`).join(' ');
+  }
+
+  const baselinePath = pathFor(payload.baselineSeries);
+  const stressPath = pathFor(payload.stressSeries);
+
+  const yTicks = 4;
+  const xTicks = payload.baselineSeries.filter((_, index) => index % Math.max(1, Math.floor(payload.baselineSeries.length / 5)) === 0);
+
+  svg.innerHTML = `
+    <rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>
+    ${new Array(yTicks + 1).fill(null).map((_, index) => {
+      const value = (maxValue / yTicks) * index;
+      const yPos = y(value);
+      return `
+        <line x1="${padding.left}" y1="${yPos}" x2="${width - padding.right}" y2="${yPos}" stroke="#E8E3D8" stroke-width="1"></line>
+        <text x="${padding.left - 10}" y="${yPos + 4}" text-anchor="end" font-size="11" fill="#7A7A7A">${formatMoney(value)}</text>
+      `;
+    }).join('')}
+    ${xTicks.map((point) => `
+      <line x1="${x(point.age)}" y1="${padding.top}" x2="${x(point.age)}" y2="${height - padding.bottom}" stroke="#F0EBE0" stroke-width="1"></line>
+      <text x="${x(point.age)}" y="${height - 16}" text-anchor="middle" font-size="11" fill="#7A7A7A">Age ${point.age}</text>
+    `).join('')}
+    <path d="${stressPath}" fill="none" stroke="#0F1F3D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="${baselinePath}" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+    <circle cx="${x(payload.targetAge)}" cy="${y(payload.targetBudget)}" r="5" fill="#C9A84C"></circle>
+    <circle cx="${x(Math.ceil(payload.longevityAge))}" cy="${y(payload.longevityBudget)}" r="5" fill="#0F1F3D"></circle>
+  `;
+}
+
+function renderInflationReport(payload) {
+  latestInflationPayload = payload;
+  document.getElementById('reportTitle').textContent = `The Inflation Erosion Visualizer for ${payload.fullName || 'Your Budget'}`;
+  document.getElementById('reportSubtitle').textContent = `A year-by-year inflation curve for ${payload.countyName || 'your county'}${payload.stateName ? `, ${payload.stateName}` : ''}, extending through the likely planning horizon.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'} · ${payload.stateName || 'State not entered'} longevity framing`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryCopy').textContent = payload.budgetNotes || payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `${formatMoney(payload.monthlyBudget)} today becomes about ${formatMoney(payload.targetBudget)} by age ${payload.targetAge}`;
+  document.getElementById('benchmarkCopy').textContent = `Using a baseline inflation assumption of ${payload.inflationRate.toFixed(1)}%, this budget could rise to about ${formatMoney(payload.targetBudget)} by age ${payload.targetAge} and roughly ${formatMoney(payload.longevityBudget)} by age ${payload.longevityAge.toFixed(1)}.`;
+  document.getElementById('currentBudgetValue').textContent = formatMoney(payload.monthlyBudget);
+  document.getElementById('targetBudgetValue').textContent = formatMoney(payload.targetBudget);
+  document.getElementById('longevityBudgetValue').textContent = formatMoney(payload.longevityBudget);
+  document.getElementById('targetBudgetSub').textContent = `Projected monthly need at age ${payload.targetAge}`;
+  document.getElementById('longevityBudgetSub').textContent = `Projected monthly need near age ${payload.longevityAge.toFixed(1)}`;
+  document.getElementById('chartPill').textContent = `${payload.inflationRate.toFixed(1)}% baseline · ${payload.stressInflationRate.toFixed(1)}% stress`;
+
+  drawChart(payload);
+
+  document.getElementById('compareGrid').innerHTML = [
+    {
+      label: 'Now',
+      value: formatMoney(payload.monthlyBudget),
+      sub: 'Current monthly budget entered into the report'
+    },
+    {
+      label: `Age ${payload.targetAge}`,
+      value: formatMoney(payload.targetBudget),
+      sub: 'Projected monthly budget at the headline target age'
+    },
+    {
+      label: `Age ${payload.longevityAge.toFixed(1)}`,
+      value: formatMoney(payload.longevityBudget),
+      sub: 'Projected monthly budget at the local planning horizon'
+    }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('erosionCallout').textContent = payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Projecting inflation erosion for ${payload.fullName || 'your budget'} in ${payload.stateName || 'your state'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveInflationReport(payload) {
+  const supabase = window.inflationVisualizerSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_code: payload.stateCode || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    current_age: payload.currentAge || null,
+    monthly_budget: payload.monthlyBudget,
+    target_age: payload.targetAge,
+    baseline_inflation_rate_pct: payload.inflationRate,
+    stress_inflation_rate_pct: payload.stressInflationRate,
+    longevity_age: payload.longevityAge,
+    target_budget_value: payload.targetBudget,
+    longevity_budget_value: payload.longevityBudget,
+    report_title: `The Inflation Erosion Visualizer for ${payload.fullName || 'Your Budget'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('inflation_erosion_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save Inflation Erosion report:', error);
+  }
+}
+
+function showGeneratedInflationReport(payload) {
+  renderInflationReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedInflationReport(payload) {
+  renderInflationReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedInflationReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fields = {
+    fullName: payload.fullName,
+    countyName: payload.countyName,
+    currentAge: payload.currentAge,
+    monthlyBudget: payload.monthlyBudget,
+    budgetPriority: payload.budgetPriority,
+    budgetNotes: payload.budgetNotes,
+    targetAge: payload.targetAge,
+    inflationRate: payload.inflationRate,
+    stressInflationRate: payload.stressInflationRate
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = String(value);
+  });
+
+  if (payload.stateCode) document.getElementById('stateSelect').value = payload.stateCode;
+  if (payload.planningGoal) document.getElementById('planningGoal').value = payload.planningGoal;
+
+  showHydratedInflationReport(payload);
+  return true;
+}
+
+async function generateInflationReport() {
+  const payload = buildInflationPayload();
+  await saveInflationReport(payload);
+  showGeneratedInflationReport(payload);
+}
+
+function editInflationReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateInflationReport = generateInflationReport;
+window.editInflationReport = editInflationReport;
+window.hydrateInflationReport = hydrateSavedInflationReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.inflationVisualizerSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateInflationReport) {
+  const { data: report } = await supabase
+    .from('inflation_erosion_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateInflationReport(report);
+  }
+}
+</script>
+</body>
+</html>

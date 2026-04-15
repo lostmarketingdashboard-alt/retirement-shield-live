@@ -1,0 +1,772 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unclaimed Property Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0F1F3D;--navy-light:#1A2D52;--navy-mid:#152847;--gold:#C9A84C;--gold-light:#D4B96A;
+  --gold-glow:rgba(201,168,76,0.12);--cream:#FAF7F0;--cream-dark:#F0EBE0;--white:#FFFFFF;
+  --text-dark:#1A1A1A;--text-mid:#4A4A4A;--text-light:#7A7A7A;--green:#2E8B57;--amber:#D97706;--red:#B73E2E;
+  --border:#E8E3D8;--shadow:0 2px 20px rgba(15,31,61,0.08)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site-header{background:var(--navy);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.logo{text-decoration:none}.logo-text{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:600}.logo-text span{color:var(--gold)}
+.hero{background:var(--navy);padding:78px 24px 94px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:700;color:var(--white);line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.66);line-height:1.7;max-width:840px;margin:0 auto 38px;font-weight:300}
+.hero-points{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-point{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.84);border-radius:999px;padding:10px 16px;font-size:13px}
+.wizard-section,.analysis-section,.report-section{padding:52px 24px 30px}
+.wizard-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start}
+.sticky-sidebar{position:sticky;top:94px}
+.sidebar-card,.form-card,.analysis-card,.report-shell,.disclaimer{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.sidebar-card{padding:28px}
+.sidebar-label,.step-label,.section-kicker,.report-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:28px;line-height:1.15;color:var(--navy);margin:8px 0 14px}
+.sidebar-copy{font-size:14px;color:var(--text-mid);margin-bottom:22px}
+.step-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--cream);border:1px solid transparent}
+.step-item.active{border-color:rgba(201,168,76,0.4);background:var(--gold-glow)}
+.step-item.done .step-num{background:var(--gold);color:var(--navy)}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--cream-dark);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35}.step-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.sidebar-note{border-radius:14px;background:var(--navy);color:rgba(255,255,255,0.78);padding:18px;font-size:13px}.sidebar-note strong{color:var(--white);display:block;margin-bottom:6px}
+.form-card{overflow:hidden}.form-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 30px}
+.form-header-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.form-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.24);color:var(--gold);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase}
+.progress-inline{color:rgba(255,255,255,0.62);font-size:12px;font-weight:600}
+.form-title{font-family:'Playfair Display',serif;color:var(--white);font-size:34px;line-height:1.1;margin-bottom:10px}
+.form-sub{color:rgba(255,255,255,0.64);font-size:15px;max-width:760px}
+.progress-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:999px;margin-top:18px;overflow:hidden}
+.progress-fill{height:100%;width:50%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .35s ease}
+.form-body{padding:30px}.form-step{display:none}.form-step.active{display:block}
+.step-question{font-family:'Playfair Display',serif;font-size:28px;line-height:1.18;color:var(--navy);margin:8px 0}
+.step-help{font-size:14px;color:var(--text-light);margin-bottom:24px;max-width:760px}
+.field-grid,.metric-grid,.card-grid,.instruction-grid{display:grid;gap:18px}
+.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric-grid,.card-grid,.instruction-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field-group{margin-bottom:18px}.field-group.full{grid-column:1/-1}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
+.field-input,.field-select,.field-textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text-dark);font-size:15px;font-family:'DM Sans',sans-serif;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.field-textarea{min-height:110px;resize:vertical}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);background:var(--white)}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-back,.btn-next,.btn-print,.btn-secondary,.link-btn{border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn-back,.btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:13px 18px}
+.btn-next,.btn-print,.link-btn{background:var(--gold);color:var(--navy);padding:13px 20px}.btn-next:hover,.btn-print:hover,.link-btn:hover{background:var(--gold-light)}
+.selection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.selection-card{padding:18px;border-radius:14px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;transition:border-color .2s,transform .2s,background .2s}
+.selection-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.12);transform:translateY(-1px)}
+.selection-card input{position:absolute;opacity:0;pointer-events:none}
+.selection-card strong{display:block;color:var(--navy);font-size:15px;margin-bottom:6px}
+.selection-card span{display:block;font-size:13px;color:var(--text-light);line-height:1.5}
+.insight-band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.insight-chip{border:1px solid var(--border);border-radius:14px;background:var(--cream);padding:16px}
+.insight-chip strong{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}.insight-chip span{font-size:13px;color:var(--text-light)}
+.analysis-section,.report-section{display:none}.analysis-section.active,.report-section.active{display:block}
+.analysis-card{max-width:920px;margin:0 auto;padding:42px 28px;text-align:center}
+.analysis-orb{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold-light),var(--gold));position:relative;box-shadow:0 0 0 16px rgba(201,168,76,0.08),0 0 0 32px rgba(201,168,76,0.04)}
+.analysis-orb::after{content:'';position:absolute;inset:24px;border-radius:50%;background:var(--navy);opacity:.16}
+.analysis-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);margin-bottom:8px}
+.analysis-sub{font-size:15px;color:var(--text-light);margin-bottom:28px}
+.analysis-steps{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.analysis-step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:12px;background:var(--cream);border:1px solid var(--border)}
+.analysis-indicator{width:38px;height:38px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700}
+.analysis-step.done .analysis-indicator{background:var(--gold);color:var(--navy)}.analysis-text{font-size:14px;color:var(--text-mid)}
+.report-shell{max-width:1080px;margin:0 auto;overflow:hidden}
+.report-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:36px 32px 30px;color:var(--white)}
+.report-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin:10px 0 12px}
+.report-subtitle{color:rgba(255,255,255,0.72);font-size:15px;max-width:800px}
+.report-meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+.report-meta-item,.pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.8)}
+.report-body{padding:28px;display:grid;gap:22px}
+.hero-summary,.section-card{background:var(--white);border:1px solid var(--border);border-radius:16px}
+.hero-summary{padding:28px;background:linear-gradient(135deg,rgba(15,31,61,0.03),rgba(201,168,76,0.08)),var(--white)}
+.summary-lead{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+.summary-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);line-height:1.08;margin-bottom:10px}.summary-title em{color:var(--gold);font-style:normal}
+.summary-copy{font-size:15px;color:var(--text-mid)}
+.summary-benchmark{background:var(--navy);color:rgba(255,255,255,0.82);border-radius:16px;padding:22px}
+.summary-benchmark .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);line-height:1.14;margin:8px 0 10px}
+.metric-card,.info-card,.instruction-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:16px}
+.metric-label,.info-label,.instruction-label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-light);font-weight:700;margin-bottom:6px}
+.metric-value,.info-title{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1.1;margin-bottom:6px}
+.metric-sub,.info-copy,.instruction-copy{font-size:12px;color:var(--text-light)}
+.section-card{padding:24px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);line-height:1.15;margin-top:4px}
+.section-copy{font-size:13px;color:var(--text-light);max-width:700px}
+.pill{background:var(--cream);border-color:var(--border);color:var(--navy)}
+.list-rows{display:flex;flex-direction:column;gap:12px}
+.list-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-row span:first-child{font-size:13px;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;font-weight:700}
+.list-row span:last-child{font-size:14px;color:var(--navy);font-weight:600;text-align:right}
+.warning-banner{display:none;margin-top:16px;background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.24);border-radius:14px;padding:14px 16px;color:#8A5200;font-size:13px}
+.warning-banner.active{display:block}
+.external-link{display:inline-flex;align-items:center;gap:8px;color:var(--navy);font-weight:700;text-decoration:none}
+.report-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 28px 28px}
+.report-note{font-size:12px;color:var(--text-light)}
+.disclaimer{max-width:1080px;margin:0 auto 64px;padding:24px 28px 32px}.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}.disclaimer strong{color:var(--text-mid)}
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width:980px){.wizard-grid,.field-grid,.metric-grid,.card-grid,.instruction-grid,.summary-lead,.selection-grid,.insight-band{grid-template-columns:1fr}.sticky-sidebar{position:static}}
+@media (max-width:768px){.site-header{padding:14px 16px}.hero{padding:54px 20px 72px}.wizard-section,.analysis-section,.report-section{padding-left:16px;padding-right:16px}.sidebar-card,.form-body,.report-body,.section-card,.hero-summary,.analysis-card,.disclaimer{padding-left:20px;padding-right:20px}.form-header,.report-header{padding:28px 20px}.step-question,.section-title{font-size:23px}.summary-title{font-size:28px}.btn-row,.section-head,.report-actions,.form-header-top,.list-row{flex-direction:column;align-items:stretch}.list-row span:last-child{text-align:left}}
+@media print{body{background:#fff}.site-header,.hero,.wizard-section,.analysis-section,.disclaimer,.report-actions{display:none!important}.report-section{display:block!important;padding:0!important}.report-shell,.section-card,.hero-summary,.metric-card,.info-card,.instruction-card{box-shadow:none!important;border-color:#ddd!important}.report-shell{max-width:none!important;border:none!important}.link-btn,.btn-secondary{display:none!important}}
+</style>
+</head>
+<body>
+<header class="site-header"><a href="/portal" class="logo"><div class="logo-text">Retirement <span>Shield</span></div></a></header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">State Search Tool</div>
+    <h1>Unclaimed Property <em>Finder</em></h1>
+    <p class="hero-sub">Americans are owed tens of billions in forgotten assets. This tool turns that statistic into a clean state-by-state search plan: the official database link, what names to search, what documents to gather, and how to move from search result to claim.</p>
+    <div class="hero-points">
+      <div class="hero-point">Official state search links</div>
+      <div class="hero-point">Claim prep checklist</div>
+      <div class="hero-point">Print-ready family handoff</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Finder Builder</div>
+        <div class="sidebar-title">This is the easiest “found money” search most families never do.</div>
+        <div class="sidebar-copy">The goal is simple: point the household to the right state database, tell them whose names to run, and reduce the friction between “maybe there’s money” and “we filed the claim.”</div>
+        <div class="step-list">
+          <div class="step-item active"><div class="step-num">1</div><div><div class="step-title">State + Search Setup</div><div class="step-sub">Who to search and where to start</div></div></div>
+          <div class="step-item"><div class="step-num">2</div><div><div class="step-title">Claim Preparation</div><div class="step-sub">Documents and family notes before filing</div></div></div>
+        </div>
+        <div class="sidebar-note"><strong>Curated-link ready</strong>This tool reads a state-link directory table for the official database URL and custom claim guidance. If a state row has not been loaded yet, it safely falls back to a generic state search prompt instead of inventing a link.</div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top"><div class="form-badge">Retirement Shield Tool</div><div class="progress-inline" id="progressText">Step 1 of 2</div></div>
+        <div class="form-title">Build a state-specific unclaimed property claim plan.</div>
+        <div class="form-sub">We’ll combine the official state search directory, your state-guide backdrop, and a household-friendly claim checklist so this can live in Documents like the other tools.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 2</div>
+          <div class="step-question">Which state should the search start in, and whose names should be checked?</div>
+          <div class="step-help">Most people should check their current state, any former state they lived in, and close family members whose mail or financial accounts may have gone dormant.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Prepared For</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret Thomas">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">Primary State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label">Search Targets</label>
+              <div class="selection-grid">
+                <label class="selection-card"><input type="checkbox" value="self"><strong>My Name</strong><span>Search your current legal name and common variations.</span></label>
+                <label class="selection-card"><input type="checkbox" value="spouse"><strong>Spouse / Partner</strong><span>Check current and prior names if relevant.</span></label>
+                <label class="selection-card"><input type="checkbox" value="parent"><strong>Parent</strong><span>Adult children often find dormant property for a parent.</span></label>
+                <label class="selection-card"><input type="checkbox" value="deceased_relative"><strong>Deceased Relative</strong><span>Estate claims often require extra proof and court paperwork.</span></label>
+                <label class="selection-card"><input type="checkbox" value="prior_state"><strong>Prior State</strong><span>Search old states of residence, work, or property ownership too.</span></label>
+                <label class="selection-card"><input type="checkbox" value="business"><strong>Old Business / LLC</strong><span>Dormant refunds and checks may sit under prior business names.</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="insight-band">
+            <div class="insight-chip"><strong>Why this converts</strong><span>This is practical, immediate, and easy to share with a spouse, parent, or adult child.</span></div>
+            <div class="insight-chip"><strong>Best behavior</strong><span>Run the state search today, then print the plan so the household knows how to finish a claim later.</span></div>
+            <div class="insight-chip"><strong>What the report does</strong><span>It gives the correct destination, claim prep notes, and family-search prompts in one saved document.</span></div>
+          </div>
+          <div class="btn-row"><div></div><button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 2</div>
+          <div class="step-question">What claim friction should we plan for?</div>
+          <div class="step-help">This lets the report highlight the right proof checklist and family notes before anyone clicks into the state portal.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="proofSelect">Proof Situation</label>
+              <select class="field-select" id="proofSelect">
+                <option value="">Select one</option>
+                <option value="basic">I have basic ID and current address proof</option>
+                <option value="estate">This may require estate documents</option>
+                <option value="multiple">I may need old addresses or name-change proof</option>
+                <option value="unknown">Not sure yet</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="priorStates">Other States To Check</label>
+              <input class="field-input" id="priorStates" type="text" placeholder="e.g. Florida, Texas, Illinois">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="notes">Family Search Notes</label>
+              <textarea class="field-textarea" id="notes" placeholder="Optional: maiden names, prior business names, deceased relatives, old addresses, former employers..."></textarea>
+            </div>
+          </div>
+          <div class="warning-banner" id="warningBanner"></div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(1)">← Back</button><button class="btn-next" type="button" onclick="generateUnclaimedPropertyReport()">Generate My Finder Report →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Unclaimed Property Report</div>
+    <div class="analysis-sub">Loading the state guide backdrop, matching the state search directory, and shaping a claim-prep checklist the family can actually use.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Loading state guide context...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Loading the state unclaimed property search directory...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Building the search and claim-prep instructions...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report into Portal Documents and Tools...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">State Search + Claim Checklist</div>
+      <div class="report-title" id="reportTitle">Unclaimed Property Finder</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved search plan showing where to look, whose names to run, and what to prepare before a claim starts.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaState">State —</div>
+        <div class="report-meta-item" id="metaTargets">Targets —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="summary-lead">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">There may be <em>missing money</em> worth checking now.</div>
+            <div class="summary-copy" id="summaryCopy">Summary appears here.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Primary Search Link</div>
+            <div class="headline" id="benchmarkHeadline">Official state search link</div>
+            <div id="benchmarkCopy">State search copy appears here.</div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card"><div class="metric-label">Names To Search</div><div class="metric-value" id="targetsValue">0</div><div class="metric-sub" id="targetsSub">People or entities to check</div></div>
+          <div class="metric-card"><div class="metric-label">Claim Prep Level</div><div class="metric-value" id="proofValue">Basic</div><div class="metric-sub" id="proofSub">How much document prep this likely needs</div></div>
+          <div class="metric-card"><div class="metric-label">Other States</div><div class="metric-value" id="statesValue">0</div><div class="metric-sub" id="statesSub">Additional states to search</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Official Search</div><div class="section-title">Where this household should begin</div><div class="section-copy">The report points to the state destination first. If an official direct link has not been loaded into the directory yet, it falls back to a safe search prompt rather than guessing.</div></div>
+          <div class="pill" id="searchPill">Directory match</div>
+        </div>
+        <div class="card-grid" id="searchGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Claim Preparation</div><div class="section-title">What to gather before filing</div><div class="section-copy">This is the difference between a quick search and an actual completed claim.</div></div>
+          <div class="pill" id="prepPill">Claim prep</div>
+        </div>
+        <div class="instruction-grid" id="instructionGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Estate Context</div><div class="section-title">How this fits the wider estate picture</div><div class="section-copy">This uses your existing state guide structure to remind the user why forgotten accounts and stale ownership details matter in the first place.</div></div>
+          <div class="pill" id="contextPill">State guide context</div>
+        </div>
+        <div class="list-rows">
+          <div class="list-row"><span>Probate Friction</span><span id="contextProbate">—</span></div>
+          <div class="list-row"><span>Transfer Tool Posture</span><span id="contextTransfer">—</span></div>
+          <div class="list-row"><span>Medicaid Timing</span><span id="contextMedicaid">—</span></div>
+          <div class="list-row"><span>Family Search Note</span><span id="contextFamily">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="report-actions">
+      <div class="report-note">Saved reports reopen from Portal Documents. This tool is educational and operational, not legal advice.</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-secondary" type="button" onclick="editUnclaimedProperty()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> Unclaimed Property Finder is for educational purposes only and does not constitute legal, tax, or financial advice. State claim procedures, required proof, and processing rules can vary by jurisdiction and by claim type. Always verify final claim steps with the official state property office before filing. Retirement Shield is not a law firm and does not process claims on your behalf. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],['CO','Colorado'],
+  ['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+  ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],
+  ['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+  ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],
+  ['NM','New Mexico'],['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
+];
+
+const TARGET_LABELS = {
+  self: 'My Name',
+  spouse: 'Spouse / Partner',
+  parent: 'Parent',
+  deceased_relative: 'Deceased Relative',
+  prior_state: 'Prior State',
+  business: 'Old Business / LLC'
+};
+
+const PROOF_LABELS = {
+  basic: 'Basic',
+  estate: 'Estate',
+  multiple: 'Multi-Document',
+  unknown: 'Unknown'
+};
+
+const FALLBACK_SEARCH_TEXT = {
+  AL: 'alabama unclaimed property search',
+  AK: 'alaska unclaimed property search',
+  AZ: 'arizona unclaimed property search',
+  AR: 'arkansas unclaimed property search',
+  CA: 'california unclaimed property search',
+  CO: 'colorado unclaimed property search',
+  CT: 'connecticut unclaimed property search',
+  DE: 'delaware unclaimed property search',
+  FL: 'FloridaTreasureHunt.gov',
+  GA: 'georgia unclaimed property search',
+  HI: 'hawaii unclaimed property search',
+  ID: 'idaho unclaimed property search',
+  IL: 'illinois unclaimed property search',
+  IN: 'indiana unclaimed property search',
+  IA: 'iowa unclaimed property search',
+  KS: 'kansas unclaimed property search',
+  KY: 'kentucky unclaimed property search',
+  LA: 'louisiana unclaimed property search',
+  ME: 'maine unclaimed property search',
+  MD: 'maryland unclaimed property search',
+  MA: 'massachusetts unclaimed property search',
+  MI: 'michigan unclaimed property search',
+  MN: 'minnesota unclaimed property search',
+  MS: 'mississippi unclaimed property search',
+  MO: 'missouri unclaimed property search',
+  MT: 'montana unclaimed property search',
+  NE: 'nebraska unclaimed property search',
+  NV: 'nevada unclaimed property search',
+  NH: 'new hampshire unclaimed property search',
+  NJ: 'new jersey unclaimed property search',
+  NM: 'new mexico unclaimed property search',
+  NY: 'new york unclaimed property search',
+  NC: 'north carolina unclaimed property search',
+  ND: 'north dakota unclaimed property search',
+  OH: 'ohio unclaimed property search',
+  OK: 'oklahoma unclaimed property search',
+  OR: 'oregon unclaimed property search',
+  PA: 'pennsylvania unclaimed property search',
+  RI: 'rhode island unclaimed property search',
+  SC: 'south carolina unclaimed property search',
+  SD: 'south dakota unclaimed property search',
+  TN: 'tennessee unclaimed property search',
+  TX: 'texas unclaimed property search',
+  UT: 'utah unclaimed property search',
+  VT: 'vermont unclaimed property search',
+  VA: 'virginia unclaimed property search',
+  WA: 'washington unclaimed property search',
+  WV: 'west virginia unclaimed property search',
+  WI: 'wisconsin unclaimed property search',
+  WY: 'wyoming unclaimed property search',
+  DC: 'district of columbia unclaimed property search'
+};
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  document.getElementById('stateSelect').appendChild(option);
+});
+
+document.querySelectorAll('.selection-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    const input = card.querySelector('input');
+    if (!input) return;
+    input.checked = !input.checked;
+    syncCards();
+  });
+});
+
+function syncCards() {
+  document.querySelectorAll('.selection-card').forEach((card) => {
+    const input = card.querySelector('input');
+    card.classList.toggle('selected', Boolean(input?.checked));
+  });
+}
+
+function slugify(value) {
+  return String(value || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((section) => section.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('.step-item').forEach((item, index) => {
+    item.classList.remove('active','done');
+    if (index + 1 < step) item.classList.add('done');
+    if (index + 1 === step) item.classList.add('active');
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 2`;
+  document.getElementById('progressFill').style.width = `${(step / 2) * 100}%`;
+}
+
+function getFormData() {
+  return {
+    fullName: document.getElementById('fullName').value.trim() || 'Retirement Shield Client',
+    stateCode: document.getElementById('stateSelect').value,
+    stateName: STATE_OPTIONS.find(([code]) => code === document.getElementById('stateSelect').value)?.[1] || '',
+    searchTargets: Array.from(document.querySelectorAll('.selection-card input:checked')).map((input) => input.value),
+    proofLevel: document.getElementById('proofSelect').value,
+    priorStates: document.getElementById('priorStates').value.trim(),
+    notes: document.getElementById('notes').value.trim()
+  };
+}
+
+function validateData(data) {
+  if (!data.stateCode) return 'Choose a state.';
+  if (!data.searchTargets.length) return 'Choose at least one search target.';
+  if (!data.proofLevel) return 'Choose the likely proof situation.';
+  return '';
+}
+
+async function loadStateGuide(supabase, stateName) {
+  const { data } = await supabase
+    .from('state_guides')
+    .select('state_name,probate_cost_display,probate_timeline_display,medicaid_lookback_display,lady_bird_display,lady_bird_deed_available,tod_display,tod_deed_available')
+    .eq('state_slug', slugify(stateName))
+    .maybeSingle();
+  return data || null;
+}
+
+async function loadStateDirectory(supabase, stateCode) {
+  const { data } = await supabase
+    .from('unclaimed_property_state_links')
+    .select('*')
+    .eq('state_code', stateCode)
+    .maybeSingle();
+  return data || null;
+}
+
+function buildDirectoryFallback(data) {
+  return {
+    state_code: data.stateCode,
+    state_name: data.stateName,
+    agency_name: `${data.stateName} unclaimed property office`,
+    search_url: '',
+    search_label: FALLBACK_SEARCH_TEXT[data.stateCode] || `${data.stateName} unclaimed property search`,
+    search_hint: `Search ${FALLBACK_SEARCH_TEXT[data.stateCode] || `${data.stateName} unclaimed property search`} and use the official state treasury or comptroller result.`,
+    documents_hint: 'Bring government ID, current address proof, and any old addresses or name variations you may need to prove ownership.',
+    step_1: 'Run your current legal name first, then maiden names, prior married names, and common spelling variations.',
+    step_2: 'Search prior states of residence, former employers, and deceased relatives if the household may have dormant checks or refunds.',
+    step_3: 'If a result appears, gather the state-required proof before submitting the claim so the case does not stall.'
+  };
+}
+
+function buildClaimInstructions(data, directory, guide) {
+  const instructions = [];
+  instructions.push({
+    label: 'Step 1',
+    title: 'Run the name search correctly',
+    copy: directory.step_1 || 'Search current and prior names, including maiden names, old married names, and common variations.'
+  });
+  instructions.push({
+    label: 'Step 2',
+    title: 'Expand the search beyond the obvious',
+    copy: data.priorStates ? `Also run searches in ${data.priorStates}. ${directory.step_2 || ''}`.trim() : (directory.step_2 || 'Check prior states, former employers, family members, and old business names when relevant.')
+  });
+
+  let proofCopy = directory.documents_hint || 'Gather ID, address proof, and ownership evidence before filing.';
+  if (data.proofLevel === 'estate') {
+    proofCopy = 'Expect to gather death certificate copies, executor or personal representative paperwork, and proof tying the claimant to the estate before filing.';
+  } else if (data.proofLevel === 'multiple') {
+    proofCopy = 'Expect to gather old addresses, name-change documents, prior statements, or other ownership proof before the state releases funds.';
+  } else if (data.proofLevel === 'unknown') {
+    proofCopy = 'Search first, then confirm the exact proof requirements from the state office before filing so the claim package is complete the first time.';
+  }
+
+  instructions.push({
+    label: 'Step 3',
+    title: 'Prepare the claim package',
+    copy: proofCopy
+  });
+
+  if (guide?.probate_cost_display || guide?.probate_timeline_display) {
+    instructions.push({
+      label: 'Step 4',
+      title: 'Keep the estate records together',
+      copy: `Because ${data.stateName} can still involve ${guide.probate_cost_display || 'probate cost'} and ${guide.probate_timeline_display || 'probate delay'}, save claim confirmations and ownership records in the family binder instead of treating this as a one-off search.`
+    });
+  }
+
+  return instructions.slice(0, 4);
+}
+
+function buildModel(data, guide, directoryRecord) {
+  const directory = directoryRecord || buildDirectoryFallback(data);
+  const instructions = buildClaimInstructions(data, directory, guide);
+  const additionalStates = data.priorStates ? data.priorStates.split(',').map((item) => item.trim()).filter(Boolean) : [];
+  const familyTargets = data.searchTargets.map((target) => TARGET_LABELS[target] || target);
+  const likelyComplexity = data.proofLevel === 'estate' ? 'Estate' : data.proofLevel === 'multiple' ? 'Multi-Document' : data.proofLevel === 'unknown' ? 'Unknown' : 'Basic';
+  const searchCards = [
+    {
+      label: 'Agency',
+      title: directory.agency_name || `${data.stateName} unclaimed property office`,
+      copy: directory.search_hint || 'Search through the official state database first.'
+    },
+    {
+      label: 'Search Link',
+      title: directory.search_url ? 'Open official database' : (directory.search_label || 'Search the official state database'),
+      copy: directory.search_url ? directory.search_url : `Use the search phrase "${directory.search_label || `${data.stateName} unclaimed property search`}" and choose the official state result.`
+    },
+    {
+      label: 'Claim Prep',
+      title: 'Gather proof before filing',
+      copy: directory.documents_hint || 'Bring identity and ownership proof so the claim does not stall.'
+    }
+  ];
+
+  return {
+    directory,
+    instructions,
+    additionalStates,
+    familyTargets,
+    likelyComplexity,
+    searchCards
+  };
+}
+
+function populateReport(data, guide, model) {
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('reportTitle').textContent = `Unclaimed Property Finder for ${data.fullName}`;
+  document.getElementById('reportSubtitle').textContent = `A ${data.stateName} search and claim checklist showing where to look, how to search, and what to gather before filing.`;
+  document.getElementById('metaState').textContent = data.stateName;
+  document.getElementById('metaTargets').textContent = `${model.familyTargets.length} target${model.familyTargets.length === 1 ? '' : 's'}`;
+  document.getElementById('metaDate').textContent = `Generated ${date}`;
+  document.getElementById('summaryTitle').innerHTML = `This family should run a <em>${data.stateName}</em> search now.`;
+  document.getElementById('summaryCopy').textContent = `Americans are owed tens of billions in unclaimed assets, and the biggest mistake is assuming someone else already checked. This report turns that into a usable state-specific search plan.`;
+  document.getElementById('benchmarkHeadline').textContent = model.directory.search_url ? 'Official state database ready' : 'Official state database prompt ready';
+  document.getElementById('benchmarkCopy').textContent = model.directory.search_url ? `Use the curated ${data.stateName} link below, then gather proof before filing a claim.` : `A direct official link has not been loaded yet, so the report uses a safe state-specific search prompt instead of guessing.`;
+  document.getElementById('targetsValue').textContent = String(model.familyTargets.length);
+  document.getElementById('proofValue').textContent = model.likelyComplexity;
+  document.getElementById('statesValue').textContent = String(model.additionalStates.length);
+  document.getElementById('targetsSub').textContent = model.familyTargets.join(', ');
+  document.getElementById('proofSub').textContent = PROOF_LABELS[data.proofLevel] ? `${PROOF_LABELS[data.proofLevel]} proof path likely` : 'Claim proof estimate';
+  document.getElementById('statesSub').textContent = model.additionalStates.length ? model.additionalStates.join(', ') : 'No extra states noted';
+  document.getElementById('searchPill').textContent = model.directory.search_url ? 'Official link loaded' : 'Fallback search prompt';
+  document.getElementById('searchGrid').innerHTML = model.searchCards.map((item, index) => `
+    <div class="info-card">
+      <div class="info-label">${item.label}</div>
+      <div class="info-title">${item.title}</div>
+      <div class="info-copy">${item.copy}</div>
+      ${index === 1 && model.directory.search_url ? `<a class="link-btn" href="${model.directory.search_url}" target="_blank" rel="noreferrer">Open State Search</a>` : ''}
+    </div>
+  `).join('');
+  document.getElementById('prepPill').textContent = `${model.instructions.length} step${model.instructions.length === 1 ? '' : 's'}`;
+  document.getElementById('instructionGrid').innerHTML = model.instructions.map((item) => `
+    <div class="instruction-card">
+      <div class="instruction-label">${item.label}</div>
+      <div class="info-title">${item.title}</div>
+      <div class="instruction-copy">${item.copy}</div>
+    </div>
+  `).join('');
+  document.getElementById('contextPill').textContent = `${data.stateCode} backdrop`;
+  document.getElementById('contextProbate').textContent = guide?.probate_cost_display && guide?.probate_timeline_display ? `${guide.probate_cost_display} · ${guide.probate_timeline_display}` : 'Review estate records carefully';
+  document.getElementById('contextTransfer').textContent = guide?.lady_bird_deed_available ? guide.lady_bird_display : guide?.tod_display || 'Keep title and ownership records organized';
+  document.getElementById('contextMedicaid').textContent = guide?.medicaid_lookback_display || 'Retain asset records in the family binder';
+  document.getElementById('contextFamily').textContent = data.notes || (data.searchTargets.includes('deceased_relative') ? 'Deceased-relative claims usually require tighter document handling and family coordination.' : 'Share this report with a spouse, parent, or adult child so the search does not stay stuck with one person.');
+}
+
+async function saveUnclaimedProperty(data, guide, model) {
+  const supabase = window.unclaimedPropertySupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const { error } = await supabase
+    .from('unclaimed_property_reports')
+    .insert({
+      user_id: userId,
+      full_name: data.fullName,
+      state_code: data.stateCode,
+      state_name: data.stateName,
+      search_targets: data.searchTargets,
+      proof_level: data.proofLevel,
+      prior_states: data.priorStates,
+      report_title: `Unclaimed Property Finder for ${data.fullName}`,
+      report_payload: { data, guide, model }
+    });
+
+  if (error) console.error('Failed to save unclaimed property report:', error);
+}
+
+function showGeneratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  const steps = ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'];
+  let delay = 0;
+  steps.forEach((id, index) => {
+    delay += 450;
+    setTimeout(() => {
+      document.getElementById(id).classList.add('done');
+      if (index === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('analysisSection').classList.remove('active');
+          document.getElementById('reportSection').classList.add('active');
+          const shell = document.getElementById('reportShell');
+          shell.classList.add('visible');
+          shell.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('.fade-up').forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 80));
+        }, 400);
+      }
+    }, delay);
+  });
+}
+
+function showHydratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedSubmission(report) {
+  const payload = report?.report_payload;
+  if (!payload?.data || !payload?.model) return false;
+  document.getElementById('fullName').value = payload.data.fullName || '';
+  document.getElementById('stateSelect').value = payload.data.stateCode || '';
+  document.getElementById('proofSelect').value = payload.data.proofLevel || '';
+  document.getElementById('priorStates').value = payload.data.priorStates || '';
+  document.getElementById('notes').value = payload.data.notes || '';
+  document.querySelectorAll('.selection-card input').forEach((input) => {
+    input.checked = (payload.data.searchTargets || []).includes(input.value);
+  });
+  syncCards();
+  populateReport(payload.data, payload.guide || null, payload.model);
+  showHydratedReport();
+  return true;
+}
+
+async function generateUnclaimedPropertyReport() {
+  const data = getFormData();
+  const validationError = validateData(data);
+  if (validationError) {
+    document.getElementById('warningBanner').classList.add('active');
+    document.getElementById('warningBanner').textContent = validationError;
+    return;
+  }
+  document.getElementById('warningBanner').classList.remove('active');
+  document.getElementById('warningBanner').textContent = '';
+
+  const supabase = window.unclaimedPropertySupabase;
+  const [guide, directoryRecord] = await Promise.all([
+    loadStateGuide(supabase, data.stateName),
+    loadStateDirectory(supabase, data.stateCode)
+  ]);
+
+  const model = buildModel(data, guide, directoryRecord);
+  populateReport(data, guide, model);
+  await saveUnclaimedProperty(data, guide, model);
+  showGeneratedReport();
+}
+
+function editUnclaimedProperty() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(2);
+}
+
+window.nextStep = nextStep;
+window.generateUnclaimedPropertyReport = generateUnclaimedPropertyReport;
+window.editUnclaimedProperty = editUnclaimedProperty;
+window.hydrateUnclaimedPropertySubmission = hydrateSavedSubmission;
+window.UNCLAIMED_PROPERTY_STATE_OPTIONS = STATE_OPTIONS;
+syncCards();
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.unclaimedPropertySupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateUnclaimedPropertySubmission) {
+  const { data: report } = await supabase
+    .from('unclaimed_property_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateUnclaimedPropertySubmission(report);
+  }
+} else if (utm) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name,state')
+    .eq('id', utm)
+    .maybeSingle();
+
+  if (profile?.full_name) {
+    const input = document.getElementById('fullName');
+    if (input && !input.value) input.value = profile.full_name;
+  }
+
+  const matchedState = (window.UNCLAIMED_PROPERTY_STATE_OPTIONS || []).find(([, name]) => String(profile?.state || '').toLowerCase() === name.toLowerCase());
+  if (matchedState) {
+    document.getElementById('stateSelect').value = matchedState[0];
+  }
+}
+</script>
+</body>
+</html>

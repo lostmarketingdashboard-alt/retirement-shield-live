@@ -1,0 +1,654 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estate Watch — State Law Change Tracker & Plan Review Alerts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0F1F3D;--navy-light:#1A2D52;--navy-mid:#152847;--gold:#C9A84C;--gold-light:#D4B96A;
+  --gold-glow:rgba(201,168,76,0.12);--cream:#FAF7F0;--cream-dark:#F0EBE0;--white:#FFFFFF;
+  --text-dark:#1A1A1A;--text-mid:#4A4A4A;--text-light:#7A7A7A;--green:#2E8B57;--amber:#D97706;--red:#B73E2E;
+  --border:#E8E3D8;--shadow:0 2px 20px rgba(15,31,61,0.08)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site-header{background:var(--navy);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.logo{text-decoration:none}.logo-text{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:600}.logo-text span{color:var(--gold)}
+.hero{background:var(--navy);padding:78px 24px 94px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:700;color:var(--white);line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.66);line-height:1.7;max-width:840px;margin:0 auto 38px;font-weight:300}
+.hero-points{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-point{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.84);border-radius:999px;padding:10px 16px;font-size:13px}
+.wizard-section,.analysis-section,.report-section{padding:52px 24px 30px}
+.wizard-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start}
+.sticky-sidebar{position:sticky;top:94px}
+.sidebar-card,.form-card,.analysis-card,.report-shell,.disclaimer{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.sidebar-card{padding:28px}
+.sidebar-label,.step-label,.section-kicker,.report-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:28px;line-height:1.15;color:var(--navy);margin:8px 0 14px}
+.sidebar-copy{font-size:14px;color:var(--text-mid);margin-bottom:22px}
+.step-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--cream);border:1px solid transparent}
+.step-item.active{border-color:rgba(201,168,76,0.4);background:var(--gold-glow)}
+.step-item.done .step-num{background:var(--gold);color:var(--navy)}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--cream-dark);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35}.step-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.sidebar-note{border-radius:14px;background:var(--navy);color:rgba(255,255,255,0.78);padding:18px;font-size:13px}.sidebar-note strong{color:var(--white);display:block;margin-bottom:6px}
+.form-card{overflow:hidden}.form-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 30px}
+.form-header-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.form-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.24);color:var(--gold);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase}
+.progress-inline{color:rgba(255,255,255,0.62);font-size:12px;font-weight:600}
+.form-title{font-family:'Playfair Display',serif;color:var(--white);font-size:34px;line-height:1.1;margin-bottom:10px}
+.form-sub{color:rgba(255,255,255,0.64);font-size:15px;max-width:760px}
+.progress-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:999px;margin-top:18px;overflow:hidden}
+.progress-fill{height:100%;width:50%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .35s ease}
+.form-body{padding:30px}.form-step{display:none}.form-step.active{display:block}
+.step-question{font-family:'Playfair Display',serif;font-size:28px;line-height:1.18;color:var(--navy);margin:8px 0}
+.step-help{font-size:14px;color:var(--text-light);margin-bottom:24px;max-width:760px}
+.field-grid,.metric-grid,.watch-grid,.action-grid{display:grid;gap:18px}
+.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric-grid,.watch-grid,.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field-group{margin-bottom:18px}.field-group.full{grid-column:1/-1}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
+.field-input,.field-select{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text-dark);font-size:15px;font-family:'DM Sans',sans-serif;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.field-input:focus,.field-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);background:var(--white)}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-back,.btn-next,.btn-print,.btn-secondary{border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.btn-back,.btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:13px 18px}
+.btn-next,.btn-print{background:var(--gold);color:var(--navy);padding:13px 20px}.btn-next:hover,.btn-print:hover{background:var(--gold-light)}
+.segment-grid,.change-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.segment-card,.change-card{padding:18px;border-radius:14px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;transition:border-color .2s,transform .2s,background .2s}
+.segment-card.selected,.change-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.12);transform:translateY(-1px)}
+.segment-card input,.change-card input{position:absolute;opacity:0;pointer-events:none}
+.segment-card strong,.change-card strong{display:block;color:var(--navy);font-size:15px;margin-bottom:6px}
+.segment-card span,.change-card span{display:block;font-size:13px;color:var(--text-light);line-height:1.5}
+.insight-band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.insight-chip{border:1px solid var(--border);border-radius:14px;background:var(--cream);padding:16px}
+.insight-chip strong{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}.insight-chip span{font-size:13px;color:var(--text-light)}
+.analysis-section,.report-section{display:none}.analysis-section.active,.report-section.active{display:block}
+.analysis-card{max-width:920px;margin:0 auto;padding:42px 28px;text-align:center}
+.analysis-orb{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold-light),var(--gold));position:relative;box-shadow:0 0 0 16px rgba(201,168,76,0.08),0 0 0 32px rgba(201,168,76,0.04)}
+.analysis-orb::after{content:'';position:absolute;inset:24px;border-radius:50%;background:var(--navy);opacity:.16}
+.analysis-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);margin-bottom:8px}
+.analysis-sub{font-size:15px;color:var(--text-light);margin-bottom:28px}
+.analysis-steps{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.analysis-step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:12px;background:var(--cream);border:1px solid var(--border)}
+.analysis-indicator{width:38px;height:38px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700}
+.analysis-step.done .analysis-indicator{background:var(--gold);color:var(--navy)}.analysis-text{font-size:14px;color:var(--text-mid)}
+.report-shell{max-width:1080px;margin:0 auto;overflow:hidden}
+.report-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:36px 32px 30px;color:var(--white)}
+.report-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin:10px 0 12px}
+.report-subtitle{color:rgba(255,255,255,0.72);font-size:15px;max-width:800px}
+.report-meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+.report-meta-item,.pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.8)}
+.report-body{padding:28px;display:grid;gap:22px}
+.hero-summary,.section-card{background:var(--white);border:1px solid var(--border);border-radius:16px}
+.hero-summary{padding:28px;background:linear-gradient(135deg,rgba(15,31,61,0.03),rgba(201,168,76,0.08)),var(--white)}
+.summary-lead{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+.summary-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);line-height:1.08;margin-bottom:10px}.summary-title em{color:var(--gold);font-style:normal}
+.summary-copy{font-size:15px;color:var(--text-mid)}
+.summary-benchmark{background:var(--navy);color:rgba(255,255,255,0.82);border-radius:16px;padding:22px}
+.summary-benchmark .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);line-height:1.14;margin:8px 0 10px}
+.metric-card,.watch-card,.action-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:16px}
+.metric-label,.watch-label,.action-label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-light);font-weight:700;margin-bottom:6px}
+.metric-value{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:6px}
+.metric-sub,.watch-copy,.action-copy{font-size:12px;color:var(--text-light)}
+.section-card{padding:24px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);line-height:1.15;margin-top:4px}
+.section-copy{font-size:13px;color:var(--text-light);max-width:700px}
+.pill{background:var(--cream);border-color:var(--border);color:var(--navy)}
+.list-rows{display:flex;flex-direction:column;gap:12px}
+.list-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-row span:first-child{font-size:13px;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;font-weight:700}
+.list-row span:last-child{font-size:14px;color:var(--navy);font-weight:600;text-align:right}
+.warning-banner{display:none;margin-top:16px;background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.24);border-radius:14px;padding:14px 16px;color:#8A5200;font-size:13px}
+.warning-banner.active{display:block}
+.report-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 28px 28px}
+.report-note{font-size:12px;color:var(--text-light)}
+.disclaimer{max-width:1080px;margin:0 auto 64px;padding:24px 28px 32px}.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}.disclaimer strong{color:var(--text-mid)}
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width:980px){.wizard-grid,.field-grid,.metric-grid,.watch-grid,.action-grid,.summary-lead,.segment-grid,.change-grid,.insight-band{grid-template-columns:1fr}.sticky-sidebar{position:static}}
+@media (max-width:768px){.site-header{padding:14px 16px}.hero{padding:54px 20px 72px}.wizard-section,.analysis-section,.report-section{padding-left:16px;padding-right:16px}.sidebar-card,.form-body,.report-body,.section-card,.hero-summary,.analysis-card,.disclaimer{padding-left:20px;padding-right:20px}.form-header,.report-header{padding:28px 20px}.step-question,.section-title{font-size:23px}.summary-title{font-size:28px}.btn-row,.section-head,.report-actions,.form-header-top,.list-row{flex-direction:column;align-items:stretch}.list-row span:last-child{text-align:left}}
+@media print{body{background:#fff}.site-header,.hero,.wizard-section,.analysis-section,.disclaimer,.report-actions{display:none!important}.report-section{display:block!important;padding:0!important}.report-shell,.section-card,.hero-summary,.metric-card,.watch-card,.action-card{box-shadow:none!important;border-color:#ddd!important}.report-shell{max-width:none!important;border:none!important}}
+</style>
+</head>
+<body>
+<header class="site-header"><a href="/portal" class="logo"><div class="logo-text">Retirement <span>Shield</span></div></a></header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">State Change Monitoring Tool</div>
+    <h1>Estate <em>Watch</em></h1>
+    <p class="hero-sub">We’re watching so the family does not have to. Estate Watch turns state-law changes and annual life-change reviews into plain-English plan alerts: what changed, whether it affects this household, and which documents should be reviewed next.</p>
+    <div class="hero-points">
+      <div class="hero-point">State-law change tracker</div>
+      <div class="hero-point">Annual estate plan health check</div>
+      <div class="hero-point">Action prompts by profile</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Watch Builder</div>
+        <div class="sidebar-title">Estate plans rot quietly. This tool is the check-engine light.</div>
+        <div class="sidebar-copy">The point is not to overwhelm the user with legislative noise. It is to tell them when a state change or family change makes their current plan stale.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1"><div class="step-num">1</div><div><div class="step-title">State + Profile</div><div class="step-sub">Where the plan lives and what lens matters most</div></div></div>
+          <div class="step-item" data-step-indicator="2"><div class="step-num">2</div><div><div class="step-title">Annual Health Check</div><div class="step-sub">Marriage, divorce, grandchild, home, retirement</div></div></div>
+        </div>
+        <div class="sidebar-note"><strong>AI-ready backend</strong>This UI runs on tracked state-change rows plus the state-guide baseline. The schema added below leaves room to store Claude-summarized legislative updates cleanly before they are published to subscribers.</div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top"><div class="form-badge">Retirement Shield Tool</div><div class="progress-inline" id="progressText">Step 1 of 2</div></div>
+        <div class="form-title">Turn silent legal drift into a visible review prompt.</div>
+        <div class="form-sub">We’ll pull tracked state changes, compare them to the standing state-guide baseline, and layer an annual household-change review on top so the family knows whether to revisit the plan now.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 2</div>
+          <div class="step-question">Which state and planning lens should lead?</div>
+          <div class="step-help">This is how the alert decides whether to emphasize probate friction, Medicaid drift, tax change, or legacy-document review.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Prepared For</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret Thomas">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label">Primary Profile</label>
+              <div class="segment-grid">
+                <label class="segment-card"><input type="radio" name="profile" value="legacy"><strong>Legacy Builder</strong><span>Focus on probate, transfer, homestead, and death-tax changes.</span></label>
+                <label class="segment-card"><input type="radio" name="profile" value="tax"><strong>Tax-Aware Optimizer</strong><span>Focus on state death-tax thresholds and planning friction.</span></label>
+                <label class="segment-card"><input type="radio" name="profile" value="longevity"><strong>Longevity Worrier</strong><span>Focus on Medicaid limits, care-planning drift, and asset-protection timing.</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="insight-band">
+            <div class="insight-chip"><strong>What this includes</strong><span>Tracked state-law changes, state-guide baseline posture, and plain-English action prompts.</span></div>
+            <div class="insight-chip"><strong>What this does not do</strong><span>It does not replace attorney review or decide that a specific document is legally sufficient.</span></div>
+            <div class="insight-chip"><strong>Best use case</strong><span>Use it quarterly for state drift and annually for a household-change prompt.</span></div>
+          </div>
+          <div class="btn-row"><div></div><button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 2</div>
+          <div class="step-question">What changed in the household this year?</div>
+          <div class="step-help">These life changes are the quiet reason documents go stale even when the law has not moved at all.</div>
+          <div class="change-grid">
+            <label class="change-card"><input type="checkbox" value="marriage"><strong>Marriage</strong><span>Spouse rights, beneficiaries, fiduciary roles, and title assumptions may all need a refresh.</span></label>
+            <label class="change-card"><input type="checkbox" value="divorce"><strong>Divorce</strong><span>Ex-spouse beneficiary mistakes and stale fiduciary appointments become high-risk fast.</span></label>
+            <label class="change-card"><input type="checkbox" value="grandchild"><strong>New Grandchild</strong><span>Trust distribution language and contingent beneficiaries may no longer reflect family intent.</span></label>
+            <label class="change-card"><input type="checkbox" value="home_purchase"><strong>Home Purchase / Sale</strong><span>Title strategy, deed tools, homestead, and probate exposure all need a fresh look.</span></label>
+            <label class="change-card"><input type="checkbox" value="retirement"><strong>Retirement</strong><span>Income-source changes can affect taxes, beneficiary timing, and legacy planning priorities.</span></label>
+            <label class="change-card"><input type="checkbox" value="none"><strong>No Major Changes</strong><span>Use the annual review prompt anyway to confirm the plan still matches current reality.</span></label>
+          </div>
+          <div class="warning-banner" id="warningBanner"></div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(1)">← Back</button><button class="btn-next" type="button" onclick="generateEstateWatch()">Generate My Estate Watch Report →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Estate Watch Report</div>
+    <div class="analysis-sub">Pulling tracked state changes, baseline state guide data, and annual plan-review prompts into one watch report.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Loading the current state guide baseline...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Loading tracked state law-change items...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Mapping life changes to document review prompts...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report into Portal Documents and Tools...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">State Law Change Tracker & Plan Review Alerts</div>
+      <div class="report-title" id="reportTitle">Estate Watch</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved review prompt showing what changed in the state, what changed in the family, and what deserves another look now.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaState">State —</div>
+        <div class="report-meta-item" id="metaProfile">Profile —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="summary-lead">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">Your estate plan may need a <em>fresh review</em>.</div>
+            <div class="summary-copy" id="summaryCopy">Summary appears here.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Primary Trigger</div>
+            <div class="headline" id="benchmarkHeadline">Watch headline</div>
+            <div id="benchmarkCopy">Watch summary appears here.</div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card"><div class="metric-label">Tracked State Changes</div><div class="metric-value" id="changeCountValue">0</div><div class="metric-sub" id="changeCountSub">Active items affecting this state</div></div>
+          <div class="metric-card"><div class="metric-label">Household Changes</div><div class="metric-value" id="lifeChangeValue">0</div><div class="metric-sub" id="lifeChangeSub">Annual plan review triggers checked</div></div>
+          <div class="metric-card"><div class="metric-label">Review Urgency</div><div class="metric-value" id="urgencyValue">Review</div><div class="metric-sub" id="urgencySub">Based on state drift + household drift</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">State Baseline</div><div class="section-title">What this state already looked like before any new change</div><div class="section-copy">This uses the current state-guide posture so the user can understand the baseline the new alert is moving against.</div></div>
+          <div class="pill" id="baselinePill">Baseline</div>
+        </div>
+        <div class="list-rows">
+          <div class="list-row"><span>Probate</span><span id="baselineProbate">—</span></div>
+          <div class="list-row"><span>State death-tax posture</span><span id="baselineTax">—</span></div>
+          <div class="list-row"><span>Transfer-tool posture</span><span id="baselineTransfer">—</span></div>
+          <div class="list-row"><span>Medicaid timing</span><span id="baselineMedicaid">—</span></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Tracked Changes</div><div class="section-title">What changed in this state</div><div class="section-copy">These are the plain-English watch items the backend can populate from your tracked legislative summaries.</div></div>
+          <div class="pill" id="watchPill">State watch</div>
+        </div>
+        <div class="watch-grid" id="watchGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Annual Health Check</div><div class="section-title">What changed in the household</div><div class="section-copy">Even if the state law did not move, these life events are enough to justify rechecking the plan.</div></div>
+          <div class="pill" id="healthCheckPill">Health check</div>
+        </div>
+        <div class="action-grid" id="actionGrid"></div>
+      </div>
+    </div>
+    <div class="report-actions">
+      <div class="report-note">Saved reports reopen from Portal Documents and are meant to trigger an annual or quarterly attorney-review conversation, not replace one.</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-secondary" type="button" onclick="editEstateWatch()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> Estate Watch is for educational purposes only and does not constitute legal, tax, investment, or financial advice. State law-change summaries may reflect tracked legislative or administrative updates, but laws can change, be interpreted differently, or apply differently based on facts, asset type, and local procedure. AI-assisted summaries can contain errors or omissions and should always be reviewed by a licensed attorney in the relevant state before action is taken. Retirement Shield is not a law firm and does not prepare legal documents. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],['CO','Colorado'],
+  ['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+  ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],
+  ['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+  ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],
+  ['NM','New Mexico'],['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
+];
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  document.getElementById('stateSelect').appendChild(option);
+});
+
+document.querySelectorAll('.segment-card,.change-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    const input = card.querySelector('input');
+    if (!input) return;
+    if (input.type === 'radio') input.checked = true;
+    if (input.type === 'checkbox') input.checked = !input.checked;
+    syncCards();
+  });
+});
+
+function syncCards() {
+  document.querySelectorAll('.segment-card,.change-card').forEach((card) => {
+    const input = card.querySelector('input');
+    card.classList.toggle('selected', Boolean(input?.checked));
+  });
+}
+
+let currentStep = 1;
+
+function slugify(value) {
+  return String(value || '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((section) => section.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('.step-item').forEach((item, index) => {
+    item.classList.remove('active','done');
+    if (index + 1 < step) item.classList.add('done');
+    if (index + 1 === step) item.classList.add('active');
+  });
+  currentStep = step;
+  document.getElementById('progressText').textContent = `Step ${step} of 2`;
+  document.getElementById('progressFill').style.width = `${(step / 2) * 100}%`;
+}
+
+function getFormData() {
+  return {
+    fullName: document.getElementById('fullName').value.trim() || 'Retirement Shield Client',
+    stateCode: document.getElementById('stateSelect').value,
+    stateName: STATE_OPTIONS.find(([code]) => code === document.getElementById('stateSelect').value)?.[1] || '',
+    profile: document.querySelector('input[name="profile"]:checked')?.value || '',
+    lifeChanges: Array.from(document.querySelectorAll('.change-card input:checked')).map((input) => input.value)
+  };
+}
+
+function validateData(data) {
+  if (!data.stateCode) return 'Choose a state.';
+  if (!data.profile) return 'Choose the primary planning profile.';
+  return '';
+}
+
+async function loadStateGuide(supabase, stateName) {
+  const { data } = await supabase
+    .from('state_guides')
+    .select('state_name,probate_cost_display,probate_timeline_display,state_estate_tax,state_inheritance_tax,medicaid_lookback_display,lady_bird_display,lady_bird_deed_available,tod_display,tod_deed_available')
+    .eq('state_slug', slugify(stateName))
+    .maybeSingle();
+  return data || null;
+}
+
+async function loadStateChanges(supabase, stateCode) {
+  const { data } = await supabase
+    .from('estate_watch_state_changes')
+    .select('*')
+    .eq('state_code', stateCode)
+    .eq('is_active', true)
+    .order('effective_date', { ascending: false })
+    .limit(6);
+  return Array.isArray(data) ? data : [];
+}
+
+function buildFallbackChangeItems(data, guide) {
+  return [
+    {
+      category: 'baseline',
+      headline: `${data.stateName} probate and transfer posture still deserves review`,
+      summary: guide?.probate_cost_display && guide?.probate_timeline_display
+        ? `${data.stateName} still shows ${guide.probate_cost_display} and ${guide.probate_timeline_display} in the standing guide snapshot, which is already enough friction to justify a periodic document review.`
+        : `${data.stateName} still needs a focused probate and title review before the household assumes the current documents are fully aligned.`
+    }
+  ];
+}
+
+function buildActions(data, changes, guide) {
+  const actions = [];
+  const add = (title, copy) => actions.push({ title, copy });
+
+  if (changes.some((item) => String(item.category || '').toLowerCase().includes('poa'))) {
+    add('Review powers of attorney', `A tracked ${data.stateName} law-change item touched power-of-attorney or execution rules, so signature formalities and stale forms should be reviewed.`);
+  }
+  if (changes.some((item) => String(item.category || '').toLowerCase().includes('medicaid'))) {
+    add('Recheck Medicaid exposure', `A tracked ${data.stateName} item touched Medicaid thresholds, look-back, or care-planning assumptions, so asset-protection timing deserves another look.`);
+  }
+  if (changes.some((item) => String(item.category || '').toLowerCase().includes('tax'))) {
+    add('Refresh transfer-tax assumptions', `A tracked ${data.stateName} death-tax item means beneficiary, trust, and gifting assumptions may need to be pressure-tested again.`);
+  }
+
+  if (data.lifeChanges.includes('marriage')) add('Update spouse-facing documents', 'Marriage is one of the fastest ways to make fiduciary appointments, beneficiary forms, and title assumptions stale.');
+  if (data.lifeChanges.includes('divorce')) add('Remove stale ex-spouse exposure', 'Divorce is a classic source of outdated beneficiary designations, stale powers of attorney, and unintended fiduciary appointments.');
+  if (data.lifeChanges.includes('grandchild')) add('Revisit contingent beneficiaries and trust language', 'A new grandchild often changes how families want backup beneficiaries or generation-skipping language to work.');
+  if (data.lifeChanges.includes('home_purchase')) add('Review title and deed strategy', guide?.lady_bird_deed_available || guide?.tod_deed_available ? 'A home purchase should trigger a review of whether the best deed or transfer tool in this state was actually used.' : 'A home purchase should trigger a title, homestead, and probate-exposure review immediately.');
+  if (data.lifeChanges.includes('retirement')) add('Review post-retirement plan assumptions', 'Retirement changes income sources, beneficiary timing, tax friction, and in many households the balance between income security and legacy transfer goals.');
+
+  if (!actions.length) {
+    add('Run the annual document review anyway', `Even without a large family event, the plan should still be reviewed against ${data.stateName}'s current probate, title, and tax posture before another year passes.`);
+  }
+
+  return actions.slice(0, 3);
+}
+
+function buildModel(data, guide, changes) {
+  const activeChanges = changes.length ? changes : buildFallbackChangeItems(data, guide);
+  const actions = buildActions(data, activeChanges, guide);
+  const urgencyScore = Math.min(100, (activeChanges.length * 18) + (data.lifeChanges.filter((item) => item !== 'none').length * 14) + (guide?.state_estate_tax && guide.state_estate_tax !== 'None' ? 8 : 0));
+  const urgencyLabel = urgencyScore >= 65 ? 'High' : urgencyScore >= 35 ? 'Moderate' : 'Routine';
+  const triggerHeadline = activeChanges[0]?.headline || `${data.stateName} still deserves an annual plan review`;
+  const triggerCopy = activeChanges[0]?.summary || `Even without a fresh tracked law-change row, ${data.stateName} estate-planning rules can drift enough to justify a periodic review.`;
+
+  return {
+    activeChanges,
+    actions,
+    urgencyScore,
+    urgencyLabel,
+    triggerHeadline,
+    triggerCopy
+  };
+}
+
+function populateReport(data, guide, model) {
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('reportTitle').textContent = `Estate Watch for ${data.fullName}`;
+  document.getElementById('reportSubtitle').textContent = `A ${data.stateName} state-law change and annual review prompt showing whether the plan should be revisited now.`;
+  document.getElementById('metaState').textContent = data.stateName;
+  document.getElementById('metaProfile').textContent = data.profile;
+  document.getElementById('metaDate').textContent = `Generated ${date}`;
+  document.getElementById('summaryTitle').innerHTML = `${model.urgencyLabel} plan-review <em>urgency</em>.`;
+  document.getElementById('summaryCopy').textContent = `Estate Watch is built to answer one narrow question: has either the state or the family moved enough that the current documents should be reviewed now instead of later?`;
+  document.getElementById('benchmarkHeadline').textContent = model.triggerHeadline;
+  document.getElementById('benchmarkCopy').textContent = model.triggerCopy;
+  document.getElementById('changeCountValue').textContent = String(model.activeChanges.length);
+  document.getElementById('lifeChangeValue').textContent = String(data.lifeChanges.filter((item) => item !== 'none').length);
+  document.getElementById('urgencyValue').textContent = model.urgencyLabel;
+  document.getElementById('baselinePill').textContent = `${data.stateCode} baseline`;
+  document.getElementById('baselineProbate').textContent = guide?.probate_cost_display && guide?.probate_timeline_display ? `${guide.probate_cost_display} · ${guide.probate_timeline_display}` : 'Review needed';
+  document.getElementById('baselineTax').textContent = `${guide?.state_estate_tax || 'Unknown'} / ${guide?.state_inheritance_tax || 'Unknown'}`;
+  document.getElementById('baselineTransfer').textContent = guide?.lady_bird_deed_available ? guide.lady_bird_display : guide?.tod_display || 'Review needed';
+  document.getElementById('baselineMedicaid').textContent = guide?.medicaid_lookback_display || 'Review needed';
+  document.getElementById('watchPill').textContent = `${model.activeChanges.length} active item${model.activeChanges.length === 1 ? '' : 's'}`;
+  document.getElementById('watchGrid').innerHTML = model.activeChanges.map((item) => `
+    <div class="watch-card">
+      <div class="watch-label">${item.category || 'state watch'}${item.effective_date ? ` · ${item.effective_date}` : ''}</div>
+      <div class="metric-value">${item.headline || 'State update'}</div>
+      <div class="watch-copy">${item.summary || item.why_it_matters || 'Summary not provided.'}</div>
+    </div>
+  `).join('');
+  document.getElementById('healthCheckPill').textContent = `${data.lifeChanges.filter((item) => item !== 'none').length || 0} annual trigger${data.lifeChanges.filter((item) => item !== 'none').length === 1 ? '' : 's'}`;
+  document.getElementById('actionGrid').innerHTML = model.actions.map((item, index) => `
+    <div class="action-card">
+      <div class="action-label">Action ${index + 1}</div>
+      <div class="metric-value">${item.title}</div>
+      <div class="action-copy">${item.copy}</div>
+    </div>
+  `).join('');
+}
+
+async function saveEstateWatch(data, guide, model) {
+  const supabase = window.estateWatchSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const { error } = await supabase
+    .from('estate_watch_reports')
+    .insert({
+      user_id: userId,
+      full_name: data.fullName,
+      state_code: data.stateCode,
+      state_name: data.stateName,
+      quiz_profile: data.profile,
+      annual_review_changes: data.lifeChanges,
+      tracked_change_count: model.activeChanges.length,
+      review_urgency_score: model.urgencyScore,
+      report_title: `Estate Watch for ${data.fullName}`,
+      report_payload: { data, guide, model }
+    });
+
+  if (error) console.error('Failed to save Estate Watch report:', error);
+}
+
+function showGeneratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  const steps = ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'];
+  let delay = 0;
+  steps.forEach((id, index) => {
+    delay += 450;
+    setTimeout(() => {
+      document.getElementById(id).classList.add('done');
+      if (index === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('analysisSection').classList.remove('active');
+          document.getElementById('reportSection').classList.add('active');
+          const shell = document.getElementById('reportShell');
+          shell.classList.add('visible');
+          shell.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('.fade-up').forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 80));
+        }, 400);
+      }
+    }, delay);
+  });
+}
+
+function showHydratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedSubmission(report) {
+  const payload = report?.report_payload;
+  if (!payload?.data || !payload?.model) return false;
+  document.getElementById('fullName').value = payload.data.fullName || '';
+  document.getElementById('stateSelect').value = payload.data.stateCode || '';
+  document.querySelectorAll('input[name="profile"]').forEach((input) => {
+    input.checked = input.value === payload.data.profile;
+  });
+  document.querySelectorAll('.change-card input').forEach((input) => {
+    input.checked = (payload.data.lifeChanges || []).includes(input.value);
+  });
+  syncCards();
+  populateReport(payload.data, payload.guide || null, payload.model);
+  showHydratedReport();
+  return true;
+}
+
+async function generateEstateWatch() {
+  const data = getFormData();
+  const validationError = validateData(data);
+  if (validationError) {
+    document.getElementById('warningBanner').classList.add('active');
+    document.getElementById('warningBanner').textContent = validationError;
+    return;
+  }
+  document.getElementById('warningBanner').classList.remove('active');
+  document.getElementById('warningBanner').textContent = '';
+
+  const supabase = window.estateWatchSupabase;
+  const [guide, changes] = await Promise.all([
+    loadStateGuide(supabase, data.stateName),
+    loadStateChanges(supabase, data.stateCode)
+  ]);
+
+  const model = buildModel(data, guide, changes);
+  populateReport(data, guide, model);
+  await saveEstateWatch(data, guide, model);
+  showGeneratedReport();
+}
+
+function editEstateWatch() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(2);
+}
+
+window.nextStep = nextStep;
+window.generateEstateWatch = generateEstateWatch;
+window.editEstateWatch = editEstateWatch;
+window.hydrateEstateWatchSubmission = hydrateSavedSubmission;
+window.ESTATE_WATCH_STATE_OPTIONS = STATE_OPTIONS;
+syncCards();
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.estateWatchSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateEstateWatchSubmission) {
+  const { data: report } = await supabase
+    .from('estate_watch_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateEstateWatchSubmission(report);
+  }
+} else if (utm) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name,state')
+    .eq('id', utm)
+    .maybeSingle();
+
+  if (profile?.full_name) {
+    const input = document.getElementById('fullName');
+    if (input && !input.value) input.value = profile.full_name;
+  }
+
+  const matchedState = (window.ESTATE_WATCH_STATE_OPTIONS || []).find(([, name]) => String(profile?.state || '').toLowerCase() === name.toLowerCase());
+  if (matchedState) {
+    document.getElementById('stateSelect').value = matchedState[0];
+  }
+}
+</script>
+</body>
+</html>

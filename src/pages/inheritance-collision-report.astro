@@ -1,0 +1,938 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Inheritance Collision Report — The Blended Family Estate Conflict Detector</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0F1F3D;--navy-light:#1A2D52;--navy-mid:#152847;--gold:#C9A84C;--gold-light:#D4B96A;
+  --gold-glow:rgba(201,168,76,0.12);--cream:#FAF7F0;--cream-dark:#F0EBE0;--white:#FFFFFF;
+  --text-dark:#1A1A1A;--text-mid:#4A4A4A;--text-light:#7A7A7A;--green:#2E8B57;--amber:#D97706;
+  --red:#B73E2E;--border:#E8E3D8;--shadow:0 2px 20px rgba(15,31,61,0.08)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site-header{background:var(--navy);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.logo{text-decoration:none}.logo-text{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:600}.logo-text span{color:var(--gold)}
+.hero{background:var(--navy);padding:78px 24px 94px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:700;color:var(--white);line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.66);line-height:1.7;max-width:830px;margin:0 auto 38px;font-weight:300}
+.hero-points{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-point{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.84);border-radius:999px;padding:10px 16px;font-size:13px}
+.wizard-section,.analysis-section,.report-section{padding:52px 24px 30px}
+.wizard-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start}
+.sticky-sidebar{position:sticky;top:94px}
+.sidebar-card,.form-card,.analysis-card,.report-shell,.disclaimer{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.sidebar-card{padding:28px}
+.sidebar-label,.step-label,.section-kicker,.report-kicker,.risk-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:28px;line-height:1.15;color:var(--navy);margin:8px 0 14px}
+.sidebar-copy{font-size:14px;color:var(--text-mid);margin-bottom:22px}
+.step-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--cream);border:1px solid transparent}
+.step-item.active{border-color:rgba(201,168,76,0.4);background:var(--gold-glow)}
+.step-item.done .step-num{background:var(--gold);color:var(--navy)}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--cream-dark);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35}
+.step-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.sidebar-note{border-radius:14px;background:var(--navy);color:rgba(255,255,255,0.78);padding:18px;font-size:13px}.sidebar-note strong{color:var(--white);display:block;margin-bottom:6px}
+.form-card{overflow:hidden}.form-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 30px}
+.form-header-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.form-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.24);color:var(--gold);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase}
+.progress-inline{color:rgba(255,255,255,0.62);font-size:12px;font-weight:600}
+.form-title{font-family:'Playfair Display',serif;color:var(--white);font-size:34px;line-height:1.1;margin-bottom:10px}
+.form-sub{color:rgba(255,255,255,0.64);font-size:15px;max-width:760px}
+.progress-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:999px;margin-top:18px;overflow:hidden}
+.progress-fill{height:100%;width:33.33%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .35s ease}
+.form-body{padding:30px}.form-step{display:none}.form-step.active{display:block}
+.step-question{font-family:'Playfair Display',serif;font-size:28px;line-height:1.18;color:var(--navy);margin:8px 0}
+.step-help{font-size:14px;color:var(--text-light);margin-bottom:24px;max-width:760px}
+.field-grid,.metric-grid,.summary-grid,.trap-grid,.action-grid{display:grid;gap:18px}
+.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric-grid,.summary-grid,.trap-grid,.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field-group{margin-bottom:18px}.field-group.full{grid-column:1/-1}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
+.field-input,.field-select{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text-dark);font-size:15px;font-family:'DM Sans',sans-serif;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.field-input:focus,.field-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);background:var(--white)}
+.field-note{margin-top:7px;font-size:12px;color:var(--text-light)}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-back,.btn-next,.btn-print,.btn-secondary{border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.btn-back,.btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:13px 18px}
+.btn-next,.btn-print{background:var(--gold);color:var(--navy);padding:13px 20px}.btn-next:hover,.btn-print:hover{background:var(--gold-light)}
+.radio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.radio-card{display:block;position:relative;padding:18px;border-radius:14px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;transition:border-color .2s,transform .2s,background .2s}
+.radio-card input{position:absolute;opacity:0;pointer-events:none}
+.radio-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.12);transform:translateY(-1px)}
+.radio-title{font-weight:700;color:var(--navy);margin-bottom:6px}
+.radio-sub{font-size:13px;color:var(--text-light);line-height:1.5}
+.insight-band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.insight-chip{border:1px solid var(--border);border-radius:14px;background:var(--cream);padding:16px}
+.insight-chip strong{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}
+.insight-chip span{font-size:13px;color:var(--text-light)}
+.analysis-section,.report-section{display:none}.analysis-section.active,.report-section.active{display:block}
+.analysis-card{max-width:920px;margin:0 auto;padding:42px 28px;text-align:center}
+.analysis-orb{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold-light),var(--gold));position:relative;box-shadow:0 0 0 16px rgba(201,168,76,0.08),0 0 0 32px rgba(201,168,76,0.04)}
+.analysis-orb::after{content:'';position:absolute;inset:24px;border-radius:50%;background:var(--navy);opacity:.16}
+.analysis-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);margin-bottom:8px}
+.analysis-sub{font-size:15px;color:var(--text-light);margin-bottom:28px}
+.analysis-steps{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.analysis-step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:12px;background:var(--cream);border:1px solid var(--border)}
+.analysis-indicator{width:38px;height:38px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700}
+.analysis-step.done .analysis-indicator{background:var(--gold);color:var(--navy)}.analysis-text{font-size:14px;color:var(--text-mid)}
+.report-shell{max-width:1080px;margin:0 auto;overflow:hidden}
+.report-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:36px 32px 30px;color:var(--white)}
+.report-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin:10px 0 12px}
+.report-subtitle{color:rgba(255,255,255,0.72);font-size:15px;max-width:800px}
+.report-meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+.report-meta-item,.pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.8)}
+.report-body{padding:28px;display:grid;gap:22px}
+.hero-summary,.section-card{background:var(--white);border:1px solid var(--border);border-radius:16px}
+.hero-summary{padding:28px;background:linear-gradient(135deg,rgba(15,31,61,0.03),rgba(201,168,76,0.08)),var(--white)}
+.summary-lead{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+.summary-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);line-height:1.08;margin-bottom:10px}.summary-title em{color:var(--gold);font-style:normal}
+.summary-copy{font-size:15px;color:var(--text-mid)}
+.summary-benchmark{background:var(--navy);color:rgba(255,255,255,0.82);border-radius:16px;padding:22px}
+.summary-benchmark .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);line-height:1.14;margin:8px 0 10px}
+.metric-card,.trap-card,.action-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:16px}
+.metric-label,.trap-label,.action-label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-light);font-weight:700;margin-bottom:6px}
+.metric-value{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:6px}
+.metric-sub,.trap-copy,.action-copy{font-size:12px;color:var(--text-light)}
+.section-card{padding:24px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);line-height:1.15;margin-top:4px}
+.section-copy{font-size:13px;color:var(--text-light);max-width:700px}
+.pill{background:var(--cream);border-color:var(--border);color:var(--navy)}
+.breakout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.breakout-card{border:1px solid var(--border);border-radius:14px;padding:18px;background:var(--cream)}
+.breakout-card h4{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:8px}
+.breakout-card p{font-size:14px;color:var(--text-mid)}
+.risk-band{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border-radius:14px;border:1px solid var(--border);background:var(--cream)}
+.risk-value{font-family:'Playfair Display',serif;font-size:32px;color:var(--navy)}
+.status-pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.status-pill.low{background:rgba(46,139,87,0.12);color:var(--green)}
+.status-pill.moderate{background:rgba(217,119,6,0.12);color:var(--amber)}
+.status-pill.high,.status-pill.severe{background:rgba(183,62,46,0.12);color:var(--red)}
+.list-rows{display:flex;flex-direction:column;gap:12px}
+.list-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-row span:first-child{font-size:13px;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;font-weight:700}
+.list-row span:last-child{font-size:14px;color:var(--navy);font-weight:600;text-align:right}
+.note-alert{background:var(--cream);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:14px;padding:18px;font-size:14px;color:var(--text-mid)}
+.warning-banner{display:none;margin-top:16px;background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.26);border-radius:14px;padding:14px 16px;color:#8A5200;font-size:13px}
+.warning-banner.active{display:block}
+.report-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 28px 28px}
+.report-note{font-size:12px;color:var(--text-light)}
+.disclaimer{max-width:1080px;margin:0 auto 64px;padding:24px 28px 32px}.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}.disclaimer strong{color:var(--text-mid)}
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width:980px){.wizard-grid,.field-grid,.metric-grid,.summary-grid,.trap-grid,.action-grid,.summary-lead,.breakout,.radio-grid,.insight-band{grid-template-columns:1fr}.sticky-sidebar{position:static}}
+@media (max-width:768px){.site-header{padding:14px 16px}.hero{padding:54px 20px 72px}.wizard-section,.analysis-section,.report-section{padding-left:16px;padding-right:16px}.sidebar-card,.form-body,.report-body,.section-card,.hero-summary,.analysis-card,.disclaimer{padding-left:20px;padding-right:20px}.form-header,.report-header{padding:28px 20px}.step-question,.section-title{font-size:23px}.summary-title{font-size:28px}.btn-row,.section-head,.report-actions,.form-header-top,.risk-band{flex-direction:column;align-items:stretch}.list-row{flex-direction:column}.list-row span:last-child{text-align:left}}
+</style>
+</head>
+<body>
+<header class="site-header"><a href="/portal" class="logo"><div class="logo-text">Retirement <span>Shield</span></div></a></header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Estate Conflict Tool</div>
+    <h1>The Inheritance <em>Collision</em> Report</h1>
+    <p class="hero-sub">See how a blended-family estate can break under state default rules before it happens. This report models intestacy, elective-share pressure, stepchild exclusion, probate friction, and the most common flashpoints between a surviving spouse and children from a prior marriage.</p>
+    <div class="hero-points">
+      <div class="hero-point">State-by-state inheritance framing</div>
+      <div class="hero-point">Blended family collision detection</div>
+      <div class="hero-point">Saved directly into the portal</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Collision Builder</div>
+        <div class="sidebar-title">This is where “we thought it was obvious” usually turns into a lawsuit.</div>
+        <div class="sidebar-copy">The report is built around one emotionally loaded question: if someone dies first, does the surviving spouse stay secure without accidentally disinheriting children from the first marriage?</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1"><div class="step-num">1</div><div><div class="step-title">Household Setup</div><div class="step-sub">State, marital status, first or later marriage</div></div></div>
+          <div class="step-item" data-step-indicator="2"><div class="step-num">2</div><div><div class="step-title">Family Map</div><div class="step-sub">Current-marriage and prior-marriage children</div></div></div>
+          <div class="step-item" data-step-indicator="3"><div class="step-num">3</div><div><div class="step-title">Estate Size</div><div class="step-sub">Approximate probate estate and home value</div></div></div>
+        </div>
+        <div class="sidebar-note"><strong>Built like the current tools</strong>This uses the same Retirement Shield page structure, Supabase save flow, report hydration, and portal-completion pattern as the tools already live in `/portal`.</div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top"><div class="form-badge">Retirement Shield Tool</div><div class="progress-inline" id="progressText">Step 1 of 3</div></div>
+        <div class="form-title">Map the inheritance fight before the family has one.</div>
+        <div class="form-sub">We’ll model the default state outcome if there is no plan, what a surviving spouse could still claim even if the will says otherwise, and where remarriage usually creates a collision between “take care of my spouse” and “protect my children.”</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">What household are we analyzing?</div>
+          <div class="step-help">This tool is most useful for remarriage and blended-family structures, but you can still run a first-marriage or unmarried scenario to see the baseline.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Prepared For</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret and Thomas">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State of Residence</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label">Marital Status</label>
+              <div class="radio-grid" data-radio-group="maritalStatus">
+                <label class="radio-card">
+                  <input type="radio" name="maritalStatus" value="married">
+                  <div class="radio-title">Married</div>
+                  <div class="radio-sub">Model the clash between a surviving spouse and descendants.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="maritalStatus" value="single">
+                  <div class="radio-title">Single / widowed / divorced</div>
+                  <div class="radio-sub">Model the direct children-only baseline without spouse claims.</div>
+                </label>
+              </div>
+            </div>
+            <div class="field-group full" id="marriageOrderWrap">
+              <label class="field-label">Marriage Order</label>
+              <div class="radio-grid" data-radio-group="marriageOrder">
+                <label class="radio-card">
+                  <input type="radio" name="marriageOrder" value="first">
+                  <div class="radio-title">First marriage</div>
+                  <div class="radio-sub">Often lower collision risk if all children are from the same marriage.</div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="marriageOrder" value="subsequent">
+                  <div class="radio-title">Subsequent marriage</div>
+                  <div class="radio-sub">Usually where intestacy and elective-share rules become emotionally explosive.</div>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="insight-band">
+            <div class="insight-chip"><strong>What we model</strong><span>State default inheritance, spouse override rights, and stepchild exclusion.</span></div>
+            <div class="insight-chip"><strong>What we do not do</strong><span>No legal documents are created here, and non-probate assets can change the final result.</span></div>
+            <div class="insight-chip"><strong>Best use case</strong><span>Use this before updating a will, trust, deed, or beneficiary lineup after remarriage.</span></div>
+          </div>
+          <div class="btn-row"><div></div><button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">How is the family actually structured?</div>
+          <div class="step-help">The core collision variable is simple: are all children shared with the current spouse, or are some from a prior relationship?</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="currentMarriageChildren">Children From Current Marriage</label>
+              <input class="field-input" id="currentMarriageChildren" type="number" min="0" max="12" value="0">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="priorMarriageChildren">Children From Prior Marriages</label>
+              <input class="field-input" id="priorMarriageChildren" type="number" min="0" max="12" value="0">
+            </div>
+          </div>
+          <div class="note-alert">Stepchildren almost never inherit automatically unless they were legally adopted or explicitly named in the estate plan. This report flags that gap directly.</div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(1)">← Back</button><button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How big is the estate exposure?</div>
+          <div class="step-help">Use a planning-level estimate for the probate estate. You can also add the home value separately so the conflict copy reflects how much is emotionally tied up in the house.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="estateSize">Approximate Probate Estate Size</label>
+              <input class="field-input" id="estateSize" type="text" value="650000" placeholder="e.g. 650000">
+              <div class="field-note">Use titled assets likely governed by probate or will-based planning.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="homeValue">Home Value (Optional)</label>
+              <input class="field-input" id="homeValue" type="text" value="450000" placeholder="e.g. 450000">
+            </div>
+          </div>
+          <div class="warning-banner" id="fallbackWarning"></div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(2)">← Back</button><button class="btn-next" type="button" onclick="generateCollisionReport()">Generate My Inheritance Collision Report →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Collision Report</div>
+    <div class="analysis-sub">Pulling the state planning overlay, mapping the family structure, and building the spouse-versus-children outcome.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Loading the state guide and any blended-family inheritance rule snapshot...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Modeling the default intestacy split and surviving-spouse pressure point...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Flagging probate, deed, tax, and stepchild traps specific to this state...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report so it appears in Portal Tools and Documents like the rest...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Blended Family Estate Conflict Detector</div>
+      <div class="report-title" id="reportTitle">The Inheritance Collision Report</div>
+      <div class="report-subtitle" id="reportSubtitle">A state-specific collision snapshot showing what default inheritance law can do to a remarried family when the planning has not been tightened.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaState">State —</div>
+        <div class="report-meta-item" id="metaFamily">Family structure —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="summary-lead">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">A blended-family estate can split in <em>surprising ways</em>.</div>
+            <div class="summary-copy" id="summaryCopy">Report summary appears here.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Primary Flashpoint</div>
+            <div class="headline" id="benchmarkHeadline">Conflict indicator pending</div>
+            <div id="benchmarkCopy">The most likely family fight will appear here.</div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card"><div class="metric-label">Collision Risk</div><div class="metric-value" id="riskScoreValue">0/100</div><div class="metric-sub" id="riskScoreSub">Overall family conflict index</div></div>
+          <div class="metric-card"><div class="metric-label">Default Spouse Share</div><div class="metric-value" id="spouseShareValue">—</div><div class="metric-sub" id="spouseShareSub">Under the modeled intestacy scenario</div></div>
+          <div class="metric-card"><div class="metric-label">Elective Share Pressure</div><div class="metric-value" id="electiveShareValue">—</div><div class="metric-sub" id="electiveShareSub">What the spouse may still claim</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Risk Rating</div><div class="section-title">Where this family can collide</div><div class="section-copy">This score blends remarriage status, prior-marriage children, estate size, spouse override rights, and state-level probate/property complexity.</div></div>
+          <div class="pill" id="propertySystemPill">Property system</div>
+        </div>
+        <div class="risk-band">
+          <div>
+            <div class="risk-kicker">Overall</div>
+            <div class="risk-value" id="riskValue">High</div>
+          </div>
+          <div class="status-pill high" id="riskPill">High conflict risk</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Default Outcome</div><div class="section-title">What intestacy likely does in this scenario</div><div class="section-copy">This models the state default if there is no controlling estate plan for the probate estate.</div></div>
+          <div class="pill" id="scenarioPill">Scenario</div>
+        </div>
+        <div class="breakout">
+          <div class="breakout-card">
+            <h4 id="intestacyHeadline">Spouse vs. children</h4>
+            <p id="intestacyNarrative">State outcome appears here.</p>
+          </div>
+          <div class="breakout-card">
+            <h4 id="childrenHeadline">Children / descendants</h4>
+            <p id="childrenNarrative">Descendant outcome appears here.</p>
+          </div>
+        </div>
+        <div class="list-rows" style="margin-top:18px;">
+          <div class="list-row"><span>Modeled spouse allocation</span><span id="listSpouseShare">—</span></div>
+          <div class="list-row"><span>Modeled descendants allocation</span><span id="listChildrenShare">—</span></div>
+          <div class="list-row"><span>Stepchildren without adoption</span><span id="listStepchildren">—</span></div>
+          <div class="list-row"><span>Home / probate overlay</span><span id="listProbateOverlay">—</span></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Spouse Override</div><div class="section-title">What the surviving spouse may still be able to claim</div><div class="section-copy">Even with a will, many states let a surviving spouse elect against the plan or retain separate property rights that children cannot override.</div></div>
+          <div class="pill" id="electiveSharePill">Elective share</div>
+        </div>
+        <div class="note-alert" id="electiveShareNote">Elective-share summary appears here.</div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">State Traps</div><div class="section-title">Where this state makes the collision worse</div><div class="section-copy">This section combines the blended-family rule snapshot with the broader state guide fields already used elsewhere in the product.</div></div>
+          <div class="pill" id="taxPill">Tax / probate</div>
+        </div>
+        <div class="trap-grid">
+          <div class="trap-card"><div class="trap-label">Probate</div><div class="metric-value" id="probateValue">—</div><div class="trap-copy" id="probateCopy">—</div></div>
+          <div class="trap-card"><div class="trap-label">Home Transfer Tool</div><div class="metric-value" id="transferValue">—</div><div class="trap-copy" id="transferCopy">—</div></div>
+          <div class="trap-card"><div class="trap-label">State Death Taxes</div><div class="metric-value" id="taxValue">—</div><div class="trap-copy" id="taxCopy">—</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Collision Actions</div><div class="section-title">What should be tightened next</div><div class="section-copy">These are planning prompts, not legal instructions. The point is to show the exact places where a lawyer needs to coordinate spouse security, descendants, title, and beneficiary designations.</div></div>
+          <div class="pill">Planning prompts</div>
+        </div>
+        <div class="action-grid">
+          <div class="action-card"><div class="action-label">Priority One</div><div class="metric-value" id="actionOneTitle">—</div><div class="action-copy" id="actionOneCopy">—</div></div>
+          <div class="action-card"><div class="action-label">Priority Two</div><div class="metric-value" id="actionTwoTitle">—</div><div class="action-copy" id="actionTwoCopy">—</div></div>
+          <div class="action-card"><div class="action-label">Priority Three</div><div class="metric-value" id="actionThreeTitle">—</div><div class="action-copy" id="actionThreeCopy">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Saved reports reopen from Portal Documents and mark the tool completed automatically.</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-secondary" type="button" onclick="editCollisionReport()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This tool is provided for educational purposes only and does not constitute legal, tax, financial, or insurance advice. State intestacy, elective-share, homestead, probate, and stepchild-rights rules can vary by fact pattern, by asset type, and by changes in state law. Non-probate assets such as beneficiary-designated accounts, joint tenancy property, trusts, and contractual rights can materially change the final outcome shown here. Retirement Shield is not a law firm, does not prepare legal documents, and does not provide legal advice. Review any blended-family estate plan with a licensed estate planning attorney in your state before relying on this report. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],['CO','Colorado'],
+  ['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+  ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],
+  ['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+  ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],
+  ['NM','New Mexico'],['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
+];
+
+const COMMUNITY_PROPERTY_STATES = new Set(['AZ','CA','ID','LA','NV','NM','TX','WA','WI']);
+
+const GENERIC_RULE_COPY = {
+  spouse_only: {
+    display: 'Surviving spouse takes the probate estate',
+    narrative: 'With no descendants in the picture, the surviving spouse is usually first in line for the probate estate under intestacy.',
+    spouse_pct: 1,
+    descendants_pct: 0
+  },
+  spouse_and_joint_descendants: {
+    display: 'Surviving spouse typically has the strongest claim',
+    narrative: 'When all children are from the current marriage, many states heavily favor the surviving spouse, but the exact allocation should come from the state rule snapshot.',
+    spouse_pct: 1,
+    descendants_pct: 0
+  },
+  spouse_and_prior_descendants: {
+    display: 'Spouse and prior-marriage children are put on a collision course',
+    narrative: 'This is the classic blended-family fight: the surviving spouse does not automatically absorb everything, and children from a prior marriage usually gain direct inheritance rights.',
+    spouse_pct: 0.5,
+    descendants_pct: 0.5
+  },
+  spouse_and_mixed_descendants: {
+    display: 'Current-family and prior-family branches both matter',
+    narrative: 'When there are both shared children and prior-marriage children, a surviving spouse and multiple descendant branches can all end up pulling against each other.',
+    spouse_pct: 0.5,
+    descendants_pct: 0.5
+  },
+  unmarried_descendants: {
+    display: 'Descendants take the estate',
+    narrative: 'Without a surviving spouse, descendants usually take the probate estate by representation.',
+    spouse_pct: 0,
+    descendants_pct: 1
+  }
+};
+
+let currentStep = 1;
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  document.getElementById('stateSelect').appendChild(option);
+});
+
+function slugify(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function currency(value) {
+  if (value == null || Number.isNaN(value)) return '—';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^\d.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatCurrencyInput(event) {
+  const raw = parseMoney(event.target.value);
+  event.target.value = raw ? String(Math.round(raw)) : '';
+}
+
+function getSelectedValue(name) {
+  return document.querySelector(`input[name="${name}"]:checked`)?.value || '';
+}
+
+function updateRadioCards() {
+  document.querySelectorAll('.radio-card').forEach((card) => {
+    const input = card.querySelector('input');
+    card.classList.toggle('selected', Boolean(input?.checked));
+  });
+}
+
+function toggleMarriageOrder() {
+  const married = getSelectedValue('maritalStatus') === 'married';
+  document.getElementById('marriageOrderWrap').style.display = married ? '' : 'none';
+}
+
+document.querySelectorAll('.radio-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    const input = card.querySelector('input');
+    if (!input) return;
+    input.checked = true;
+    updateRadioCards();
+    toggleMarriageOrder();
+  });
+});
+
+['estateSize','homeValue'].forEach((id) => {
+  const input = document.getElementById(id);
+  input.addEventListener('blur', formatCurrencyInput);
+});
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((section) => section.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('.step-item').forEach((item, index) => {
+    item.classList.remove('active','done');
+    if (index + 1 < step) item.classList.add('done');
+    if (index + 1 === step) item.classList.add('active');
+  });
+  currentStep = step;
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+}
+
+function getScenarioKey(data) {
+  const currentChildren = data.currentMarriageChildren;
+  const priorChildren = data.priorMarriageChildren;
+  const totalChildren = currentChildren + priorChildren;
+
+  if (data.maritalStatus !== 'married') return totalChildren > 0 ? 'unmarried_descendants' : 'spouse_only';
+  if (!totalChildren) return 'spouse_only';
+  if (currentChildren > 0 && priorChildren > 0) return 'spouse_and_mixed_descendants';
+  if (priorChildren > 0) return 'spouse_and_prior_descendants';
+  return 'spouse_and_joint_descendants';
+}
+
+function percentileLabel(value) {
+  if (value == null) return 'Review needed';
+  return `${Math.round(value * 100)}%`;
+}
+
+async function loadStateGuide(supabase, stateCode) {
+  if (!supabase || !stateCode) return null;
+  const stateName = STATE_OPTIONS.find(([code]) => code === stateCode)?.[1];
+  if (!stateName) return null;
+  const { data } = await supabase
+    .from('state_guides')
+    .select('state_name,probate_cost_display,probate_timeline_display,homestead_display,homestead_protects_from_creditors,lady_bird_display,lady_bird_deed_available,tod_display,tod_deed_available,state_estate_tax,state_inheritance_tax')
+    .eq('state_slug', slugify(stateName))
+    .maybeSingle();
+  return data || null;
+}
+
+async function loadStateRules(supabase, stateCode) {
+  if (!supabase || !stateCode) return null;
+  const { data } = await supabase
+    .from('inheritance_collision_state_rules')
+    .select('*')
+    .eq('state_code', stateCode)
+    .eq('is_active', true)
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data || null;
+}
+
+function buildInputData() {
+  return {
+    fullName: document.getElementById('fullName').value.trim() || 'Retirement Shield Client',
+    stateCode: document.getElementById('stateSelect').value,
+    stateName: STATE_OPTIONS.find(([code]) => code === document.getElementById('stateSelect').value)?.[1] || '',
+    maritalStatus: getSelectedValue('maritalStatus') || 'married',
+    marriageOrder: getSelectedValue('marriageOrder') || 'first',
+    currentMarriageChildren: Number(document.getElementById('currentMarriageChildren').value || 0),
+    priorMarriageChildren: Number(document.getElementById('priorMarriageChildren').value || 0),
+    estateSize: parseMoney(document.getElementById('estateSize').value),
+    homeValue: parseMoney(document.getElementById('homeValue').value)
+  };
+}
+
+function validateInput(data) {
+  if (!data.stateCode) return 'Choose a state.';
+  if (!data.maritalStatus) return 'Choose a marital status.';
+  if (data.maritalStatus === 'married' && !data.marriageOrder) return 'Choose whether this is a first or subsequent marriage.';
+  if (data.currentMarriageChildren < 0 || data.priorMarriageChildren < 0) return 'Children counts cannot be negative.';
+  if (!data.estateSize) return 'Enter an approximate estate size.';
+  return '';
+}
+
+function fallbackElectiveShare(stateCode, stateName) {
+  if (COMMUNITY_PROPERTY_STATES.has(stateCode)) {
+    return {
+      display: 'Community property rules apply before any separate-property claim',
+      narrative: `${stateName} is treated here as a community property state. The surviving spouse usually already owns one-half of community property, but separate-property and quasi-community-property claims still require a state-specific rule row for exact modeling.`,
+      label: 'Community property overlay'
+    };
+  }
+  return {
+    display: 'State-specific elective-share row still needs to be loaded',
+    narrative: `This report can save and render without a dedicated ${stateName} rule snapshot, but exact elective-share percentages and scope should be added in the database for a production-grade state result.`,
+    label: 'State rule needed'
+  };
+}
+
+function buildCollisionModel(data, guide, stateRuleRecord) {
+  const rules = stateRuleRecord?.rules_payload || {};
+  const scenarioKey = getScenarioKey(data);
+  const scenarioRule = rules.intestacy?.[scenarioKey] || GENERIC_RULE_COPY[scenarioKey] || GENERIC_RULE_COPY.spouse_only;
+  const electiveRule = rules.elective_share || fallbackElectiveShare(data.stateCode, data.stateName);
+  const communityProperty = rules.property_system === 'community_property' || (!rules.property_system && COMMUNITY_PROPERTY_STATES.has(data.stateCode));
+  const propertySystemLabel = communityProperty ? 'Community property state' : 'Common law / separate property state';
+  const spousePct = typeof scenarioRule.spouse_pct === 'number' ? scenarioRule.spouse_pct : null;
+  const descendantsPct = typeof scenarioRule.descendants_pct === 'number' ? scenarioRule.descendants_pct : null;
+  const spouseShareAmount = spousePct != null ? data.estateSize * spousePct : null;
+  const descendantsShareAmount = descendantsPct != null ? data.estateSize * descendantsPct : null;
+  const totalChildren = data.currentMarriageChildren + data.priorMarriageChildren;
+  const perChildAmount = descendantsShareAmount != null && totalChildren > 0 ? descendantsShareAmount / totalChildren : null;
+  const homeText = data.homeValue ? currency(data.homeValue) : 'the home';
+  const probateSummary = [guide?.probate_cost_display, guide?.probate_timeline_display].filter(Boolean).join(' · ') || 'State guide review needed';
+  const transferSummary = guide?.lady_bird_deed_available ? guide.lady_bird_display : guide?.tod_deed_available ? guide.tod_display : guide?.homestead_display || 'Title review needed';
+  const taxSummary = [guide?.state_estate_tax, guide?.state_inheritance_tax].filter(Boolean).join(' / ') || 'Review needed';
+  const stepchildrenInherit = rules.stepchildren?.inherit_without_adoption === true;
+  const stepchildrenCopy = rules.stepchildren?.display || (stepchildrenInherit ? 'This state rule row says stepchildren may have rights in limited circumstances.' : 'No automatic inheritance rights without adoption or explicit planning.');
+
+  let riskScore = 18;
+  if (data.maritalStatus === 'married') riskScore += 10;
+  if (data.marriageOrder === 'subsequent') riskScore += 18;
+  if (data.priorMarriageChildren > 0) riskScore += 28;
+  if (data.currentMarriageChildren > 0) riskScore += 8;
+  if (data.estateSize >= 500000) riskScore += 10;
+  if (data.homeValue >= 300000) riskScore += 8;
+  if (communityProperty) riskScore += 8;
+  if (!stepchildrenInherit) riskScore += 6;
+  if (guide?.state_estate_tax && guide.state_estate_tax !== 'None') riskScore += 4;
+  if (guide?.state_inheritance_tax && guide.state_inheritance_tax !== 'None') riskScore += 4;
+  riskScore = Math.max(10, Math.min(100, riskScore));
+
+  const riskLevel = riskScore >= 80 ? 'severe' : riskScore >= 60 ? 'high' : riskScore >= 35 ? 'moderate' : 'low';
+  const riskTitle = riskLevel === 'severe' ? 'Severe' : riskLevel === 'high' ? 'High' : riskLevel === 'moderate' ? 'Moderate' : 'Low';
+
+  const benchmarkHeadline = data.priorMarriageChildren > 0
+    ? 'Prior-marriage children and the spouse both have real claims'
+    : data.maritalStatus === 'married'
+      ? 'The spouse likely leads, but title and override rights still matter'
+      : 'Direct descendants control the baseline result';
+
+  const benchmarkCopy = data.priorMarriageChildren > 0
+    ? `The emotional collision is usually not about percentages. It is about whether ${homeText} and the rest of the estate are being used first to protect the surviving spouse, preserved for first-marriage children, or both.`
+    : `The cleaner family tree lowers the risk, but probate design, beneficiary coordination, and spouse-protection rules still decide how smooth the outcome actually is.`;
+
+  const summaryCopy = data.maritalStatus === 'married'
+    ? `In ${data.stateName}, this ${data.marriageOrder === 'subsequent' ? 'later-marriage' : 'married'} household is modeled with ${data.currentMarriageChildren} current-marriage child${data.currentMarriageChildren === 1 ? '' : 'ren'} and ${data.priorMarriageChildren} prior-marriage child${data.priorMarriageChildren === 1 ? '' : 'ren'}. On a probate estate of about ${currency(data.estateSize)}, the surviving spouse and the descendant line do not necessarily want the same thing.`
+    : `In ${data.stateName}, the model shows what happens when the spouse layer falls away and descendants inherit more directly. This is the clean baseline many blended families compare against when deciding how much to guarantee a later spouse versus preserve for children.`;
+
+  const actionOne = data.priorMarriageChildren > 0
+    ? ['Coordinate the spouse plan with the children plan', 'A blended-family estate should not rely on “the kids will understand.” Spell out the trust, deed, and beneficiary structure so the spouse is secure without accidentally rewriting the children out of the estate.']
+    : ['Confirm the probate path', 'A calmer family structure still needs title, beneficiary, and will/trust coordination so the default state outcome does not control more than expected.'];
+  const actionTwo = communityProperty
+    ? ['Review community vs. separate property tracing', 'In a community property state, the fight often shifts from “who inherits” to “what bucket was this asset in?” The house, brokerage account, and commingled savings deserve a tracing review.']
+    : ['Pressure-test the elective-share exposure', 'If the plan leaves the spouse less than the statutory floor, the surviving spouse may be able to challenge the arrangement anyway.'];
+  const actionThree = !stepchildrenInherit
+    ? ['Name stepchildren explicitly if they matter', 'If a stepchild is intended to inherit, say so directly in the documents. States almost never give that child an automatic share.']
+    : ['Check descendant definitions carefully', 'Even where stepchild or blended-family definitions are broader, the estate plan should still define which children, branches, or substitute takers are intended.'];
+
+  return {
+    stateRuleLoaded: Boolean(stateRuleRecord),
+    stateRuleVersion: stateRuleRecord?.rule_version || 'fallback',
+    scenarioKey,
+    scenarioDisplay: scenarioRule.display,
+    intestacyNarrative: scenarioRule.narrative,
+    childrenNarrative: descendantsPct && totalChildren
+      ? `The descendant side is modeled at ${percentileLabel(descendantsPct)} of the probate estate, or about ${currency(descendantsShareAmount)} total${perChildAmount != null ? ` before any per-stirpes/per-capita adjustments, which is about ${currency(perChildAmount)} per child if divided evenly.` : '.'}`
+      : 'The descendant line is not modeled as taking a direct probate share in this baseline scenario.',
+    spousePct,
+    descendantsPct,
+    spouseShareAmount,
+    descendantsShareAmount,
+    electiveRule,
+    propertySystemLabel,
+    communityProperty,
+    probateSummary,
+    transferSummary,
+    taxSummary,
+    stepchildrenCopy,
+    riskScore,
+    riskLevel,
+    riskTitle,
+    benchmarkHeadline,
+    benchmarkCopy,
+    summaryCopy,
+    actionOne,
+    actionTwo,
+    actionThree
+  };
+}
+
+function populateReport(data, guide, stateRuleRecord, model) {
+  const generatedDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const familyLabel = `${data.currentMarriageChildren} current-marriage / ${data.priorMarriageChildren} prior-marriage children`;
+  const electiveLabel = model.electiveRule.display || model.electiveRule.label || 'Review needed';
+  const probateTool = guide?.lady_bird_deed_available ? guide.lady_bird_display : guide?.tod_deed_available ? guide.tod_display : 'Review title strategy';
+  const taxLine = [guide?.state_estate_tax || 'Estate tax review', guide?.state_inheritance_tax || 'Inheritance tax review'].join(' · ');
+
+  document.getElementById('reportTitle').textContent = `The Inheritance Collision Report for ${data.fullName}`;
+  document.getElementById('reportSubtitle').textContent = `A ${data.stateName} blended-family conflict snapshot showing default intestacy, surviving-spouse override pressure, and the traps that commonly disinherit one side of the family.`;
+  document.getElementById('metaState').textContent = `${data.stateName} · ${model.propertySystemLabel}`;
+  document.getElementById('metaFamily').textContent = familyLabel;
+  document.getElementById('metaDate').textContent = `Generated ${generatedDate}`;
+  document.getElementById('summaryTitle').innerHTML = `${model.riskTitle} collision risk in a <em>${data.stateName}</em> ${data.maritalStatus === 'married' ? 'spouse-versus-children' : 'descendants-only'} scenario.`;
+  document.getElementById('summaryCopy').textContent = model.summaryCopy;
+  document.getElementById('benchmarkHeadline').textContent = model.benchmarkHeadline;
+  document.getElementById('benchmarkCopy').textContent = model.benchmarkCopy;
+  document.getElementById('riskScoreValue').textContent = `${model.riskScore}/100`;
+  document.getElementById('riskScoreSub').textContent = stateRuleRecord ? `Using ${stateRuleRecord.state_code} rule snapshot + state guide overlay` : 'Using fallback logic until a state rule snapshot is loaded';
+  document.getElementById('spouseShareValue').textContent = model.spousePct != null ? `${percentileLabel(model.spousePct)} / ${currency(model.spouseShareAmount)}` : 'Review needed';
+  document.getElementById('spouseShareSub').textContent = model.scenarioDisplay;
+  document.getElementById('electiveShareValue').textContent = electiveLabel;
+  document.getElementById('electiveShareSub').textContent = model.electiveRule.label || 'Surviving-spouse minimum claim';
+  document.getElementById('propertySystemPill').textContent = model.propertySystemLabel;
+  document.getElementById('riskValue').textContent = `${model.riskTitle} collision risk`;
+  const riskPill = document.getElementById('riskPill');
+  riskPill.textContent = `${model.riskTitle} conflict risk`;
+  riskPill.className = `status-pill ${model.riskLevel}`;
+  document.getElementById('scenarioPill').textContent = model.scenarioKey.replaceAll('_',' ');
+  document.getElementById('intestacyHeadline').textContent = model.scenarioDisplay;
+  document.getElementById('intestacyNarrative').textContent = model.intestacyNarrative;
+  document.getElementById('childrenHeadline').textContent = data.priorMarriageChildren > 0 ? 'Prior-marriage children are not automatically pushed aside' : 'Descendant branch outcome';
+  document.getElementById('childrenNarrative').textContent = model.childrenNarrative;
+  document.getElementById('listSpouseShare').textContent = model.spousePct != null ? `${percentileLabel(model.spousePct)} of about ${currency(data.estateSize)} = ${currency(model.spouseShareAmount)}` : 'State-specific review needed';
+  document.getElementById('listChildrenShare').textContent = model.descendantsPct != null ? `${percentileLabel(model.descendantsPct)} of about ${currency(data.estateSize)} = ${currency(model.descendantsShareAmount)}` : 'No direct modeled share';
+  document.getElementById('listStepchildren').textContent = model.stepchildrenCopy;
+  document.getElementById('listProbateOverlay').textContent = `${model.probateSummary} · ${probateTool}`;
+  document.getElementById('electiveSharePill').textContent = model.electiveRule.label || 'Elective share';
+  document.getElementById('electiveShareNote').textContent = model.electiveRule.narrative || electiveLabel;
+  document.getElementById('taxPill').textContent = taxLine;
+  document.getElementById('probateValue').textContent = guide?.probate_timeline_display || 'Review';
+  document.getElementById('probateCopy').textContent = guide?.probate_cost_display ? `${guide.probate_cost_display}. If the house and titled assets are still flowing through probate, delay and family pressure both increase.` : 'The state guide row for probate timing and cost still needs review.';
+  document.getElementById('transferValue').textContent = probateTool || 'Review';
+  document.getElementById('transferCopy').textContent = guide?.homestead_display ? `${guide.homestead_display}. The house is often where blended-family emotions are strongest, so deed and title mechanics matter more than people expect.` : 'Title planning tools and homestead restrictions should be reviewed for this state.';
+  document.getElementById('taxValue').textContent = guide?.state_estate_tax && guide?.state_estate_tax !== 'None' ? guide.state_estate_tax : guide?.state_inheritance_tax && guide?.state_inheritance_tax !== 'None' ? guide.state_inheritance_tax : 'None / low';
+  document.getElementById('taxCopy').textContent = `${taxLine}. Death taxes may be irrelevant for many households, but when they apply they intensify pressure between spouse liquidity and descendant expectations.`;
+  document.getElementById('actionOneTitle').textContent = model.actionOne[0];
+  document.getElementById('actionOneCopy').textContent = model.actionOne[1];
+  document.getElementById('actionTwoTitle').textContent = model.actionTwo[0];
+  document.getElementById('actionTwoCopy').textContent = model.actionTwo[1];
+  document.getElementById('actionThreeTitle').textContent = model.actionThree[0];
+  document.getElementById('actionThreeCopy').textContent = model.actionThree[1];
+
+  const warning = document.getElementById('fallbackWarning');
+  if (stateRuleRecord) {
+    warning.classList.remove('active');
+    warning.textContent = '';
+  } else {
+    warning.classList.add('active');
+    warning.textContent = `${data.stateName} does not have a dedicated rule row in inheritance_collision_state_rules yet, so this report is using safe fallback logic plus the broader state guide overlay. Add a state rule row for exact elective-share and intestacy wording.`;
+  }
+}
+
+async function saveCollisionReport(data, guide, stateRuleRecord, model) {
+  const supabase = window.inheritanceCollisionSupabase;
+  if (!supabase) return null;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const payload = {
+    user_id: userId,
+    full_name: data.fullName,
+    state_code: data.stateCode,
+    state_name: data.stateName,
+    marital_status: data.maritalStatus,
+    marriage_order: data.marriageOrder,
+    current_marriage_children: data.currentMarriageChildren,
+    prior_marriage_children: data.priorMarriageChildren,
+    approximate_estate_size: data.estateSize,
+    home_value: data.homeValue || null,
+    scenario_key: model.scenarioKey,
+    property_system: model.propertySystemLabel,
+    collision_risk_score: model.riskScore,
+    spouse_share_pct: model.spousePct,
+    descendants_share_pct: model.descendantsPct,
+    elective_share_display: model.electiveRule.display || null,
+    state_rule_version: stateRuleRecord?.rule_version || null,
+    state_rule_snapshot: stateRuleRecord || null,
+    report_title: `The Inheritance Collision Report for ${data.fullName}`,
+    report_payload: { ...data, guide, stateRuleRecord, model }
+  };
+
+  const { error } = await supabase
+    .from('inheritance_collision_reports')
+    .insert(payload);
+
+  if (error) {
+    console.error('Failed to save Inheritance Collision report:', error);
+  }
+}
+
+function showGeneratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  const steps = ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'];
+  steps.forEach((id) => document.getElementById(id).classList.remove('done'));
+  let delay = 0;
+  steps.forEach((id, index) => {
+    delay += 500;
+    setTimeout(() => {
+      document.getElementById(id).classList.add('done');
+      if (index === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('analysisSection').classList.remove('active');
+          document.getElementById('reportSection').classList.add('active');
+          const shell = document.getElementById('reportShell');
+          shell.classList.add('visible');
+          shell.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const fadeEls = document.querySelectorAll('.fade-up');
+          fadeEls.forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 80));
+        }, 400);
+      }
+    }, delay);
+  });
+}
+
+function showHydratedReport() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedSubmission(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  document.getElementById('fullName').value = payload.fullName || '';
+  document.getElementById('stateSelect').value = payload.stateCode || '';
+  document.getElementById('currentMarriageChildren').value = payload.currentMarriageChildren ?? 0;
+  document.getElementById('priorMarriageChildren').value = payload.priorMarriageChildren ?? 0;
+  document.getElementById('estateSize').value = payload.estateSize ? String(Math.round(payload.estateSize)) : '';
+  document.getElementById('homeValue').value = payload.homeValue ? String(Math.round(payload.homeValue)) : '';
+
+  ['maritalStatus','marriageOrder'].forEach((group) => {
+    document.querySelectorAll(`input[name="${group}"]`).forEach((input) => {
+      input.checked = input.value === payload[group];
+    });
+  });
+
+  updateRadioCards();
+  toggleMarriageOrder();
+  populateReport(payload, payload.guide || null, payload.stateRuleRecord || null, payload.model);
+  showHydratedReport();
+  return true;
+}
+
+async function generateCollisionReport() {
+  const data = buildInputData();
+  const validationError = validateInput(data);
+  if (validationError) {
+    alert(validationError);
+    return;
+  }
+
+  const supabase = window.inheritanceCollisionSupabase;
+  const [guide, stateRuleRecord] = await Promise.all([
+    loadStateGuide(supabase, data.stateCode),
+    loadStateRules(supabase, data.stateCode)
+  ]);
+
+  const model = buildCollisionModel(data, guide, stateRuleRecord);
+  populateReport(data, guide, stateRuleRecord, model);
+  await saveCollisionReport(data, guide, stateRuleRecord, model);
+  showGeneratedReport();
+}
+
+function editCollisionReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateCollisionReport = generateCollisionReport;
+window.editCollisionReport = editCollisionReport;
+window.hydrateInheritanceCollisionSubmission = hydrateSavedSubmission;
+updateRadioCards();
+toggleMarriageOrder();
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.inheritanceCollisionSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateInheritanceCollisionSubmission) {
+  const { data: report } = await supabase
+    .from('inheritance_collision_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateInheritanceCollisionSubmission(report);
+  }
+} else if (utm) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', utm)
+    .maybeSingle();
+
+  if (profile?.full_name) {
+    const input = document.getElementById('fullName');
+    if (input && !input.value) input.value = profile.full_name;
+  }
+}
+</script>
+</body>
+</html>

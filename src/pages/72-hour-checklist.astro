@@ -1,0 +1,738 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 72-Hour Checklist — The Personalized After-Death Action Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0F1F3D;--navy-light:#1A2D52;--navy-mid:#152847;--gold:#C9A84C;--gold-light:#D4B96A;
+  --gold-glow:rgba(201,168,76,0.12);--cream:#FAF7F0;--cream-dark:#F0EBE0;--white:#FFFFFF;
+  --text-dark:#1A1A1A;--text-mid:#4A4A4A;--text-light:#7A7A7A;--green:#2E8B57;--amber:#D97706;
+  --red:#B73E2E;--border:#E8E3D8;--shadow:0 2px 20px rgba(15,31,61,0.08)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site-header{background:var(--navy);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.logo{text-decoration:none}.logo-text{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:600}.logo-text span{color:var(--gold)}
+.hero{background:var(--navy);padding:78px 24px 94px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:700;color:var(--white);line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.66);line-height:1.7;max-width:840px;margin:0 auto 38px;font-weight:300}
+.hero-points{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-point{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.84);border-radius:999px;padding:10px 16px;font-size:13px}
+.wizard-section,.analysis-section,.report-section{padding:52px 24px 30px}
+.wizard-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start}
+.sticky-sidebar{position:sticky;top:94px}
+.sidebar-card,.form-card,.analysis-card,.report-shell,.disclaimer{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.sidebar-card{padding:28px}
+.sidebar-label,.step-label,.section-kicker,.report-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:28px;line-height:1.15;color:var(--navy);margin:8px 0 14px}
+.sidebar-copy{font-size:14px;color:var(--text-mid);margin-bottom:22px}
+.step-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--cream);border:1px solid transparent}
+.step-item.active{border-color:rgba(201,168,76,0.4);background:var(--gold-glow)}
+.step-item.done .step-num{background:var(--gold);color:var(--navy)}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--cream-dark);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35}
+.step-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.sidebar-note{border-radius:14px;background:var(--navy);color:rgba(255,255,255,0.78);padding:18px;font-size:13px}.sidebar-note strong{color:var(--white);display:block;margin-bottom:6px}
+.form-card{overflow:hidden}.form-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 30px}
+.form-header-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.form-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.24);color:var(--gold);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase}
+.progress-inline{color:rgba(255,255,255,0.62);font-size:12px;font-weight:600}
+.form-title{font-family:'Playfair Display',serif;color:var(--white);font-size:34px;line-height:1.1;margin-bottom:10px}
+.form-sub{color:rgba(255,255,255,0.64);font-size:15px;max-width:760px}
+.progress-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:999px;margin-top:18px;overflow:hidden}
+.progress-fill{height:100%;width:50%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .35s ease}
+.form-body{padding:30px}.form-step{display:none}.form-step.active{display:block}
+.step-question{font-family:'Playfair Display',serif;font-size:28px;line-height:1.18;color:var(--navy);margin:8px 0}
+.step-help{font-size:14px;color:var(--text-light);margin-bottom:24px;max-width:760px}
+.field-grid,.metric-grid,.timeline-grid,.doc-grid,.action-grid{display:grid;gap:18px}
+.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.metric-grid,.timeline-grid,.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.doc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.field-group{margin-bottom:18px}.field-group.full{grid-column:1/-1}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
+.field-input,.field-select{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text-dark);font-size:15px;font-family:'DM Sans',sans-serif;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.field-input:focus,.field-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);background:var(--white)}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-back,.btn-next,.btn-print,.btn-secondary{border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.btn-back,.btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:13px 18px}
+.btn-next,.btn-print{background:var(--gold);color:var(--navy);padding:13px 20px}.btn-next:hover,.btn-print:hover{background:var(--gold-light)}
+.doc-card{display:flex;gap:14px;align-items:flex-start;padding:16px;border-radius:14px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.doc-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.12);transform:translateY(-1px)}
+.doc-card input{margin-top:3px}
+.doc-copy strong{display:block;color:var(--navy);font-size:15px;margin-bottom:4px}
+.doc-copy span{display:block;font-size:13px;color:var(--text-light);line-height:1.5}
+.insight-band{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+.insight-chip{border:1px solid var(--border);border-radius:14px;background:var(--cream);padding:16px}
+.insight-chip strong{display:block;font-size:13px;color:var(--navy);margin-bottom:6px}
+.insight-chip span{font-size:13px;color:var(--text-light)}
+.analysis-section,.report-section{display:none}.analysis-section.active,.report-section.active{display:block}
+.analysis-card{max-width:920px;margin:0 auto;padding:42px 28px;text-align:center}
+.analysis-orb{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold-light),var(--gold));position:relative;box-shadow:0 0 0 16px rgba(201,168,76,0.08),0 0 0 32px rgba(201,168,76,0.04)}
+.analysis-orb::after{content:'';position:absolute;inset:24px;border-radius:50%;background:var(--navy);opacity:.16}
+.analysis-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);margin-bottom:8px}
+.analysis-sub{font-size:15px;color:var(--text-light);margin-bottom:28px}
+.analysis-steps{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.analysis-step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:12px;background:var(--cream);border:1px solid var(--border)}
+.analysis-indicator{width:38px;height:38px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700}
+.analysis-step.done .analysis-indicator{background:var(--gold);color:var(--navy)}.analysis-text{font-size:14px;color:var(--text-mid)}
+.report-shell{max-width:1080px;margin:0 auto;overflow:hidden}
+.report-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:36px 32px 30px;color:var(--white)}
+.report-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin:10px 0 12px}
+.report-subtitle{color:rgba(255,255,255,0.72);font-size:15px;max-width:800px}
+.report-meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+.report-meta-item,.pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.8)}
+.report-body{padding:28px;display:grid;gap:22px}
+.hero-summary,.section-card{background:var(--white);border:1px solid var(--border);border-radius:16px}
+.hero-summary{padding:28px;background:linear-gradient(135deg,rgba(15,31,61,0.03),rgba(201,168,76,0.08)),var(--white)}
+.summary-lead{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+.summary-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);line-height:1.08;margin-bottom:10px}.summary-title em{color:var(--gold);font-style:normal}
+.summary-copy{font-size:15px;color:var(--text-mid)}
+.summary-benchmark{background:var(--navy);color:rgba(255,255,255,0.82);border-radius:16px;padding:22px}
+.summary-benchmark .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);line-height:1.14;margin:8px 0 10px}
+.metric-card,.timeline-card,.action-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:16px}
+.metric-label,.timeline-label,.action-label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-light);font-weight:700;margin-bottom:6px}
+.metric-value{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:6px}
+.metric-sub,.timeline-copy,.action-copy{font-size:12px;color:var(--text-light)}
+.section-card{padding:24px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);line-height:1.15;margin-top:4px}
+.section-copy{font-size:13px;color:var(--text-light);max-width:700px}
+.pill{background:var(--cream);border-color:var(--border);color:var(--navy)}
+.timeline-card h4{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:8px}
+.timeline-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.timeline-item{display:flex;gap:10px;align-items:flex-start;padding-top:10px;border-top:1px solid var(--border)}
+.timeline-item:first-child{padding-top:0;border-top:none}
+.timeline-dot{width:22px;height:22px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.timeline-text strong{display:block;color:var(--navy);font-size:14px;margin-bottom:2px}
+.timeline-text span{font-size:13px;color:var(--text-mid)}
+.list-rows{display:flex;flex-direction:column;gap:12px}
+.list-row{display:flex;justify-content:space-between;gap:18px;padding:12px 0;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-row span:first-child{font-size:13px;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;font-weight:700}
+.list-row span:last-child{font-size:14px;color:var(--navy);font-weight:600;text-align:right}
+.note-alert,.warning-banner{background:var(--cream);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:14px;padding:18px;font-size:14px;color:var(--text-mid)}
+.warning-banner{display:none;margin-top:16px}
+.warning-banner.active{display:block}
+.report-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 28px 28px}
+.report-note{font-size:12px;color:var(--text-light)}
+.disclaimer{max-width:1080px;margin:0 auto 64px;padding:24px 28px 32px}.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}.disclaimer strong{color:var(--text-mid)}
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width:980px){.wizard-grid,.field-grid,.metric-grid,.timeline-grid,.doc-grid,.action-grid,.summary-lead,.insight-band{grid-template-columns:1fr}.sticky-sidebar{position:static}}
+@media (max-width:768px){.site-header{padding:14px 16px}.hero{padding:54px 20px 72px}.wizard-section,.analysis-section,.report-section{padding-left:16px;padding-right:16px}.sidebar-card,.form-body,.report-body,.section-card,.hero-summary,.analysis-card,.disclaimer{padding-left:20px;padding-right:20px}.form-header,.report-header{padding:28px 20px}.step-question,.section-title{font-size:23px}.summary-title{font-size:28px}.btn-row,.section-head,.report-actions,.form-header-top,.list-row{flex-direction:column;align-items:stretch}.list-row span:last-child{text-align:left}}
+@media print{body{background:#fff}.site-header,.hero,.wizard-section,.analysis-section,.disclaimer,.report-actions{display:none!important}.report-section{display:block!important;padding:0!important}.report-shell,.section-card,.hero-summary,.timeline-card,.metric-card,.action-card{box-shadow:none!important;border-color:#ddd!important}.report-shell{max-width:none!important;border:none!important}.section-card,.timeline-card{break-inside:avoid;page-break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="site-header"><a href="/portal" class="logo"><div class="logo-text">Retirement <span>Shield</span></div></a></header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Family Action Tool</div>
+    <h1>The 72-Hour <em>Checklist</em></h1>
+    <p class="hero-sub">A personalized, state-specific after-death action plan for the surviving family. It organizes what to do in the first 72 hours, first 30 days, and first 12 months based on which documents are already in place and which gaps will slow the family down.</p>
+    <div class="hero-points">
+      <div class="hero-point">Print-ready family action plan</div>
+      <div class="hero-point">State deadline and probate reminders</div>
+      <div class="hero-point">Built to drop into the emergency binder</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Checklist Builder</div>
+        <div class="sidebar-title">When someone dies on a Saturday, the family does not need theory. They need a sequence.</div>
+        <div class="sidebar-copy">This tool repackages the same estate-planning logic already in the product into a moment-of-loss action plan the spouse or adult child can actually follow under pressure.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1"><div class="step-num">1</div><div><div class="step-title">Household Basics</div><div class="step-sub">Name, state, who this checklist is for</div></div></div>
+          <div class="step-item" data-step-indicator="2"><div class="step-num">2</div><div><div class="step-title">What Exists Already</div><div class="step-sub">Documents, arrangements, and access points</div></div></div>
+        </div>
+        <div class="sidebar-note"><strong>Portal-compatible</strong>The finished plan saves like the other tools, shows as completed in `/portal`, can be restarted, and is designed to print cleanly into the emergency binder.</div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top"><div class="form-badge">Retirement Shield Tool</div><div class="progress-inline" id="progressText">Step 1 of 2</div></div>
+        <div class="form-title">Turn a family crisis into a checklist.</div>
+        <div class="form-sub">We’ll take the estate-planning facts that matter under pressure and turn them into a time-sequenced plan for the first 72 hours, first 30 days, and first 12 months after death.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 2</div>
+          <div class="step-question">Who is this plan for?</div>
+          <div class="step-help">This name appears on the saved report so the family knows the checklist belongs to this household, not to “some generic estate planner.”</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Prepared For</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret and Thomas">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State of Residence</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+          </div>
+          <div class="insight-band">
+            <div class="insight-chip"><strong>What this includes</strong><span>Death certificate ordering, probate urgency, document retrieval, account access, and family coordination steps.</span></div>
+            <div class="insight-chip"><strong>What this does not do</strong><span>It does not create legal authority. It tells the family what to gather, who to call, and what deadlines to not miss.</span></div>
+            <div class="insight-chip"><strong>Best use case</strong><span>Print it now, save it in the emergency binder, and update it whenever documents or beneficiary forms change.</span></div>
+          </div>
+          <div class="btn-row"><div></div><button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 2</div>
+          <div class="step-question">What is already in place?</div>
+          <div class="step-help">Check everything the family can confidently locate or confirm today. The missing items become the parts of the action plan that need the most attention.</div>
+          <div class="doc-grid">
+            <label class="doc-card"><input type="checkbox" id="hasWill"><div class="doc-copy"><strong>Will</strong><span>The family can locate the signed will or knows exactly where it is.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasTrust"><div class="doc-copy"><strong>Trust</strong><span>A revocable trust or funded trust package is already in place.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasPoa"><div class="doc-copy"><strong>Durable Financial POA</strong><span>Someone can step in for incapacity-related financial management before death.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasHealthcareProxy"><div class="doc-copy"><strong>Healthcare Proxy / Medical POA</strong><span>The family knows who is authorized to make medical decisions and access records.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasBeneficiaryDesignations"><div class="doc-copy"><strong>Updated Beneficiary Designations</strong><span>IRA, 401(k), annuity, and insurance beneficiary forms are current.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasFuneralPreplan"><div class="doc-copy"><strong>Funeral / Burial Pre-Plan</strong><span>Instructions, preferences, and any prepaid arrangements are already organized.</span></div></label>
+            <label class="doc-card"><input type="checkbox" id="hasDigitalInventory"><div class="doc-copy"><strong>Digital Account Inventory</strong><span>Passwords, account list, device access, and critical subscriptions are mapped.</span></div></label>
+          </div>
+          <div class="warning-banner" id="fallbackWarning"></div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(1)">← Back</button><button class="btn-next" type="button" onclick="generateAfterDeathPlan()">Generate My 72-Hour Checklist →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Action Plan</div>
+    <div class="analysis-sub">Translating document readiness and state rules into a time-sequenced family checklist.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Loading state-specific filing and creditor-window reminders...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Scoring where the family will get stuck because paperwork is missing...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Sequencing the first 72 hours, first 30 days, and first 12 months...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report so it appears in Portal Documents and Tools...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Personalized After-Death Action Plan</div>
+      <div class="report-title" id="reportTitle">The 72-Hour Checklist</div>
+      <div class="report-subtitle" id="reportSubtitle">A print-ready sequence for the surviving family built from state requirements and the documents already in place.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaState">State —</div>
+        <div class="report-meta-item" id="metaReadiness">Readiness —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="summary-lead">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">The family’s first week now fits on <em>one page</em>.</div>
+            <div class="summary-copy" id="summaryCopy">Summary appears here.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Primary Bottleneck</div>
+            <div class="headline" id="benchmarkHeadline">Biggest likely delay</div>
+            <div id="benchmarkCopy">Bottleneck copy appears here.</div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card"><div class="metric-label">Readiness Score</div><div class="metric-value" id="readinessScore">0/100</div><div class="metric-sub" id="readinessSub">Based on documents and arrangements already in place</div></div>
+          <div class="metric-card"><div class="metric-label">Death Certificate Copies</div><div class="metric-value" id="certificateValue">—</div><div class="metric-sub" id="certificateSub">State / planning recommendation</div></div>
+          <div class="metric-card"><div class="metric-label">Will / Probate Urgency</div><div class="metric-value" id="deadlineValue">—</div><div class="metric-sub" id="deadlineSub">Do not miss this filing window</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">State Snapshot</div><div class="section-title">What this state changes</div><div class="section-copy">The action plan uses the broader `state_guides` overlay plus a dedicated after-death rules table for timing and administrative friction.</div></div>
+          <div class="pill" id="statePill">State overlay</div>
+        </div>
+        <div class="list-rows">
+          <div class="list-row"><span>Death certificate ordering</span><span id="stateDeathCertificates">—</span></div>
+          <div class="list-row"><span>Original will deadline</span><span id="stateWillDeadline">—</span></div>
+          <div class="list-row"><span>Creditor notification window</span><span id="stateCreditorWindow">—</span></div>
+          <div class="list-row"><span>Probate / court friction</span><span id="stateProbateWindow">—</span></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Time Sequence</div><div class="section-title">What the family should do, in order</div><div class="section-copy">This is written for the surviving spouse or adult child handling real-world administration, not for an attorney reading a statute book.</div></div>
+          <div class="pill">Print-ready</div>
+        </div>
+        <div class="timeline-grid">
+          <div class="timeline-card">
+            <div class="timeline-label">First 72 Hours</div>
+            <h4>Stabilize the household</h4>
+            <div class="timeline-list" id="timeline72"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-label">First 30 Days</div>
+            <h4>Open the right files</h4>
+            <div class="timeline-list" id="timeline30"></div>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-label">First 12 Months</div>
+            <h4>Finish the transfer work</h4>
+            <div class="timeline-list" id="timeline12"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Document Gaps</div><div class="section-title">What will slow the family down</div><div class="section-copy">Missing documents do not just create legal risk. They create Monday-morning bottlenecks when bills, accounts, and medical records need attention.</div></div>
+          <div class="pill" id="gapPill">Readiness gaps</div>
+        </div>
+        <div class="action-grid">
+          <div class="action-card"><div class="action-label">Gap One</div><div class="metric-value" id="gapOneTitle">—</div><div class="action-copy" id="gapOneCopy">—</div></div>
+          <div class="action-card"><div class="action-label">Gap Two</div><div class="metric-value" id="gapTwoTitle">—</div><div class="action-copy" id="gapTwoCopy">—</div></div>
+          <div class="action-card"><div class="action-label">Gap Three</div><div class="metric-value" id="gapThreeTitle">—</div><div class="action-copy" id="gapThreeCopy">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="report-actions">
+      <div class="report-note">Designed to be printed and placed in the emergency binder.</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn-secondary" type="button" onclick="editAfterDeathPlan()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This checklist is for educational and organizational purposes only and does not constitute legal, tax, financial, insurance, funeral, or medical advice. State rules for probate filings, creditor notice, certified death certificate ordering, account access, and related post-death administration can change and may vary based on county procedure, asset type, and family facts. Retirement Shield is not a law firm, does not prepare legal documents, and does not provide legal advice. Review this plan with a licensed estate planning or probate attorney in your state before relying on it for legal deadlines. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script>
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],['CO','Colorado'],
+  ['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],
+  ['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],
+  ['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],
+  ['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],
+  ['NM','New Mexico'],['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming'],['DC','District of Columbia']
+];
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  document.getElementById('stateSelect').appendChild(option);
+});
+
+document.querySelectorAll('.doc-card').forEach((card) => {
+  const input = card.querySelector('input');
+  const sync = () => card.classList.toggle('selected', input.checked);
+  card.addEventListener('click', () => setTimeout(sync, 0));
+  input.addEventListener('change', sync);
+});
+
+let currentStep = 1;
+
+function slugify(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((section) => section.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('.step-item').forEach((item, index) => {
+    item.classList.remove('active','done');
+    if (index + 1 < step) item.classList.add('done');
+    if (index + 1 === step) item.classList.add('active');
+  });
+  currentStep = step;
+  document.getElementById('progressText').textContent = `Step ${step} of 2`;
+  document.getElementById('progressFill').style.width = `${(step / 2) * 100}%`;
+}
+
+function getInputData() {
+  return {
+    fullName: document.getElementById('fullName').value.trim() || 'Retirement Shield Client',
+    stateCode: document.getElementById('stateSelect').value,
+    stateName: STATE_OPTIONS.find(([code]) => code === document.getElementById('stateSelect').value)?.[1] || '',
+    hasWill: document.getElementById('hasWill').checked,
+    hasTrust: document.getElementById('hasTrust').checked,
+    hasPoa: document.getElementById('hasPoa').checked,
+    hasHealthcareProxy: document.getElementById('hasHealthcareProxy').checked,
+    hasBeneficiaryDesignations: document.getElementById('hasBeneficiaryDesignations').checked,
+    hasFuneralPreplan: document.getElementById('hasFuneralPreplan').checked,
+    hasDigitalInventory: document.getElementById('hasDigitalInventory').checked
+  };
+}
+
+function validateInput(data) {
+  if (!data.stateCode) return 'Choose a state.';
+  return '';
+}
+
+async function loadStateGuide(supabase, stateCode) {
+  if (!supabase || !stateCode) return null;
+  const stateName = STATE_OPTIONS.find(([code]) => code === stateCode)?.[1];
+  if (!stateName) return null;
+  const { data } = await supabase
+    .from('state_guides')
+    .select('state_name,probate_cost_display,probate_timeline_display,homestead_display,lady_bird_display,lady_bird_deed_available,tod_display,tod_deed_available,state_estate_tax,state_inheritance_tax')
+    .eq('state_slug', slugify(stateName))
+    .maybeSingle();
+  return data || null;
+}
+
+async function loadStateRules(supabase, stateCode) {
+  if (!supabase || !stateCode) return null;
+  const { data } = await supabase
+    .from('after_death_checklist_state_rules')
+    .select('*')
+    .eq('state_code', stateCode)
+    .eq('is_active', true)
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data || null;
+}
+
+function defaultStateRules(stateName, stateCode) {
+  return {
+    death_certificate_copies: '10-15 certified copies',
+    will_deadline: `${stateName} filing deadline should be confirmed with local probate counsel immediately after death.`,
+    creditor_window: `${stateName} creditor notice timing varies by probate procedure and county practice.`,
+    probate_urgency: `${stateName} probate procedure and original-will handling should be reviewed quickly if titled assets remain outside a trust.`,
+    account_access: 'Banks, insurers, and transfer agents will usually require a certified death certificate plus beneficiary or court paperwork before retitling assets.',
+    funeral_note: 'If no funeral pre-plan exists, the family should locate written preferences immediately so Monday-morning decisions are not being made emotionally.',
+    rule_label: `${stateCode} fallback`
+  };
+}
+
+function readinessScore(data) {
+  const checks = [
+    data.hasWill,
+    data.hasTrust,
+    data.hasPoa,
+    data.hasHealthcareProxy,
+    data.hasBeneficiaryDesignations,
+    data.hasFuneralPreplan,
+    data.hasDigitalInventory
+  ];
+  const completed = checks.filter(Boolean).length;
+  return Math.round((completed / checks.length) * 100);
+}
+
+function pickTopGaps(data) {
+  const gaps = [];
+  if (!data.hasDigitalInventory) gaps.push(['No digital account inventory', 'Even when the legal documents are decent, families still get stuck on phones, laptops, password resets, autopay, and two-factor authentication.']);
+  if (!data.hasBeneficiaryDesignations) gaps.push(['Beneficiary designations need review', 'Retirement accounts, annuities, and life insurance usually pass outside the will. If the forms are stale, the family can lose time and money immediately.']);
+  if (!data.hasWill && !data.hasTrust) gaps.push(['No clear death-side plan', 'Without a will or trust, the family falls straight into default state administration and cannot rely on “everyone knows what was intended.”']);
+  if (!data.hasWill) gaps.push(['Will location is a bottleneck', 'If the original will cannot be found quickly, the probate timeline often gets slower and more expensive at the exact moment the family wants clarity.']);
+  if (!data.hasTrust) gaps.push(['Probate exposure remains high', 'Without a trust or coordinated titling plan, the house and titled assets may still need formal probate handling.']);
+  if (!data.hasFuneralPreplan) gaps.push(['Funeral decisions are still live', 'The family may be forced to make expensive and emotional decisions in the first 24-48 hours without written preferences.']);
+  if (!data.hasHealthcareProxy) gaps.push(['Medical decision paper trail is weak', 'If there is no healthcare proxy or HIPAA release, hospitals may not be as easy to work with during the final medical event.']);
+  if (!data.hasPoa) gaps.push(['Incapacity paperwork is thin', 'A missing durable POA often becomes visible before death, when bills and account management still have to continue.']);
+  return gaps.slice(0, 3);
+}
+
+function buildTimelineItems(data, guide, rules) {
+  const in72 = [
+    ['Secure the household and pause impulsive decisions', 'Get immediate family aligned, lock down the house, preserve original documents, and avoid transferring or removing property before the paperwork picture is clear.'],
+    ['Order certified death certificates', `Ask the funeral home to order ${rules.death_certificate_copies}. Every bank, insurer, and government agency will ask for originals.`],
+    ['Locate the controlling documents', data.hasWill || data.hasTrust ? 'Pull the will, trust package, beneficiary forms, and binder immediately so the family knows what actually controls which assets.' : 'Because there is no confirmed will or trust, the family should assume the state default process may control more than expected.'],
+    ['Notify the right people first', data.hasFuneralPreplan ? 'Use the pre-plan instructions to coordinate funeral, burial, or cremation without guesswork.' : rules.funeral_note]
+  ];
+
+  const in30 = [
+    ['File or deliver the original will on time', rules.will_deadline],
+    ['Open the right administration lane', data.hasTrust ? 'Review which assets are already trust-owned and which still require beneficiary or probate handling.' : rules.probate_urgency],
+    ['Start account and benefit notifications', `${rules.account_access} Social Security, pensions, insurers, and custodians should be contacted in a deliberate sequence rather than randomly.`],
+    ['Map bills, subscriptions, and autopay', data.hasDigitalInventory ? 'Use the digital inventory to stop fraud, keep essential bills paid, and close the accounts that no longer make sense.' : 'Because no digital inventory is confirmed, the family should build a live list of banks, cards, utilities, logins, autopay, and subscriptions before accounts start drifting.']
+  ];
+
+  const in12 = [
+    ['Close out creditor and court deadlines', rules.creditor_window],
+    ['Retitle and re-register what changed hands', data.hasBeneficiaryDesignations ? 'Confirm that beneficiary-driven assets actually landed where expected and that no stale designation created a surprise.' : 'Beneficiary designations should be reviewed line by line because the will does not control those assets.'],
+    ['Rebuild the surviving household plan', 'Once the immediate administration ends, update the surviving spouse or adult child plan so the same confusion does not recur in the next generation.'],
+    ['Refresh the binder', 'Any lesson learned from the loss should be folded back into the emergency binder, account map, and contact sheet while the details are still fresh.']
+  ];
+
+  return { in72, in30, in12 };
+}
+
+function buildModel(data, guide, stateRuleRecord) {
+  const baseRules = stateRuleRecord?.rules_payload || {};
+  const rules = { ...defaultStateRules(data.stateName, data.stateCode), ...baseRules };
+  const score = readinessScore(data);
+  const gaps = pickTopGaps(data);
+  while (gaps.length < 3) {
+    gaps.push(['Coordination review', 'The family should still rehearse where the binder is, who is first call, and what accounts or titles are most likely to slow administration.']);
+  }
+  const biggestGap = gaps[0][0];
+  const benchmarkCopy = gaps[0][1];
+  const timeline = buildTimelineItems(data, guide, rules);
+  return {
+    score,
+    rules,
+    gaps,
+    biggestGap,
+    benchmarkCopy,
+    timeline,
+    readinessLabel: score >= 80 ? 'Strong' : score >= 55 ? 'Mixed' : 'Fragile'
+  };
+}
+
+function renderTimeline(targetId, items) {
+  const wrap = document.getElementById(targetId);
+  wrap.innerHTML = items.map((item, index) => `
+    <div class="timeline-item">
+      <div class="timeline-dot">${index + 1}</div>
+      <div class="timeline-text">
+        <strong>${item[0]}</strong>
+        <span>${item[1]}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function populateReport(data, guide, stateRuleRecord, model) {
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('reportTitle').textContent = `The 72-Hour Checklist for ${data.fullName}`;
+  document.getElementById('reportSubtitle').textContent = `A ${data.stateName} after-death action plan built from the documents already in place and the deadlines the family should not miss.`;
+  document.getElementById('metaState').textContent = `${data.stateName} · ${stateRuleRecord ? stateRuleRecord.rule_version : 'fallback state rules'}`;
+  document.getElementById('metaReadiness').textContent = `${model.readinessLabel} readiness · ${model.score}/100`;
+  document.getElementById('metaDate').textContent = `Generated ${date}`;
+  document.getElementById('summaryTitle').innerHTML = `${model.readinessLabel} family readiness for the first <em>72 hours</em>.`;
+  document.getElementById('summaryCopy').textContent = `This plan assumes the surviving family needs a calm sequence, not a legal memo. In ${data.stateName}, the strongest friction points are the original documents, account access, and any state filing windows that start immediately after death.`;
+  document.getElementById('benchmarkHeadline').textContent = model.biggestGap;
+  document.getElementById('benchmarkCopy').textContent = model.benchmarkCopy;
+  document.getElementById('readinessScore').textContent = `${model.score}/100`;
+  document.getElementById('readinessSub').textContent = `${[
+    data.hasWill && 'will',
+    data.hasTrust && 'trust',
+    data.hasPoa && 'POA',
+    data.hasHealthcareProxy && 'healthcare proxy',
+    data.hasBeneficiaryDesignations && 'beneficiaries',
+    data.hasFuneralPreplan && 'funeral pre-plan',
+    data.hasDigitalInventory && 'digital inventory'
+  ].filter(Boolean).join(', ') || 'No confirmed documents yet'}`;
+  document.getElementById('certificateValue').textContent = model.rules.death_certificate_copies;
+  document.getElementById('certificateSub').textContent = 'Order more than the family thinks it needs';
+  document.getElementById('deadlineValue').textContent = model.rules.will_deadline;
+  document.getElementById('deadlineSub').textContent = 'Original will and probate urgency reminder';
+  document.getElementById('statePill').textContent = guide?.probate_timeline_display || 'State overlay';
+  document.getElementById('stateDeathCertificates').textContent = model.rules.death_certificate_copies;
+  document.getElementById('stateWillDeadline').textContent = model.rules.will_deadline;
+  document.getElementById('stateCreditorWindow').textContent = model.rules.creditor_window;
+  document.getElementById('stateProbateWindow').textContent = guide?.probate_cost_display && guide?.probate_timeline_display ? `${guide.probate_cost_display} · ${guide.probate_timeline_display}` : model.rules.probate_urgency;
+  renderTimeline('timeline72', model.timeline.in72);
+  renderTimeline('timeline30', model.timeline.in30);
+  renderTimeline('timeline12', model.timeline.in12);
+  document.getElementById('gapPill').textContent = `${7 - Math.round(model.score / 100 * 7)} active gaps`.replace('-0', '0');
+  document.getElementById('gapOneTitle').textContent = model.gaps[0][0];
+  document.getElementById('gapOneCopy').textContent = model.gaps[0][1];
+  document.getElementById('gapTwoTitle').textContent = model.gaps[1][0];
+  document.getElementById('gapTwoCopy').textContent = model.gaps[1][1];
+  document.getElementById('gapThreeTitle').textContent = model.gaps[2][0];
+  document.getElementById('gapThreeCopy').textContent = model.gaps[2][1];
+
+  const warning = document.getElementById('fallbackWarning');
+  if (stateRuleRecord) {
+    warning.classList.remove('active');
+    warning.textContent = '';
+  } else {
+    warning.classList.add('active');
+    warning.textContent = `${data.stateName} does not have a dedicated row in after_death_checklist_state_rules yet, so this plan is using safe fallback wording plus the broader state guide overlay. Add a state row for exact death-certificate, filing, and creditor-window phrasing.`;
+  }
+}
+
+async function saveAfterDeathPlan(data, guide, stateRuleRecord, model) {
+  const supabase = window.afterDeathChecklistSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const payload = {
+    user_id: userId,
+    full_name: data.fullName,
+    state_code: data.stateCode,
+    state_name: data.stateName,
+    has_will: data.hasWill,
+    has_trust: data.hasTrust,
+    has_poa: data.hasPoa,
+    has_healthcare_proxy: data.hasHealthcareProxy,
+    has_beneficiary_designations: data.hasBeneficiaryDesignations,
+    has_funeral_preplan: data.hasFuneralPreplan,
+    has_digital_inventory: data.hasDigitalInventory,
+    readiness_score: model.score,
+    death_certificate_copies: model.rules.death_certificate_copies,
+    will_deadline: model.rules.will_deadline,
+    creditor_window: model.rules.creditor_window,
+    state_rule_version: stateRuleRecord?.rule_version || null,
+    state_rule_snapshot: stateRuleRecord || null,
+    report_title: `The 72-Hour Checklist for ${data.fullName}`,
+    report_payload: { ...data, guide, stateRuleRecord, model }
+  };
+
+  const { error } = await supabase
+    .from('after_death_checklist_reports')
+    .insert(payload);
+
+  if (error) {
+    console.error('Failed to save 72-Hour Checklist report:', error);
+  }
+}
+
+function showGeneratedPlan() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  const steps = ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'];
+  let delay = 0;
+  steps.forEach((id, index) => {
+    delay += 450;
+    setTimeout(() => {
+      document.getElementById(id).classList.add('done');
+      if (index === steps.length - 1) {
+        setTimeout(() => {
+          document.getElementById('analysisSection').classList.remove('active');
+          document.getElementById('reportSection').classList.add('active');
+          const shell = document.getElementById('reportShell');
+          shell.classList.add('visible');
+          shell.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('.fade-up').forEach((el, i) => setTimeout(() => el.classList.add('visible'), i * 80));
+        }, 400);
+      }
+    }, delay);
+  });
+}
+
+function showHydratedPlan() {
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedSubmission(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+  document.getElementById('fullName').value = payload.fullName || '';
+  document.getElementById('stateSelect').value = payload.stateCode || '';
+  document.getElementById('hasWill').checked = Boolean(payload.hasWill);
+  document.getElementById('hasTrust').checked = Boolean(payload.hasTrust);
+  document.getElementById('hasPoa').checked = Boolean(payload.hasPoa);
+  document.getElementById('hasHealthcareProxy').checked = Boolean(payload.hasHealthcareProxy);
+  document.getElementById('hasBeneficiaryDesignations').checked = Boolean(payload.hasBeneficiaryDesignations);
+  document.getElementById('hasFuneralPreplan').checked = Boolean(payload.hasFuneralPreplan);
+  document.getElementById('hasDigitalInventory').checked = Boolean(payload.hasDigitalInventory);
+  document.querySelectorAll('.doc-card').forEach((card) => {
+    const input = card.querySelector('input');
+    card.classList.toggle('selected', input.checked);
+  });
+  populateReport(payload, payload.guide || null, payload.stateRuleRecord || null, payload.model);
+  showHydratedPlan();
+  return true;
+}
+
+async function generateAfterDeathPlan() {
+  const data = getInputData();
+  const validationError = validateInput(data);
+  if (validationError) {
+    alert(validationError);
+    return;
+  }
+  const supabase = window.afterDeathChecklistSupabase;
+  const [guide, stateRuleRecord] = await Promise.all([
+    loadStateGuide(supabase, data.stateCode),
+    loadStateRules(supabase, data.stateCode)
+  ]);
+  const model = buildModel(data, guide, stateRuleRecord);
+  populateReport(data, guide, stateRuleRecord, model);
+  await saveAfterDeathPlan(data, guide, stateRuleRecord, model);
+  showGeneratedPlan();
+}
+
+function editAfterDeathPlan() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(2);
+}
+
+window.nextStep = nextStep;
+window.generateAfterDeathPlan = generateAfterDeathPlan;
+window.editAfterDeathPlan = editAfterDeathPlan;
+window.hydrateAfterDeathChecklistSubmission = hydrateSavedSubmission;
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.afterDeathChecklistSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateAfterDeathChecklistSubmission) {
+  const { data: report } = await supabase
+    .from('after_death_checklist_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateAfterDeathChecklistSubmission(report);
+  }
+} else if (utm) {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', utm)
+    .maybeSingle();
+
+  if (profile?.full_name) {
+    const input = document.getElementById('fullName');
+    if (input && !input.value) input.value = profile.full_name;
+  }
+}
+</script>
+</body>
+</html>

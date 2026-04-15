@@ -1,0 +1,1023 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Your Annuity Ripping You Off? — The Annuity X-Ray Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --amber: #E67E22;
+  --red: #C0392B;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+.logo { text-decoration: none; }
+.logo-text { font-family: 'Playfair Display', serif; color: var(--white); font-size: 18px; font-weight: 600; }
+.logo-text span { color: var(--gold); }
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px; padding: 8px 18px; margin-bottom: 28px;
+  font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1.2px; text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 18px; color: rgba(255,255,255,0.66); line-height: 1.7;
+  max-width: 800px; margin: 0 auto 38px; font-weight: 300;
+}
+.hero-points { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hero-point {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84); border-radius: 999px; padding: 10px 16px; font-size: 13px;
+}
+.wizard-section, .analysis-section, .report-section { padding: 52px 24px 30px; }
+.wizard-grid {
+  max-width: 1180px; margin: 0 auto; display: grid;
+  grid-template-columns: 340px minmax(0, 1fr); gap: 28px; align-items: start;
+}
+.sticky-sidebar { position: sticky; top: 94px; }
+.sidebar-card, .form-card, .analysis-card, .report-shell, .disclaimer {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+}
+.sidebar-card { padding: 28px; }
+.sidebar-label, .step-label, .section-kicker, .report-kicker {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold);
+}
+.sidebar-title {
+  font-family: 'Playfair Display', serif; font-size: 28px; line-height: 1.15; color: var(--navy); margin: 8px 0 14px;
+}
+.sidebar-copy { font-size: 14px; color: var(--text-mid); margin-bottom: 22px; }
+.step-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+.step-item {
+  display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+  padding: 12px 14px; border-radius: 12px; background: var(--cream); border: 1px solid transparent;
+}
+.step-item.active { border-color: rgba(201,168,76,0.4); background: var(--gold-glow); }
+.step-item.done .step-num { background: var(--gold); color: var(--navy); }
+.step-num {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--cream-dark); color: var(--navy);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+}
+.step-title { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.step-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.sidebar-note {
+  border-radius: 14px; background: var(--navy); color: rgba(255,255,255,0.78); padding: 18px; font-size: 13px;
+}
+.sidebar-note strong { color: var(--white); display: block; margin-bottom: 6px; }
+.form-card { overflow: hidden; }
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 28px 30px;
+}
+.form-header-top {
+  display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 18px;
+}
+.form-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px;
+  background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.24); color: var(--gold);
+  border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase;
+}
+.progress-inline { color: rgba(255,255,255,0.62); font-size: 12px; font-weight: 600; }
+.form-title {
+  font-family: 'Playfair Display', serif; color: var(--white); font-size: 34px; line-height: 1.1; margin-bottom: 10px;
+}
+.form-sub { color: rgba(255,255,255,0.64); font-size: 15px; max-width: 760px; }
+.progress-bar {
+  height: 5px; background: rgba(255,255,255,0.1); border-radius: 999px; margin-top: 18px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; width: 33.33%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px; transition: width 0.35s ease;
+}
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.step-question {
+  font-family: 'Playfair Display', serif; font-size: 28px; line-height: 1.18; color: var(--navy); margin: 8px 0;
+}
+.step-help { font-size: 14px; color: var(--text-light); margin-bottom: 24px; max-width: 720px; }
+.field-grid, .insight-grid, .metric-grid, .compare-grid, .flag-grid {
+  display: grid; gap: 18px;
+}
+.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.insight-grid, .metric-grid, .compare-grid, .flag-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+.field-label {
+  display: block; font-size: 11px; font-weight: 700; color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 0.9px; margin-bottom: 8px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 10px; background: var(--cream);
+  color: var(--text-dark); font-size: 15px; font-family: 'DM Sans', sans-serif; padding: 14px 16px;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); background: var(--white);
+}
+.field-textarea { min-height: 120px; resize: vertical; }
+.field-note { margin-top: 7px; font-size: 12px; color: var(--text-light); }
+.btn-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; }
+.btn-back, .btn-next, .btn-print, .btn-secondary {
+  border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.btn-back, .btn-secondary {
+  background: transparent; border: 1.5px solid var(--border); color: var(--text-mid); padding: 13px 18px;
+}
+.btn-next, .btn-print { background: var(--gold); color: var(--navy); padding: 13px 20px; }
+.btn-next:hover, .btn-print:hover { background: var(--gold-light); }
+.analysis-section, .report-section { display: none; }
+.analysis-section.active, .report-section.active { display: block; }
+.analysis-card { max-width: 920px; margin: 0 auto; padding: 42px 28px; text-align: center; }
+.analysis-orb {
+  width: 96px; height: 96px; margin: 0 auto 20px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold)); position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+.analysis-orb::after {
+  content: ''; position: absolute; inset: 24px; border-radius: 50%; background: var(--navy); opacity: 0.16;
+}
+.analysis-title { font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); margin-bottom: 8px; }
+.analysis-sub { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
+.analysis-steps { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.analysis-step {
+  display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: center; text-align: left;
+  padding: 14px 16px; border-radius: 12px; background: var(--cream); border: 1px solid var(--border);
+}
+.analysis-indicator {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--gold-glow); color: var(--gold);
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.analysis-step.done .analysis-indicator { background: var(--gold); color: var(--navy); }
+.analysis-text { font-size: 14px; color: var(--text-mid); }
+.report-shell { max-width: 1080px; margin: 0 auto; overflow: hidden; }
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); padding: 36px 32px 30px; color: var(--white);
+}
+.report-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(30px, 4vw, 44px); line-height: 1.1; margin: 10px 0 12px;
+}
+.report-subtitle { color: rgba(255,255,255,0.72); font-size: 15px; max-width: 780px; }
+.report-meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+.report-meta-item, .pill {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px;
+  padding: 8px 14px; font-size: 12px; color: rgba(255,255,255,0.8); white-space: normal; overflow-wrap: anywhere;
+}
+.report-body { padding: 28px; display: grid; gap: 22px; }
+.hero-summary, .section-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+}
+.hero-summary {
+  padding: 28px; background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; }
+.summary-title {
+  font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); line-height: 1.08; margin-bottom: 10px;
+}
+.summary-title em { color: var(--gold); font-style: normal; }
+.summary-copy { font-size: 15px; color: var(--text-mid); }
+.summary-benchmark {
+  background: var(--navy); color: rgba(255,255,255,0.82); border-radius: 16px; padding: 22px;
+}
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif; font-size: 24px; color: var(--white); line-height: 1.14; margin: 8px 0 10px;
+}
+.metric-card, .compare-card, .flag-card, .insight-card {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+}
+.metric-label, .compare-card .label, .flag-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--text-light); font-weight: 700; margin-bottom: 6px;
+}
+.metric-value, .compare-card .value {
+  font-family: 'Playfair Display', serif; font-size: 30px; color: var(--navy); line-height: 1; margin-bottom: 6px;
+}
+.metric-sub, .compare-card .sub, .flag-sub, .insight-card span { font-size: 12px; color: var(--text-light); }
+.section-card { padding: 24px; }
+.section-head {
+  display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); line-height: 1.15; margin-top: 4px;
+}
+.section-copy { font-size: 13px; color: var(--text-light); max-width: 650px; }
+.pill { background: var(--cream); border-color: var(--border); color: var(--navy); }
+.flag-card.good { border-left: 4px solid var(--green); }
+.flag-card.watch { border-left: 4px solid var(--amber); }
+.flag-card.risk { border-left: 4px solid var(--red); }
+.flag-card strong { display: block; color: var(--navy); margin-bottom: 8px; }
+.compare-card .value.small { font-size: 24px; }
+.callout {
+  background: var(--cream); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+  border-radius: 14px; padding: 18px; font-size: 14px; color: var(--text-mid);
+}
+.report-actions {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 0 28px 28px;
+}
+.report-note { font-size: 12px; color: var(--text-light); }
+.disclaimer { max-width: 1080px; margin: 0 auto 64px; padding: 24px 28px 32px; }
+.disclaimer p { font-size: 11px; color: var(--text-light); line-height: 1.7; }
+.disclaimer strong { color: var(--text-mid); }
+.fade-up { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 980px) {
+  .wizard-grid, .field-grid, .insight-grid, .metric-grid, .compare-grid, .flag-grid, .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .sticky-sidebar { position: static; }
+}
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section, .analysis-section, .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card, .form-body, .report-body, .section-card, .hero-summary, .analysis-card, .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header, .report-header { padding: 28px 20px; }
+  .step-question, .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row, .section-head, .report-actions, .form-header-top { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Annuity Transparency Tool</div>
+    <h1>Is Your Annuity <em>Ripping You Off?</em> — The Annuity X-Ray Report</h1>
+    <p class="hero-sub">Turn an opaque annuity contract into a simple question: after fees, lockups, and surrender friction, is this contract actually paying enough to justify what it is costing you?</p>
+    <div class="hero-points">
+      <div class="hero-point">Treasury and modeled CD benchmarks</div>
+      <div class="hero-point">Opportunity-cost estimate</div>
+      <div class="hero-point">Fee and surrender transparency</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Annuity X-Ray</div>
+        <div class="sidebar-title">This is the “am I actually getting a fair deal?” tool.</div>
+        <div class="sidebar-copy">The point is not product replacement. It is clarity. We compare the contract’s effective yield against simple outside options and translate every fee bucket into real dollars people can feel.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Contract Basics</div>
+              <div class="step-sub">Annuity type, value, payout or credited rate</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Fee Stack</div>
+              <div class="step-sub">M&amp;E, riders, admin charges, and surrender drag</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Context</div>
+              <div class="step-sub">Benchmark pull, trust notes, and saved report framing</div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-note">
+          <strong>Data note</strong>
+          Benchmarks are pulled from the live benchmark endpoint. Treasury rates are the risk-free anchor. CD and bond-ladder figures are transparency benchmarks, not product recommendations.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See what the annuity is really paying after the parts salespeople skip.</div>
+        <div class="form-sub">This report compares the contract’s effective yield against current outside benchmarks and turns the fee stack into an annual drag estimate.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">What kind of annuity are we looking at?</div>
+          <div class="step-help">These inputs establish the core yield math and the tone of the transparency analysis.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Robert Lewis">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="annuityType">Annuity Type</label>
+              <select class="field-select" id="annuityType">
+                <option value="fixed">Fixed annuity</option>
+                <option value="indexed">Indexed annuity</option>
+                <option value="variable">Variable annuity</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="valueMode">Primary Yield Input</label>
+              <select class="field-select" id="valueMode">
+                <option value="credited_rate">Credited / stated annual rate</option>
+                <option value="annual_payout">Annual payout amount</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="contractValue">Approximate Contract Value</label>
+              <input class="field-input" id="contractValue" type="text" placeholder="e.g. 275000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="rateOrPayout">Credited Rate or Annual Payout</label>
+              <input class="field-input" id="rateOrPayout" type="text" placeholder="e.g. 4.2 or 13200">
+              <div class="field-note">If using payout mode, enter the annual dollar income. If using rate mode, enter the annual percentage rate.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="surrenderYearsRemaining">Surrender Period Remaining</label>
+              <input class="field-input" id="surrenderYearsRemaining" type="number" min="0" max="20" placeholder="e.g. 6">
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="metric-card">
+              <div class="metric-label">Why this matters</div>
+              <div class="metric-sub">Many retirees know they own an annuity but cannot explain whether the contract is earning enough to justify the lockup.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What this catches</div>
+              <div class="metric-sub">Low credited rates, weak income relative to value, and surrender periods that trap the owner even when the yield is uncompetitive.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What this avoids</div>
+              <div class="metric-sub">This tool does not recommend a new product. It just measures transparency, drag, and opportunity cost.</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What fees and penalties are attached to the contract?</div>
+          <div class="step-help">Optional fields are okay, but the more of the fee stack we know, the more honest the x-ray becomes.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="mortalityExpenseFee">Mortality &amp; Expense Fee %</label>
+              <input class="field-input" id="mortalityExpenseFee" type="text" placeholder="e.g. 1.25">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="riderFee">Rider Fee %</label>
+              <input class="field-input" id="riderFee" type="text" placeholder="e.g. 0.95">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="adminFee">Admin / Contract Fee %</label>
+              <input class="field-input" id="adminFee" type="text" placeholder="e.g. 0.20">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="surrenderCharge">Current Surrender Charge %</label>
+              <input class="field-input" id="surrenderCharge" type="text" placeholder="e.g. 7">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="feeNotes">Fee Notes or Guarantees</label>
+              <textarea class="field-textarea" id="feeNotes" placeholder="e.g. The agent said the rider guarantees lifetime income, but we do not know if we need it."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">What context should shape the final report?</div>
+          <div class="step-help">This final step frames what the user is worried about and saves the benchmark snapshot with the report so the portal document is stable when reopened.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="liquidityNeed">Liquidity Concern</label>
+              <select class="field-select" id="liquidityNeed">
+                <option value="low">Low: unlikely to need large access soon</option>
+                <option value="medium">Medium: flexibility matters within a few years</option>
+                <option value="high">High: access matters and lockups feel risky</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="confidenceLevel">Current Confidence Level</label>
+              <select class="field-select" id="confidenceLevel">
+                <option value="uncertain">I do not really understand the contract</option>
+                <option value="mixed">I understand parts of it but not the tradeoffs</option>
+                <option value="comfortable">I mostly understand it and want validation</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="notes">What is the real question you want answered?</label>
+              <textarea class="field-textarea" id="notes" placeholder="e.g. If I am only earning 3-4% net and locked for six more years, I want to know whether this was a bad deal or just a boring one."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateAnnuityReport()">Generate My Annuity X-Ray →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Annuity X-Ray</div>
+    <div class="analysis-sub" id="analysisSub">Pulling benchmark rates, translating fees into drag, and measuring opportunity cost.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Calculating the contract’s gross and net effective yield...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Pulling Treasury-based benchmark data and building comparison rates...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Translating fees and surrender terms into annual and lockup drag...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report to your portal so it appears in Documents like the other tools...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Annuity Transparency Report</div>
+      <div class="report-title" id="reportTitle">The Annuity X-Ray Report</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved annuity benchmark comparison showing effective yield, fee drag, and lockup cost.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaType">Contract type —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">Your contract’s net yield is <em>under review</em>.</div>
+            <div class="summary-copy" id="summaryCopy">The saved report summary appears here.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Benchmark View</div>
+            <div class="headline" id="benchmarkHeadline">How it stacks up against simple outside options</div>
+            <div id="benchmarkCopy">Current Treasury and modeled CD comparisons appear here.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card">
+            <div class="metric-label">Net Effective Yield</div>
+            <div class="metric-value" id="netYieldValue">0.0%</div>
+            <div class="metric-sub" id="netYieldSub">After disclosed fees</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Annual Opportunity Cost</div>
+            <div class="metric-value" id="oppCostValue">$0</div>
+            <div class="metric-sub" id="oppCostSub">Vs matched Treasury benchmark</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Current Lockup Drag</div>
+            <div class="metric-value" id="lockupValue">$0</div>
+            <div class="metric-sub" id="lockupSub">Based on surrender charge</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Quick Comparison</div>
+            <div class="section-title">The alternatives your contract should at least be compared against</div>
+            <div class="section-copy">This is not a product recommendation. It is the basic comparison any annuity owner deserves to see.</div>
+          </div>
+          <div class="pill" id="comparisonPill">Benchmark set</div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Fee Breakdown</div>
+            <div class="section-title">What each fee bucket is costing the contract</div>
+            <div class="section-copy">Where possible, the tool converts percentage fees into annual dollars against the contract value.</div>
+          </div>
+          <div class="pill" id="feePill">Fee stack</div>
+        </div>
+        <div class="compare-grid" id="feeGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Flags</div>
+            <div class="section-title">The parts of the contract that deserve real attention</div>
+            <div class="section-copy">Flags are built around underperformance, opacity, and lockup risk rather than product sales.</div>
+          </div>
+          <div class="pill" id="flagPill">Transparency scan</div>
+        </div>
+        <div class="flag-grid" id="flagGrid"></div>
+      </div>
+
+      <div class="callout" id="annuityCallout">The annuity callout appears here after generation.</div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Saved to your portal Documents tab when generated. Edit Inputs lets you rerun the analysis with better contract details later.</div>
+      <div style="display:flex; gap:12px;">
+        <button class="btn-secondary" type="button" onclick="editAnnuityReport()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This annuity transparency tool is for educational purposes only and does not constitute insurance, investment, tax, legal, or financial advice. Benchmark rates shown here are general market comparisons drawn from Treasury-based sources and modeled alternatives, not personalized recommendations or replacement illustrations. Opportunity-cost, fee-drag, and surrender analyses are planning estimates based on user-entered information and may differ from the actual contract language, rider structure, or insurer crediting methodology. Always review annuity contracts, surrender schedules, tax consequences, and replacement considerations with a qualified professional before taking action. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const FALLBACK_BENCHMARKS = {
+  asOfDate: '2026-04-15',
+  source: 'Bundled fallback assumptions',
+  marketableAvgRate: 4.1,
+  treasury: { oneYear: 4.0, threeYear: 4.1, fiveYear: 4.2, tenYear: 4.35 },
+  cdBenchmarks: { oneYear: 4.35, threeYear: 4.4, fiveYear: 4.4 },
+  bondLadder: { shortIntermediateBlend: 3.95, longBlend: 4.15 }
+};
+
+let latestAnnuityPayload = null;
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function formatPercent(value) {
+  return `${Number(value || 0).toFixed(1)}%`;
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parsePercent(value, fallback = 0) {
+  const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+async function loadBenchmarks() {
+  try {
+    const response = await fetch('/api/annuity-xray/benchmarks');
+    if (!response.ok) throw new Error('Benchmark fetch failed');
+    const payload = await response.json();
+    return payload.benchmarks || FALLBACK_BENCHMARKS;
+  } catch {
+    return FALLBACK_BENCHMARKS;
+  }
+}
+
+function nearestBenchmarkRate(benchmarks, yearsRemaining) {
+  if (yearsRemaining <= 1) return { label: '1-Year Treasury', rate: benchmarks.treasury.oneYear };
+  if (yearsRemaining <= 3) return { label: '3-Year Treasury', rate: benchmarks.treasury.threeYear };
+  return { label: '5-Year Treasury', rate: benchmarks.treasury.fiveYear };
+}
+
+function buildFlags(payload) {
+  const flags = [];
+  if (payload.netEffectiveYield < payload.matchedTreasury.rate) {
+    flags.push({
+      tone: payload.netEffectiveYield + 1 < payload.matchedTreasury.rate ? 'risk' : 'watch',
+      title: 'Underperforming matched Treasury',
+      text: `The contract’s net yield of ${formatPercent(payload.netEffectiveYield)} trails the matched ${payload.matchedTreasury.label.toLowerCase()} benchmark of ${formatPercent(payload.matchedTreasury.rate)}.`
+    });
+  } else {
+    flags.push({
+      tone: 'good',
+      title: 'Competitive vs Treasury baseline',
+      text: `The current net yield is at or above the matched Treasury comparison, which lowers the chance that the contract is obviously lagging simple outside options.`
+    });
+  }
+
+  if (payload.totalFeePct >= 2) {
+    flags.push({
+      tone: 'risk',
+      title: 'Heavy fee stack',
+      text: `The disclosed fee stack totals ${formatPercent(payload.totalFeePct)}, which is large enough to materially change what the contract is really earning.`
+    });
+  } else if (payload.totalFeePct >= 1) {
+    flags.push({
+      tone: 'watch',
+      title: 'Meaningful ongoing fees',
+      text: `The fee stack totals ${formatPercent(payload.totalFeePct)}. That may be reasonable in some cases, but it needs to be justified by guarantees the owner actually values.`
+    });
+  }
+
+  if (payload.surrenderYearsRemaining >= 5 || payload.surrenderCharge >= 7) {
+    flags.push({
+      tone: 'risk',
+      title: 'Lockup risk is still real',
+      text: `There are ${payload.surrenderYearsRemaining} years left in the surrender schedule with a current charge of ${formatPercent(payload.surrenderCharge)}. That can trap the owner even when the economics look weak.`
+    });
+  } else if (payload.surrenderYearsRemaining > 0) {
+    flags.push({
+      tone: 'watch',
+      title: 'Surrender friction remains',
+      text: `The contract still has a live surrender charge, so the real question is not just yield. It is whether the lockup is worth tolerating for the remaining period.`
+    });
+  }
+
+  if (payload.confidenceLevel === 'uncertain') {
+    flags.push({
+      tone: 'watch',
+      title: 'Opacity is part of the risk',
+      text: 'When the owner does not feel they understand the contract, that itself is a planning issue. Complexity often hides the true tradeoff.'
+    });
+  }
+
+  return flags.slice(0, 6);
+}
+
+function buildNarrative(payload) {
+  const spread = payload.netEffectiveYield - payload.matchedTreasury.rate;
+  const relation = spread >= 0 ? 'ahead of' : 'behind';
+  return `After the disclosed fee stack, the contract is earning about ${formatPercent(payload.netEffectiveYield)} net. That is ${formatPercent(Math.abs(spread))} ${relation} the matched ${payload.matchedTreasury.label.toLowerCase()} benchmark and translates to roughly ${formatMoney(payload.opportunityCostAnnual)} of annual opportunity cost on a contract value of ${formatMoney(payload.contractValue)}. ${payload.notes ? payload.notes : 'The real issue is not whether annuities are always bad. It is whether this specific contract is paying enough to justify its complexity and lockup.'}`;
+}
+
+async function buildAnnuityPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const annuityType = document.getElementById('annuityType').value;
+  const valueMode = document.getElementById('valueMode').value;
+  const contractValue = parseMoney(document.getElementById('contractValue').value);
+  const rawRateOrPayout = parsePercent(document.getElementById('rateOrPayout').value, 0);
+  const surrenderYearsRemaining = Number(document.getElementById('surrenderYearsRemaining').value || 0);
+  const mortalityExpenseFee = parsePercent(document.getElementById('mortalityExpenseFee').value, 0);
+  const riderFee = parsePercent(document.getElementById('riderFee').value, 0);
+  const adminFee = parsePercent(document.getElementById('adminFee').value, 0);
+  const surrenderCharge = parsePercent(document.getElementById('surrenderCharge').value, 0);
+  const feeNotes = document.getElementById('feeNotes').value.trim();
+  const liquidityNeed = document.getElementById('liquidityNeed').value;
+  const confidenceLevel = document.getElementById('confidenceLevel').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  const grossEffectiveYield = valueMode === 'annual_payout'
+    ? (contractValue > 0 ? (parseMoney(document.getElementById('rateOrPayout').value) / contractValue) * 100 : 0)
+    : rawRateOrPayout;
+
+  const benchmarks = await loadBenchmarks();
+  const matchedTreasury = nearestBenchmarkRate(benchmarks, surrenderYearsRemaining || 1);
+  const matchedCd = surrenderYearsRemaining <= 1 ? benchmarks.cdBenchmarks.oneYear : surrenderYearsRemaining <= 3 ? benchmarks.cdBenchmarks.threeYear : benchmarks.cdBenchmarks.fiveYear;
+  const ladderRate = surrenderYearsRemaining <= 3 ? benchmarks.bondLadder.shortIntermediateBlend : benchmarks.bondLadder.longBlend;
+  const totalFeePct = mortalityExpenseFee + riderFee + adminFee;
+  const netEffectiveYield = Math.max(grossEffectiveYield - totalFeePct, -10);
+  const opportunityGapPct = Math.max(matchedTreasury.rate - netEffectiveYield, 0);
+  const opportunityCostAnnual = contractValue * (opportunityGapPct / 100);
+  const lockupCost = contractValue * (surrenderCharge / 100);
+  const annualFeeDrag = contractValue * (totalFeePct / 100);
+
+  const payload = {
+    fullName,
+    annuityType,
+    valueMode,
+    contractValue,
+    rawRateOrPayout: valueMode === 'annual_payout' ? parseMoney(document.getElementById('rateOrPayout').value) : rawRateOrPayout,
+    grossEffectiveYield,
+    mortalityExpenseFee,
+    riderFee,
+    adminFee,
+    totalFeePct,
+    surrenderYearsRemaining,
+    surrenderCharge,
+    feeNotes,
+    liquidityNeed,
+    confidenceLevel,
+    notes,
+    benchmarks,
+    matchedTreasury,
+    matchedCd,
+    ladderRate,
+    netEffectiveYield,
+    opportunityGapPct,
+    opportunityCostAnnual,
+    annualFeeDrag,
+    lockupCost
+  };
+
+  payload.flags = buildFlags(payload);
+  payload.narrative = buildNarrative(payload);
+  return payload;
+}
+
+function renderAnnuityReport(payload) {
+  latestAnnuityPayload = payload;
+
+  document.getElementById('reportTitle').textContent = `The Annuity X-Ray Report for ${payload.fullName || 'Your Contract'}`;
+  document.getElementById('reportSubtitle').textContent = `A saved annuity benchmark comparison showing effective yield, fee drag, and surrender friction for a ${payload.annuityType} contract.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaType').textContent = `${payload.annuityType[0].toUpperCase() + payload.annuityType.slice(1)} annuity · ${payload.valueMode === 'annual_payout' ? 'payout mode' : 'credited-rate mode'}`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryTitle').innerHTML = `Net effective yield: <em>${formatPercent(payload.netEffectiveYield)}</em>.`;
+  document.getElementById('summaryCopy').textContent = payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `Matched Treasury benchmark: ${formatPercent(payload.matchedTreasury.rate)}`;
+  document.getElementById('benchmarkCopy').textContent = `Current benchmark set dated ${payload.benchmarks.asOfDate} shows about ${formatPercent(payload.matchedTreasury.rate)} for the matched Treasury comparison, ${formatPercent(payload.matchedCd)} for a modeled CD alternative, and ${formatPercent(payload.ladderRate)} for a simple bond-ladder proxy.`;
+
+  document.getElementById('netYieldValue').textContent = formatPercent(payload.netEffectiveYield);
+  document.getElementById('netYieldSub').textContent = `${formatPercent(payload.grossEffectiveYield)} gross less ${formatPercent(payload.totalFeePct)} fees`;
+  document.getElementById('oppCostValue').textContent = formatMoney(payload.opportunityCostAnnual);
+  document.getElementById('oppCostSub').textContent = `${formatPercent(payload.opportunityGapPct)} behind ${payload.matchedTreasury.label.toLowerCase()}`;
+  document.getElementById('lockupValue').textContent = formatMoney(payload.lockupCost);
+  document.getElementById('lockupSub').textContent = `${formatPercent(payload.surrenderCharge)} current surrender charge`;
+
+  document.getElementById('comparisonPill').textContent = `${payload.benchmarks.source}`;
+  document.getElementById('feePill').textContent = `${formatPercent(payload.totalFeePct)} total disclosed fees`;
+  document.getElementById('flagPill').textContent = `${payload.flags.length} active flags`;
+
+  document.getElementById('compareGrid').innerHTML = [
+    { label: 'Your Contract', value: formatPercent(payload.netEffectiveYield), sub: 'Net effective yield after disclosed fees' },
+    { label: payload.matchedTreasury.label, value: formatPercent(payload.matchedTreasury.rate), sub: 'Risk-free Treasury baseline closest to the lockup horizon' },
+    { label: 'Modeled CD Rate', value: formatPercent(payload.matchedCd), sub: 'Illustrative CD comparison using current benchmark spreads' },
+    { label: 'Simple Bond Ladder', value: formatPercent(payload.ladderRate), sub: 'Illustrative short/intermediate ladder proxy' },
+    { label: 'Annual Fee Drag', value: formatMoney(payload.annualFeeDrag), sub: 'Dollar effect of disclosed ongoing fees' },
+    { label: 'Contract Value', value: formatMoney(payload.contractValue), sub: 'Approximate value entered into the x-ray' }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value ${String(item.value).includes('$') ? 'small' : ''}">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('feeGrid').innerHTML = [
+    { label: 'Mortality & Expense', value: formatPercent(payload.mortalityExpenseFee), sub: `${formatMoney(payload.contractValue * (payload.mortalityExpenseFee / 100))} per year on this contract size` },
+    { label: 'Rider Fees', value: formatPercent(payload.riderFee), sub: `${formatMoney(payload.contractValue * (payload.riderFee / 100))} per year if disclosed accurately` },
+    { label: 'Admin Fees', value: formatPercent(payload.adminFee), sub: `${formatMoney(payload.contractValue * (payload.adminFee / 100))} annual administrative drag` }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('flagGrid').innerHTML = payload.flags.map((flag) => `
+    <div class="flag-card ${flag.tone}">
+      <div class="flag-label">${flag.tone === 'good' ? 'Supportive' : flag.tone === 'watch' ? 'Watch closely' : 'Pressure point'}</div>
+      <strong>${flag.title}</strong>
+      <div class="flag-sub">${flag.text}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('annuityCallout').textContent = payload.feeNotes
+    ? `${payload.narrative} Additional contract note: ${payload.feeNotes}`
+    : payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Running the annuity x-ray for ${payload.fullName || 'your contract'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveAnnuityReport(payload) {
+  const supabase = window.annuityXraySupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    annuity_type: payload.annuityType,
+    input_mode: payload.valueMode,
+    contract_value: payload.contractValue,
+    gross_effective_yield_pct: payload.grossEffectiveYield,
+    net_effective_yield_pct: payload.netEffectiveYield,
+    mortality_expense_fee_pct: payload.mortalityExpenseFee,
+    rider_fee_pct: payload.riderFee,
+    admin_fee_pct: payload.adminFee,
+    total_fee_pct: payload.totalFeePct,
+    surrender_years_remaining: payload.surrenderYearsRemaining,
+    surrender_charge_pct: payload.surrenderCharge,
+    annual_fee_drag: payload.annualFeeDrag,
+    matched_treasury_label: payload.matchedTreasury.label,
+    matched_treasury_rate_pct: payload.matchedTreasury.rate,
+    modeled_cd_rate_pct: payload.matchedCd,
+    modeled_bond_ladder_rate_pct: payload.ladderRate,
+    opportunity_cost_annual: payload.opportunityCostAnnual,
+    lockup_cost_estimate: payload.lockupCost,
+    report_title: `The Annuity X-Ray Report for ${payload.fullName || 'Your Contract'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('annuity_xray_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save Annuity X-Ray report:', error);
+  }
+}
+
+function showGeneratedAnnuityReport(payload) {
+  renderAnnuityReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedAnnuityReport(payload) {
+  renderAnnuityReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedAnnuityReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fieldMap = {
+    fullName: payload.fullName,
+    contractValue: payload.contractValue,
+    rateOrPayout: payload.rawRateOrPayout,
+    surrenderYearsRemaining: payload.surrenderYearsRemaining,
+    mortalityExpenseFee: payload.mortalityExpenseFee,
+    riderFee: payload.riderFee,
+    adminFee: payload.adminFee,
+    surrenderCharge: payload.surrenderCharge,
+    feeNotes: payload.feeNotes,
+    notes: payload.notes
+  };
+
+  Object.entries(fieldMap).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = String(value);
+  });
+
+  if (payload.annuityType) document.getElementById('annuityType').value = payload.annuityType;
+  if (payload.valueMode) document.getElementById('valueMode').value = payload.valueMode;
+  if (payload.liquidityNeed) document.getElementById('liquidityNeed').value = payload.liquidityNeed;
+  if (payload.confidenceLevel) document.getElementById('confidenceLevel').value = payload.confidenceLevel;
+
+  showHydratedAnnuityReport(payload);
+  return true;
+}
+
+async function generateAnnuityReport() {
+  const payload = await buildAnnuityPayload();
+  await saveAnnuityReport(payload);
+  showGeneratedAnnuityReport(payload);
+}
+
+function editAnnuityReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateAnnuityReport = generateAnnuityReport;
+window.editAnnuityReport = editAnnuityReport;
+window.hydrateAnnuityXrayReport = hydrateSavedAnnuityReport;
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+window.annuityXraySupabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+);
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateAnnuityXrayReport) {
+  const { data: report } = await window.annuityXraySupabase
+    .from('annuity_xray_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateAnnuityXrayReport(report);
+  }
+}
+</script>
+</body>
+</html>

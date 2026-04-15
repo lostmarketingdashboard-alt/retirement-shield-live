@@ -1,0 +1,482 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Should You Move? — The Retirement Relocation Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0F1F3D;--navy-light:#1A2D52;--navy-mid:#152847;--gold:#C9A84C;--gold-light:#D4B96A;
+  --gold-glow:rgba(201,168,76,0.12);--cream:#FAF7F0;--cream-dark:#F0EBE0;--white:#FFFFFF;
+  --text-dark:#1A1A1A;--text-mid:#4A4A4A;--text-light:#7A7A7A;--green:#27AE60;--amber:#E67E22;
+  --red:#C0392B;--border:#E8E3D8;--shadow:0 2px 20px rgba(15,31,61,0.08)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site-header{background:var(--navy);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--gold)}
+.logo{text-decoration:none}.logo-text{font-family:'Playfair Display',serif;color:var(--white);font-size:18px;font-weight:600}.logo-text span{color:var(--gold)}
+.hero{background:var(--navy);padding:78px 24px 94px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;max-width:980px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,54px);font-weight:700;color:var(--white);line-height:1.12;margin-bottom:18px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:18px;color:rgba(255,255,255,0.66);line-height:1.7;max-width:820px;margin:0 auto 38px;font-weight:300}
+.hero-points{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.hero-point{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.84);border-radius:999px;padding:10px 16px;font-size:13px}
+.wizard-section,.analysis-section,.report-section{padding:52px 24px 30px}
+.wizard-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;align-items:start}
+.sticky-sidebar{position:sticky;top:94px}
+.sidebar-card,.form-card,.analysis-card,.report-shell,.disclaimer{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.sidebar-card{padding:28px}
+.sidebar-label,.step-label,.section-kicker,.report-kicker{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:28px;line-height:1.15;color:var(--navy);margin:8px 0 14px}
+.sidebar-copy{font-size:14px;color:var(--text-mid);margin-bottom:22px}
+.step-list{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.step-item{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;padding:12px 14px;border-radius:12px;background:var(--cream);border:1px solid transparent}
+.step-item.active{border-color:rgba(201,168,76,0.4);background:var(--gold-glow)}
+.step-item.done .step-num{background:var(--gold);color:var(--navy)}
+.step-num{width:34px;height:34px;border-radius:50%;background:var(--cream-dark);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.step-title{font-size:14px;font-weight:700;color:var(--navy);line-height:1.35}
+.step-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.sidebar-note{border-radius:14px;background:var(--navy);color:rgba(255,255,255,0.78);padding:18px;font-size:13px}.sidebar-note strong{color:var(--white);display:block;margin-bottom:6px}
+.form-card{overflow:hidden}.form-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);padding:28px 30px}
+.form-header-top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.form-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.24);color:var(--gold);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase}
+.progress-inline{color:rgba(255,255,255,0.62);font-size:12px;font-weight:600}
+.form-title{font-family:'Playfair Display',serif;color:var(--white);font-size:34px;line-height:1.1;margin-bottom:10px}
+.form-sub{color:rgba(255,255,255,0.64);font-size:15px;max-width:760px}
+.progress-bar{height:5px;background:rgba(255,255,255,0.1);border-radius:999px;margin-top:18px;overflow:hidden}
+.progress-fill{height:100%;width:33.33%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .35s ease}
+.form-body{padding:30px}.form-step{display:none}.form-step.active{display:block}
+.step-question{font-family:'Playfair Display',serif;font-size:28px;line-height:1.18;color:var(--navy);margin:8px 0}
+.step-help{font-size:14px;color:var(--text-light);margin-bottom:24px;max-width:720px}
+.field-grid,.insight-grid,.metric-grid,.compare-grid,.candidate-grid{display:grid;gap:18px}
+.field-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.insight-grid,.metric-grid,.compare-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.candidate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.field-group{margin-bottom:18px}.field-group.full{grid-column:1/-1}
+.field-label{display:block;font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:8px}
+.field-input,.field-select,.field-textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--text-dark);font-size:15px;font-family:'DM Sans',sans-serif;padding:14px 16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12);background:var(--white)}
+.field-textarea{min-height:120px;resize:vertical}.field-note{margin-top:7px;font-size:12px;color:var(--text-light)}
+.btn-row{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
+.btn-back,.btn-next,.btn-print,.btn-secondary,.copy-btn{border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.btn-back,.btn-secondary,.copy-btn{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:13px 18px}
+.btn-next,.btn-print{background:var(--gold);color:var(--navy);padding:13px 20px}.btn-next:hover,.btn-print:hover{background:var(--gold-light)}
+.analysis-section,.report-section{display:none}.analysis-section.active,.report-section.active{display:block}
+.analysis-card{max-width:920px;margin:0 auto;padding:42px 28px;text-align:center}
+.analysis-orb{width:96px;height:96px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--gold-light),var(--gold));position:relative;box-shadow:0 0 0 16px rgba(201,168,76,0.08),0 0 0 32px rgba(201,168,76,0.04)}
+.analysis-orb::after{content:'';position:absolute;inset:24px;border-radius:50%;background:var(--navy);opacity:.16}
+.analysis-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);margin-bottom:8px}
+.analysis-sub{font-size:15px;color:var(--text-light);margin-bottom:28px}
+.analysis-steps{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.analysis-step{display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:12px;background:var(--cream);border:1px solid var(--border)}
+.analysis-indicator{width:38px;height:38px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700}
+.analysis-step.done .analysis-indicator{background:var(--gold);color:var(--navy)}.analysis-text{font-size:14px;color:var(--text-mid)}
+.report-shell{max-width:1080px;margin:0 auto;overflow:hidden}
+.report-header{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:36px 32px 30px;color:var(--white)}
+.report-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,44px);line-height:1.1;margin:10px 0 12px}
+.report-subtitle{color:rgba(255,255,255,0.72);font-size:15px;max-width:780px}
+.report-meta{margin-top:20px;display:flex;flex-wrap:wrap;gap:12px}
+.report-meta-item,.pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.8);white-space:normal;overflow-wrap:anywhere}
+.report-body{padding:28px;display:grid;gap:22px}
+.hero-summary,.section-card{background:var(--white);border:1px solid var(--border);border-radius:16px}
+.hero-summary{padding:28px;background:linear-gradient(135deg,rgba(15,31,61,0.03),rgba(201,168,76,0.08)),var(--white)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px}
+.summary-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--navy);line-height:1.08;margin-bottom:10px}.summary-title em{color:var(--gold);font-style:normal}
+.summary-copy{font-size:15px;color:var(--text-mid)}
+.summary-benchmark{background:var(--navy);color:rgba(255,255,255,0.82);border-radius:16px;padding:22px}
+.summary-benchmark .headline{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);line-height:1.14;margin:8px 0 10px}
+.metric-card,.compare-card,.candidate-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:16px}
+.metric-label,.compare-card .label,.candidate-label{font-size:11px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-light);font-weight:700;margin-bottom:6px}
+.metric-value,.compare-card .value{font-family:'Playfair Display',serif;font-size:30px;color:var(--navy);line-height:1;margin-bottom:6px}
+.metric-sub,.compare-card .sub,.candidate-sub{font-size:12px;color:var(--text-light)}
+.section-card{padding:24px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy);line-height:1.15;margin-top:4px}
+.section-copy{font-size:13px;color:var(--text-light);max-width:650px}
+.pill{background:var(--cream);border-color:var(--border);color:var(--navy)}
+.candidate-card h4{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy);margin-bottom:10px}
+.candidate-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.candidate-row{display:flex;justify-content:space-between;gap:14px;font-size:13px;color:var(--text-mid)}
+.candidate-row strong{color:var(--navy)}
+.callout{background:var(--cream);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:14px;padding:18px;font-size:14px;color:var(--text-mid)}
+.report-actions{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 28px 28px}
+.report-note{font-size:12px;color:var(--text-light)}
+.share-wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.share-url{font-size:13px;color:var(--text-mid);word-break:break-all}
+.disclaimer{max-width:1080px;margin:0 auto 64px;padding:24px 28px 32px}.disclaimer p{font-size:11px;color:var(--text-light);line-height:1.7}.disclaimer strong{color:var(--text-mid)}
+.fade-up{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}.fade-up.visible{opacity:1;transform:translateY(0)}
+@media (max-width:980px){.wizard-grid,.field-grid,.insight-grid,.metric-grid,.compare-grid,.candidate-grid,.hero-grid{grid-template-columns:1fr}.sticky-sidebar{position:static}}
+@media (max-width:768px){.site-header{padding:14px 16px}.hero{padding:54px 20px 72px}.wizard-section,.analysis-section,.report-section{padding-left:16px;padding-right:16px}.sidebar-card,.form-body,.report-body,.section-card,.hero-summary,.analysis-card,.disclaimer{padding-left:20px;padding-right:20px}.form-header,.report-header{padding:28px 20px}.step-question,.section-title{font-size:23px}.summary-title{font-size:28px}.btn-row,.section-head,.report-actions,.form-header-top{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<header class="site-header"><a href="/portal" class="logo"><div class="logo-text">Retirement <span>Shield</span></div></a></header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Relocation Planning Tool</div>
+    <h1>Should You <em>Move?</em> — The Retirement Relocation Calculator</h1>
+    <p class="hero-sub">Compare where you live now against one or two retirement destinations using property value, cost-of-living pressure, state tax drag, county longevity, and estate-planning complexity in one report.</p>
+    <div class="hero-points">
+      <div class="hero-point">RentCast-backed home value comparison</div>
+      <div class="hero-point">Cost-of-living and state-tax framing</div>
+      <div class="hero-point">County longevity + estate planning contrast</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">Relocation Builder</div>
+        <div class="sidebar-title">This is not a lifestyle listicle. It is a balance-sheet move test.</div>
+        <div class="sidebar-copy">The goal is to show what changes if you actually relocate: home equity, annual living cost, state tax friction, longevity framing, and whether the estate plan gets simpler or more complicated.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1"><div class="step-num">1</div><div><div class="step-title">Current Home</div><div class="step-sub">Where you live today</div></div></div>
+          <div class="step-item" data-step-indicator="2"><div class="step-num">2</div><div><div class="step-title">Destinations</div><div class="step-sub">One or two places you are considering</div></div></div>
+          <div class="step-item" data-step-indicator="3"><div class="step-num">3</div><div><div class="step-title">Spending Context</div><div class="step-sub">Annual budget and tax-sensitive income</div></div></div>
+        </div>
+        <div class="sidebar-note"><strong>Data note</strong> Property valuation uses the existing RentCast integration. Estate-planning complexity comes from the same state guide fields already used elsewhere in the product.</div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top"><div class="form-badge">Retirement Shield Tool</div><div class="progress-inline" id="progressText">Step 1 of 3</div></div>
+        <div class="form-title">Put the whole retirement move on one page.</div>
+        <div class="form-sub">This calculator compares relocation options side by side and saves a shareable report URL that can become a repeatable planning page.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Where do you live now?</div>
+          <div class="step-help">Use your primary residence or the location your current retirement plan is built around.</div>
+          <div class="field-grid">
+            <div class="field-group full">
+              <label class="field-label" for="currentAddress">Current Address</label>
+              <input class="field-input" id="currentAddress" type="text" placeholder="e.g. 123 Main St, Montclair, NJ 07042">
+            </div>
+          </div>
+          <div class="btn-row"><div></div><button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What places are you comparing it against?</div>
+          <div class="step-help">Enter one required destination and one optional second destination. The report will compare each one back to your current location.</div>
+          <div class="field-grid">
+            <div class="field-group full">
+              <label class="field-label" for="candidateAddress1">Destination 1</label>
+              <input class="field-input" id="candidateAddress1" type="text" placeholder="e.g. 450 Ocean Dr, Jupiter, FL 33477">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="candidateAddress2">Destination 2 (Optional)</label>
+              <input class="field-input" id="candidateAddress2" type="text" placeholder="e.g. 90 Desert Sky Ln, Scottsdale, AZ 85255">
+            </div>
+          </div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(1)">← Back</button><button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button></div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">What annual numbers should shape the comparison?</div>
+          <div class="step-help">These are planning-level inputs used to translate state price parity and state income tax differences into dollars.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="annualBudget">Annual Retirement Budget</label>
+              <input class="field-input" id="annualBudget" type="text" value="72000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="annualTaxableIncome">Annual Taxable Income</label>
+              <input class="field-input" id="annualTaxableIncome" type="text" value="85000">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="notes">Planning Notes</label>
+              <textarea class="field-textarea" id="notes" placeholder="e.g. We want lower property tax and simpler probate rules, but not if the move destroys our social setup."></textarea>
+            </div>
+          </div>
+          <div class="btn-row"><button class="btn-back" type="button" onclick="nextStep(2)">← Back</button><button class="btn-next" type="button" onclick="generateRelocationReport()">Generate My Relocation Report →</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your Relocation Comparison</div>
+    <div class="analysis-sub" id="analysisSub">Pulling property values, county longevity, and estate-planning complexity across locations.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Matching each address to a live RentCast property record...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Comparing home value and annual cost-of-living pressure by location...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Layering in county life expectancy and state guide complexity...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report and generating a shareable relocation URL...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">Retirement Relocation Comparison</div>
+      <div class="report-title" id="reportTitle">Should You Move?</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved side-by-side comparison of retirement relocation options.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaCurrent">Current home —</div>
+        <div class="report-meta-item" id="metaBudget">Annual budget —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="section-kicker">Headline</div>
+            <div class="summary-title" id="summaryTitle">Your move decision is now on <em>one page</em>.</div>
+            <div class="summary-copy" id="summaryCopy">The saved report summary appears here.</div>
+            <div class="share-wrap">
+              <button class="copy-btn" type="button" onclick="copyShareUrl()">Copy Share URL</button>
+              <div class="share-url" id="shareUrlText">Share URL pending</div>
+            </div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Best Financial Shift</div>
+            <div class="headline" id="benchmarkHeadline">Top destination impact</div>
+            <div id="benchmarkCopy">Destination summary appears here.</div>
+          </div>
+        </div>
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card"><div class="metric-label">Best First-Year Shift</div><div class="metric-value" id="bestImpactValue">$0</div><div class="metric-sub" id="bestImpactSub">Home equity + annual cost + state tax</div></div>
+          <div class="metric-card"><div class="metric-label">Largest Longevity Change</div><div class="metric-value" id="longevityShiftValue">0.0 yrs</div><div class="metric-sub" id="longevityShiftSub">County life expectancy delta</div></div>
+          <div class="metric-card"><div class="metric-label">Biggest Complexity Change</div><div class="metric-value" id="complexityShiftValue">0</div><div class="metric-sub" id="complexityShiftSub">Estate-planning complexity score delta</div></div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Current Baseline</div><div class="section-title">What you are leaving today</div><div class="section-copy">This baseline is used for every destination comparison.</div></div>
+          <div class="pill" id="baselinePill">Current location</div>
+        </div>
+        <div class="compare-grid" id="baselineGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div><div class="section-kicker">Destination Comparison</div><div class="section-title">How each destination changes the retirement math</div><div class="section-copy">Each card blends property value, cost-of-living, state-tax, longevity, and probate/homestead/deed complexity into one snapshot.</div></div>
+          <div class="pill" id="destinationPill">Destinations</div>
+        </div>
+        <div class="candidate-grid" id="candidateGrid"></div>
+      </div>
+
+      <div class="callout" id="relocationCallout">The relocation callout appears here after generation.</div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Saved to your portal Documents tab when generated. The share URL opens a unique relocation comparison page for this report.</div>
+      <div style="display:flex; gap:12px;"><button class="btn-secondary" type="button" onclick="editRelocationReport()">Edit Inputs</button><button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button></div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer"><p><strong>Important Disclosures:</strong> This relocation tool is for educational purposes only and does not constitute legal, tax, real-estate, insurance, or financial advice. Property values and rental estimates come from third-party automated valuation data and may differ materially from appraisals, listing outcomes, or actual transaction prices. Cost-of-living, tax, longevity, and estate-planning comparisons are high-level planning estimates intended to help frame tradeoffs, not replace professional advice. State probate, homestead, estate tax, inheritance tax, and deed rules can change and should be verified with a licensed attorney or tax professional before making relocation or title decisions. © 2026 Retirement Shield. All rights reserved.</p></div>
+
+<script is:inline>
+let latestRelocationPayload = null;
+
+function formatMoney(value){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(value||0)}
+function nextStep(step){document.querySelectorAll('.form-step').forEach(panel=>panel.classList.remove('active'));document.getElementById(`step${step}`).classList.add('active');document.querySelectorAll('[data-step-indicator]').forEach((item,index)=>{const num=index+1;item.classList.toggle('active',num===step);item.classList.toggle('done',num<step)});document.getElementById('progressText').textContent=`Step ${step} of 3`;document.getElementById('progressFill').style.width=`${(step/3)*100}%`;window.scrollTo({top:document.getElementById('wizardSection').offsetTop-76,behavior:'smooth'})}
+
+function createShareUrl(slug){return `${window.location.origin}/retirement-relocation/${slug}`}
+
+function renderRelocationReport(payload){
+  latestRelocationPayload = payload;
+  const best = payload.comparisons.slice().sort((a,b)=>b.firstYearImpact-a.firstYearImpact)[0];
+  const biggestLongevity = payload.comparisons.slice().sort((a,b)=>Math.abs(b.longevityDelta)-Math.abs(a.longevityDelta))[0];
+  const biggestComplexity = payload.comparisons.slice().sort((a,b)=>Math.abs(b.complexityDelta)-Math.abs(a.complexityDelta))[0];
+
+  document.getElementById('reportTitle').textContent = 'Should You Move? — The Retirement Relocation Calculator';
+  document.getElementById('reportSubtitle').textContent = `A saved relocation comparison between ${payload.current.stateName || 'your current state'} and ${payload.destinations.map(d=>d.stateName).filter(Boolean).join(' / ')}.`;
+  document.getElementById('metaCurrent').textContent = `Current home: ${payload.current.city || payload.current.stateName || '—'}`;
+  document.getElementById('metaBudget').textContent = `Budget ${formatMoney(payload.annualBudget)} · Taxable income ${formatMoney(payload.annualTaxableIncome)}`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date(payload.generatedAt || Date.now()).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+  document.getElementById('summaryTitle').innerHTML = `Your move decision is now on <em>one page</em>.`;
+  document.getElementById('summaryCopy').textContent = payload.notes ? `${payload.summary.subline} ${payload.notes}` : payload.summary.subline;
+  document.getElementById('shareUrlText').textContent = createShareUrl(payload.shareSlug);
+  document.getElementById('benchmarkHeadline').textContent = best ? `${best.candidate.stateName} shows ${best.firstYearImpactLabel} of first-year shift` : 'Destination comparison ready';
+  document.getElementById('benchmarkCopy').textContent = best ? `Compared with ${payload.current.stateName}, this destination changes annual cost pressure by ${best.annualBudgetDeltaLabel}, state tax by ${best.annualTaxDeltaLabel}, and home-equity position by ${best.equityShiftLabel}.` : payload.summary.headline;
+
+  document.getElementById('bestImpactValue').textContent = best ? best.firstYearImpactLabel : '$0';
+  document.getElementById('bestImpactSub').textContent = best ? `Best destination: ${best.candidate.stateName}` : 'Home equity + annual cost + state tax';
+  document.getElementById('longevityShiftValue').textContent = biggestLongevity ? biggestLongevity.longevityDeltaLabel : '0.0 yrs';
+  document.getElementById('longevityShiftSub').textContent = biggestLongevity ? `${biggestLongevity.candidate.countyName || biggestLongevity.candidate.stateName}` : 'County life expectancy delta';
+  document.getElementById('complexityShiftValue').textContent = biggestComplexity ? biggestComplexity.complexityDeltaLabel : '0';
+  document.getElementById('complexityShiftSub').textContent = biggestComplexity ? `${biggestComplexity.candidate.stateName} estate complexity shift` : 'Estate-planning complexity score delta';
+  document.getElementById('baselinePill').textContent = payload.current.fullAddress;
+  document.getElementById('destinationPill').textContent = `${payload.destinations.length} destination${payload.destinations.length===1?'':'s'}`;
+
+  document.getElementById('baselineGrid').innerHTML = [
+    {label:'Home value',value:payload.current.homeValueLabel,sub:'RentCast-backed estimate'},
+    {label:'Cost index',value:payload.current.rppLabel,sub:`Budget-adjusted spend ${payload.current.budgetAdjustedLabel}`},
+    {label:'State tax drag',value:payload.current.estimatedStateTaxLabel,sub:`Approx. ${payload.current.incomeTaxRate.toFixed(2)}% planning rate`},
+    {label:'Life expectancy',value:payload.current.lifeExpectancyLabel,sub:payload.current.countyName || 'County'},
+    {label:'Estate complexity',value:payload.current.complexityLabel,sub:`Probate ${payload.current.estateGuide?.probateTimelineDisplay || 'review needed'}`},
+    {label:'Homestead / deed tools',value:payload.current.estateGuide?.homesteadDisplay || 'Review',sub:`Lady Bird: ${payload.current.estateGuide?.ladyBirdDisplay || 'Review'} · TOD: ${payload.current.estateGuide?.todDisplay || 'Review'}`}
+  ].map(item=>`<div class="compare-card"><div class="label">${item.label}</div><div class="value">${item.value}</div><div class="sub">${item.sub}</div></div>`).join('');
+
+  document.getElementById('candidateGrid').innerHTML = payload.comparisons.map(comp => `
+    <div class="candidate-card">
+      <div class="candidate-label">Destination</div>
+      <h4>${comp.candidate.city || comp.candidate.stateName}</h4>
+      <div class="candidate-sub">${comp.candidate.fullAddress}</div>
+      <div class="candidate-list">
+        <div class="candidate-row"><span>Home equity shift</span><strong>${comp.equityShiftLabel}</strong></div>
+        <div class="candidate-row"><span>Annual cost-of-living shift</span><strong>${comp.annualBudgetDeltaLabel}</strong></div>
+        <div class="candidate-row"><span>Annual state-tax shift</span><strong>${comp.annualTaxDeltaLabel}</strong></div>
+        <div class="candidate-row"><span>Life expectancy delta</span><strong>${comp.longevityDeltaLabel}</strong></div>
+        <div class="candidate-row"><span>Estate complexity delta</span><strong>${comp.complexityDeltaLabel}</strong></div>
+        <div class="candidate-row"><span>First-year net impact</span><strong>${comp.firstYearImpactLabel}</strong></div>
+        <div class="candidate-row"><span>Probate / timeline</span><strong>${comp.candidate.estateGuide?.probateCostDisplay || 'Review'} · ${comp.candidate.estateGuide?.probateTimelineDisplay || 'Review'}</strong></div>
+        <div class="candidate-row"><span>Homestead / deed options</span><strong>${comp.candidate.estateGuide?.homesteadDisplay || 'Review'}</strong></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('relocationCallout').textContent = payload.summary.headline;
+}
+
+function runAnalysisAnimation(payload){
+  document.getElementById('analysisSub').textContent = `Comparing ${payload.current.city || payload.current.stateName || 'your current home'} against ${payload.destinations.map(d=>d.city || d.stateName).join(' and ')}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id,index)=>{const el=document.getElementById(id);el.classList.remove('done');setTimeout(()=>el.classList.add('done'),(index+1)*360)})
+}
+
+async function saveRelocationReport(payload){
+  const supabase = window.relocationSupabase;
+  if(!supabase) return null;
+  const { data:{session} } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if(!userId) return null;
+
+  const { error } = await supabase.from('retirement_relocation_reports').insert({
+    user_id:userId,
+    share_slug:payload.shareSlug,
+    current_address:payload.current.fullAddress,
+    current_state_name:payload.current.stateName,
+    current_county_name:payload.current.countyName,
+    current_home_value:payload.current.homeValue,
+    annual_budget:payload.annualBudget,
+    annual_taxable_income:payload.annualTaxableIncome,
+    primary_destination_address:payload.destinations[0]?.fullAddress || null,
+    primary_destination_state_name:payload.destinations[0]?.stateName || null,
+    primary_destination_county_name:payload.destinations[0]?.countyName || null,
+    primary_destination_home_value:payload.destinations[0]?.homeValue || null,
+    secondary_destination_address:payload.destinations[1]?.fullAddress || null,
+    secondary_destination_state_name:payload.destinations[1]?.stateName || null,
+    secondary_destination_county_name:payload.destinations[1]?.countyName || null,
+    secondary_destination_home_value:payload.destinations[1]?.homeValue || null,
+    best_first_year_impact:payload.comparisons.reduce((max,item)=>Math.max(max,item.firstYearImpact), Number.NEGATIVE_INFINITY),
+    report_title:`Should You Move? — Retirement Relocation Calculator`,
+    report_payload:payload
+  });
+  if(error) console.error('Failed to save Retirement Relocation report:', error);
+}
+
+function showGeneratedRelocationReport(payload){
+  renderRelocationReport(payload);
+  document.getElementById('wizardSection').style.display='none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+  setTimeout(()=>{document.getElementById('analysisSection').classList.remove('active');document.getElementById('reportSection').classList.add('active');document.getElementById('reportShell').classList.add('visible');document.getElementById('reportShell').scrollIntoView({behavior:'smooth',block:'start'})},1800);
+}
+
+function showHydratedRelocationReport(payload){
+  renderRelocationReport(payload);
+  document.getElementById('wizardSection').style.display='none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({top:0,behavior:'auto'});
+}
+
+async function hydrateSavedRelocationReport(report){
+  const payload = report?.report_payload;
+  if(!payload) return false;
+  const fields = {
+    currentAddress: payload.current?.inputAddress,
+    candidateAddress1: payload.destinations?.[0]?.inputAddress,
+    candidateAddress2: payload.destinations?.[1]?.inputAddress || '',
+    annualBudget: payload.annualBudget,
+    annualTaxableIncome: payload.annualTaxableIncome,
+    notes: payload.notes || ''
+  };
+  Object.entries(fields).forEach(([id,value])=>{const input=document.getElementById(id); if(input && value!==undefined && value!==null) input.value=String(value);});
+  showHydratedRelocationReport(payload);
+  return true;
+}
+
+async function generateRelocationReport(){
+  const currentAddress = document.getElementById('currentAddress').value.trim();
+  const candidateAddress1 = document.getElementById('candidateAddress1').value.trim();
+  const candidateAddress2 = document.getElementById('candidateAddress2').value.trim();
+  const annualBudget = Number(String(document.getElementById('annualBudget').value || '').replace(/[^0-9.]/g,'')) || 72000;
+  const annualTaxableIncome = Number(String(document.getElementById('annualTaxableIncome').value || '').replace(/[^0-9.]/g,'')) || 85000;
+  const notes = document.getElementById('notes').value.trim();
+
+  const response = await fetch('/api/rentcast/retirement-relocation', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      currentAddress,
+      candidateAddresses:[candidateAddress1,candidateAddress2].filter(Boolean),
+      annualBudget,
+      annualTaxableIncome
+    })
+  });
+
+  if(!response.ok){
+    const errorPayload = await response.json().catch(()=>({}));
+    alert(errorPayload.error || 'Unable to generate the relocation report right now.');
+    return;
+  }
+
+  const payload = await response.json();
+  payload.notes = notes;
+  await saveRelocationReport(payload);
+  showGeneratedRelocationReport(payload);
+}
+
+function editRelocationReport(){document.getElementById('reportSection').classList.remove('active');document.getElementById('wizardSection').style.display='block';nextStep(3)}
+async function copyShareUrl(){if(!latestRelocationPayload?.shareSlug) return; const text=createShareUrl(latestRelocationPayload.shareSlug); try{await navigator.clipboard.writeText(text)}catch{}}
+
+window.nextStep=nextStep;
+window.generateRelocationReport=generateRelocationReport;
+window.editRelocationReport=editRelocationReport;
+window.copyShareUrl=copyShareUrl;
+window.hydrateRelocationReport=hydrateSavedRelocationReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+window.relocationSupabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  { auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'} }
+);
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+if(utm && reportMode === 'latest' && window.hydrateRelocationReport){
+  const { data: report } = await window.relocationSupabase.from('retirement_relocation_reports').select('*').eq('user_id', utm).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  if(report) await window.hydrateRelocationReport(report);
+}
+</script>
+</body>
+</html>

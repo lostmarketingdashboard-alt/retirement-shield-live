@@ -65,9 +65,17 @@ export const ssr = false;
     })
 
     function initializePortal(user, profile) {
-      const initials = profile.full_name
-        ? profile.full_name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()
+      const getInitials = (name) => name
+        ? name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase()
         : 'RS'
+
+      const getFamilyPlanTitle = (name) => name
+        ? `${name.split(' ').slice(-1)[0]} Family Plan`
+        : 'Your Family Plan'
+
+      const getPortalStateLabel = (value) => value || 'Not added yet'
+      const getProfileEmail = () => profile.email || user.email || ''
+      const initials = getInitials(profile.full_name)
 
       const app = document.getElementById('app')
 
@@ -86,7 +94,7 @@ export const ssr = false;
               <div class="user-menu">
                 <div class="avatar">${initials}</div>
                 <div class="user-info">
-                  <span class="user-name">${profile.full_name}</span>
+                  <span class="user-name" id="portalUserName">${profile.full_name}</span>
                   <span class="user-role">${profile.role}</span>
                 </div>
                 <button id="logoutBtn" class="logout-btn">Sign Out</button>
@@ -110,7 +118,7 @@ export const ssr = false;
                 </div>
   
                 <div class="hero-main">
-                  <h1>${profile.full_name ? profile.full_name.split(' ').slice(-1)[0] + ' Family Plan' : 'Your Family Plan'}</h1>
+                  <h1 id="portalFamilyPlanTitle">${getFamilyPlanTitle(profile.full_name)}</h1>
                   <p class="subtext">Prepared following your consultation with Lewis on February 18, 2026</p>
 
                
@@ -144,10 +152,12 @@ export const ssr = false;
   <button class="tab active" data-tab="assigned-members">Assigned Members</button>
 ` : `
   <button class="tab active" data-tab="action">Action Plan</button>
-  <button class="tab" data-tab="team">Your Team</button>
-  <button class="tab" data-tab="timeline">Timeline</button>
+ 
   <button class="tab" data-tab="documents">Documents</button>
   <button class="tab" data-tab="tools">Tools</button>
+   <button class="tab" data-tab="profile">Profile</button>
+  <button class="tab" data-tab="team">Your Team</button>
+  <button class="tab" data-tab="timeline">Timeline</button>
 `}
             </div>
             <div class="tab-underline"></div>
@@ -174,6 +184,317 @@ export const ssr = false;
       if (profile.role === 'user') {
 
         let actionPlan = [];
+        let actionPlanLoaded = false;
+        const userTabCache = {
+          reports: null,
+          reportsPromise: null,
+          team: null,
+          teamPromise: null,
+          profileMarkup: null
+        };
+        const PROFILE_STATE_OPTIONS = [
+          ['','Select your state'],
+          ['Alabama','Alabama'],['Alaska','Alaska'],['Arizona','Arizona'],['Arkansas','Arkansas'],['California','California'],
+          ['Colorado','Colorado'],['Connecticut','Connecticut'],['Delaware','Delaware'],['Florida','Florida'],['Georgia','Georgia'],
+          ['Hawaii','Hawaii'],['Idaho','Idaho'],['Illinois','Illinois'],['Indiana','Indiana'],['Iowa','Iowa'],['Kansas','Kansas'],
+          ['Kentucky','Kentucky'],['Louisiana','Louisiana'],['Maine','Maine'],['Maryland','Maryland'],['Massachusetts','Massachusetts'],
+          ['Michigan','Michigan'],['Minnesota','Minnesota'],['Mississippi','Mississippi'],['Missouri','Missouri'],['Montana','Montana'],
+          ['Nebraska','Nebraska'],['Nevada','Nevada'],['New Hampshire','New Hampshire'],['New Jersey','New Jersey'],['New Mexico','New Mexico'],
+          ['New York','New York'],['North Carolina','North Carolina'],['North Dakota','North Dakota'],['Ohio','Ohio'],['Oklahoma','Oklahoma'],
+          ['Oregon','Oregon'],['Pennsylvania','Pennsylvania'],['Rhode Island','Rhode Island'],['South Carolina','South Carolina'],
+          ['South Dakota','South Dakota'],['Tennessee','Tennessee'],['Texas','Texas'],['Utah','Utah'],['Vermont','Vermont'],
+          ['Virginia','Virginia'],['Washington','Washington'],['West Virginia','West Virginia'],['Wisconsin','Wisconsin'],['Wyoming','Wyoming'],
+          ['District of Columbia','District of Columbia']
+        ];
+
+        function renderTabLoading(message = 'Loading...') {
+          contentDiv.innerHTML = `
+            <div class="doc-card">
+              <div class="doc-body">
+                <p>${message}</p>
+              </div>
+            </div>
+          `;
+        }
+
+        async function getLatestSingle(table, selectFields) {
+          const { data } = await supabase
+            .from(table)
+            .select(selectFields)
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+          return data ?? null;
+        }
+
+        async function getUserReportsSnapshot({ force = false } = {}) {
+          if (!force && userTabCache.reports) return userTabCache.reports;
+          if (!force && userTabCache.reportsPromise) return userTabCache.reportsPromise;
+
+          userTabCache.reportsPromise = (async () => {
+            const [
+              familyPlanQuizReport,
+              widowsPlaybookReport,
+              legacyWidowsPlaybookResult,
+              homeEquityReport,
+              emergencyBinderReport,
+              retirementPaycheckReport,
+              retirementRunwayReport,
+              incomeShieldReport,
+              inflationErosionReport,
+              irmaaGuardReport,
+              rmdCalendarReport,
+              annuityXrayReport,
+              unclaimedPropertyReport,
+              relocationReport,
+              inheritanceCollisionReport,
+              afterDeathChecklistReport,
+              shieldBriefReport,
+              dividendWatchReport,
+              estateWatchReport
+            ] = await Promise.all([
+              getLatestSingle('family-plan-quiz-data', 'id, created_at'),
+              getLatestSingle('widows_playbook_reports', 'id, created_at'),
+              getLatestSingle('widows-playbook-data', 'id, created_at'),
+              getLatestSingle('home_equity_reports', 'id, created_at, full_address'),
+              getLatestSingle('emergency_binder_reports', 'id, created_at, report_title, household_label, state_name'),
+              getLatestSingle('retirement_paycheck_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('retirement_runway_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('income_shield_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('inflation_erosion_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('irmaa_guard_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('rmd_calendar_reports', 'id, created_at, report_title, full_name, county_name, state_name'),
+              getLatestSingle('annuity_xray_reports', 'id, created_at, report_title, full_name'),
+              getLatestSingle('unclaimed_property_reports', 'id, created_at, report_title, full_name, state_name, proof_level'),
+              getLatestSingle('retirement_relocation_reports', 'id, created_at, report_title, current_state_name, primary_destination_state_name'),
+              getLatestSingle('inheritance_collision_reports', 'id, created_at, report_title, full_name, state_name'),
+              getLatestSingle('after_death_checklist_reports', 'id, created_at, report_title, full_name, state_name'),
+              getLatestSingle('shield_brief_reports', 'id, created_at, report_title, full_name, state_name, county_name, generated_month, segment_label'),
+              getLatestSingle('dividend_watch_reports', 'id, created_at, report_title, full_name, portfolio_label, holdings_count'),
+              getLatestSingle('estate_watch_reports', 'id, created_at, report_title, full_name, state_name, quiz_profile, tracked_change_count')
+            ]);
+
+            const snapshot = {
+              familyPlanQuizReport,
+              widowsReportResolved: widowsPlaybookReport || legacyWidowsPlaybookResult,
+              homeEquityReport,
+              emergencyBinderReport,
+              retirementPaycheckReport,
+              retirementRunwayReport,
+              incomeShieldReport,
+              inflationErosionReport,
+              irmaaGuardReport,
+              rmdCalendarReport,
+              annuityXrayReport,
+              unclaimedPropertyReport,
+              relocationReport,
+              inheritanceCollisionReport,
+              afterDeathChecklistReport,
+              shieldBriefReport,
+              dividendWatchReport,
+              estateWatchReport
+            };
+
+            userTabCache.reports = snapshot;
+            userTabCache.reportsPromise = null;
+            return snapshot;
+          })();
+
+          return userTabCache.reportsPromise;
+        }
+
+        async function getTeamSnapshot({ force = false } = {}) {
+          if (!force && userTabCache.team) return userTabCache.team;
+          if (!force && userTabCache.teamPromise) return userTabCache.teamPromise;
+
+          userTabCache.teamPromise = (async () => {
+            const { data: assignments } = await supabase
+              .from('referral_assignments')
+              .select('referral_id')
+              .eq('user_id', user.id);
+
+            if (!assignments || assignments.length === 0) {
+              const emptyState = { assignments: [], consultants: [] };
+              userTabCache.team = emptyState;
+              userTabCache.teamPromise = null;
+              return emptyState;
+            }
+
+            const referralIds = assignments.map(a => a.referral_id);
+            const { data: consultants } = await supabase
+              .from('profiles')
+              .select('id, full_name, email')
+              .in('id', referralIds);
+
+            const teamState = { assignments, consultants: consultants || [] };
+            userTabCache.team = teamState;
+            userTabCache.teamPromise = null;
+            return teamState;
+          })();
+
+          return userTabCache.teamPromise;
+        }
+
+        function prefetchUserPortalTabs() {
+          getUserReportsSnapshot().catch(() => {});
+          getTeamSnapshot().catch(() => {});
+        }
+
+        function refreshPortalIdentityUI() {
+          const initialsValue = getInitials(profile.full_name);
+          const userNameEl = document.getElementById('portalUserName');
+          const familyPlanTitleEl = document.getElementById('portalFamilyPlanTitle');
+          const avatarEl = document.querySelector('.avatar');
+
+          if (userNameEl) userNameEl.textContent = profile.full_name || 'Retirement Shield Member';
+          if (familyPlanTitleEl) familyPlanTitleEl.textContent = getFamilyPlanTitle(profile.full_name);
+          if (avatarEl) avatarEl.textContent = initialsValue;
+        }
+
+        function renderProfile() {
+          const memberSince = profile.created_at
+            ? new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+            : 'Recently joined';
+          const stateLabel = getPortalStateLabel(profile.state);
+          const saveStatusMarkup = userTabCache.profileMarkup || '';
+
+          contentDiv.innerHTML = `
+            <div class="profile-layout">
+              <section class="profile-hero-card">
+                <div class="profile-hero-copy">
+                  <div class="profile-kicker">Member Profile</div>
+                  <h2>Keep your portal details current.</h2>
+                  <p>Your profile is what the portal uses to personalize saved tools, state-specific planning views, and household-facing documents. Update it here and the rest of the portal follows along.</p>
+                  <div class="profile-pill-row">
+                    <span class="profile-pill">Role: ${profile.role}</span>
+                    <span class="profile-pill">State: ${stateLabel}</span>
+                    <span class="profile-pill">Member since ${memberSince}</span>
+                  </div>
+                </div>
+                <div class="profile-identity-card">
+                  <div class="profile-avatar-lg">${getInitials(profile.full_name)}</div>
+                  <div class="profile-identity-name">${profile.full_name || 'Retirement Shield Member'}</div>
+                  <div class="profile-identity-email">${getProfileEmail() || 'No email on file'}</div>
+                  <div class="profile-identity-meta">Household portal profile</div>
+                </div>
+              </section>
+
+              <div class="profile-grid">
+                <section class="doc-card profile-card">
+                  <div class="doc-header profile-card-head">
+                    <div class="doc-icon">👤</div>
+                    <div>
+                      <h3>Edit Your Details</h3>
+                      <div class="doc-meta">These fields update your portal identity and state-based personalization.</div>
+                    </div>
+                  </div>
+
+                  ${saveStatusMarkup}
+
+                  <form id="profileForm" class="profile-form">
+                    <div class="profile-form-grid">
+                      <label class="profile-field">
+                        <span class="profile-label">Full Name</span>
+                        <input id="profileFullName" class="profile-input" type="text" value="${profile.full_name ?? ''}" placeholder="e.g. Margaret Thomas">
+                      </label>
+                      <label class="profile-field">
+                        <span class="profile-label">Email Address</span>
+                        <input id="profileEmail" class="profile-input" type="email" value="${getProfileEmail()}" placeholder="name@example.com">
+                      </label>
+                      <label class="profile-field profile-field-full">
+                        <span class="profile-label">Primary State</span>
+                        <select id="profileState" class="profile-input">
+                          ${PROFILE_STATE_OPTIONS.map(([value, label]) => `<option value="${value}" ${profile.state === value ? 'selected' : ''}>${label}</option>`).join('')}
+                        </select>
+                      </label>
+                    </div>
+
+                    <div class="profile-actions">
+                      <button type="submit" class="view-pdf-btn" id="saveProfileBtn">Save Profile</button>
+                    </div>
+                  </form>
+                </section>
+
+                <section class="doc-card profile-card">
+                  <div class="doc-header profile-card-head">
+                    <div class="doc-icon">🧭</div>
+                    <div>
+                      <h3>How Your Profile Is Used</h3>
+                      <div class="doc-meta">A quick snapshot of what this information influences inside Retirement Shield.</div>
+                    </div>
+                  </div>
+                  <div class="profile-usage-list">
+                    <div class="profile-usage-item">
+                      <strong>Portal identity</strong>
+                      <span>Your name and email appear across the header, saved reports, and profile summary views.</span>
+                    </div>
+                    <div class="profile-usage-item">
+                      <strong>State guidance</strong>
+                      <span>Your state helps prefill state-driven tools and keeps legal or planning content pointed at the right jurisdiction.</span>
+                    </div>
+                    <div class="profile-usage-item">
+                      <strong>Household continuity</strong>
+                      <span>Keeping this current makes shared family documents and saved outputs easier for a spouse or adult child to understand later.</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          `;
+
+          const profileForm = document.getElementById('profileForm');
+          if (profileForm) {
+            profileForm.addEventListener('submit', async (event) => {
+              event.preventDefault();
+
+              const saveBtn = document.getElementById('saveProfileBtn');
+              const fullName = document.getElementById('profileFullName')?.value.trim() || '';
+              const email = document.getElementById('profileEmail')?.value.trim() || '';
+              const state = document.getElementById('profileState')?.value || '';
+
+              if (!fullName) {
+                userTabCache.profileMarkup = `<div class="profile-alert error">Please enter your full name before saving.</div>`;
+                renderProfile();
+                return;
+              }
+
+              if (!email) {
+                userTabCache.profileMarkup = `<div class="profile-alert error">Please enter an email address before saving.</div>`;
+                renderProfile();
+                return;
+              }
+
+              if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+              }
+
+              const { error } = await supabase
+                .from('profiles')
+                .update({
+                  full_name: fullName,
+                  email,
+                  state
+                })
+                .eq('id', user.id);
+
+              if (error) {
+                userTabCache.profileMarkup = `<div class="profile-alert error">We could not save your profile just now. Please try again.</div>`;
+                renderProfile();
+                return;
+              }
+
+              profile.full_name = fullName;
+              profile.email = email;
+              profile.state = state;
+              userTabCache.profileMarkup = `<div class="profile-alert success">Your profile has been updated.</div>`;
+              refreshPortalIdentityUI();
+              renderProfile();
+            });
+          }
+        }
 
         async function loadActionPlan() {
 
@@ -232,6 +553,7 @@ export const ssr = false;
           }
 
           actionPlan = enrichedPlans;
+          actionPlanLoaded = true;
         }
 
         function calculateStats() {
@@ -291,72 +613,48 @@ export const ssr = false;
 
         // --- DOCUMENTS TAB FUNCTIONALITY ---
         async function renderDocuments() {
-          const { data: familyPlanQuizReport } = await supabase
-            .from('family-plan-quiz-data')
-            .select('created_at')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          if (!userTabCache.reports) {
+            renderTabLoading('Loading your saved documents...');
+          }
 
-          const { data: widowsPlaybookReport } = await supabase
-            .from('widows_playbook_reports')
-            .select('created_at')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const widowsReportResolved = widowsPlaybookReport || (await supabase
-            .from('widows-playbook-data')
-            .select('created_at')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()).data
-
-          const { data: homeEquityReport } = await supabase
-            .from('home_equity_reports')
-            .select('created_at, full_address')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: emergencyBinderReport } = await supabase
-            .from('emergency_binder_reports')
-            .select('created_at, report_title, household_label, state_name')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: retirementPaycheckReport } = await supabase
-            .from('retirement_paycheck_reports')
-            .select('created_at, report_title, full_name, county_name, state_name')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: retirementRunwayReport } = await supabase
-            .from('retirement_runway_reports')
-            .select('created_at, report_title, full_name, county_name, state_name')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: incomeShieldReport } = await supabase
-            .from('income_shield_reports')
-            .select('created_at, report_title, full_name, county_name, state_name')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          const {
+            familyPlanQuizReport,
+            widowsReportResolved,
+            homeEquityReport,
+            emergencyBinderReport,
+            retirementPaycheckReport,
+            retirementRunwayReport,
+            incomeShieldReport,
+            inflationErosionReport,
+            irmaaGuardReport,
+            rmdCalendarReport,
+            annuityXrayReport,
+            unclaimedPropertyReport,
+            relocationReport,
+            inheritanceCollisionReport,
+            afterDeathChecklistReport,
+            shieldBriefReport,
+            dividendWatchReport,
+            estateWatchReport
+          } = await getUserReportsSnapshot();
 
           contentDiv.innerHTML = `
-            <div class="doc-card">
+            <div class="documents-search-wrap">
+             <input
+                id="documentSearch"
+                class="portal-search"
+                type="text"
+                placeholder="Search documents by title, type, or description..."
+              />
+            </div>
+
+            <div id="documentSearchEmpty" class="doc-card" style="margin-top:24px;display:none;">
+              <div class="doc-body">
+                <p>No documents match that search yet.</p>
+              </div>
+            </div>
+
+            <div class="doc-card document-search-item" data-doc-search="estate planning assessment personalized strategy report trust structure beneficiary designations asset protection retirement income coordination">
               <div class="doc-header">
                 <div class="doc-icon">📄</div>
                 <div>
@@ -379,7 +677,7 @@ export const ssr = false;
             </div>
 
             ${familyPlanQuizReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="is your family's plan actually ready family readiness quiz results completed family plan quiz saved results" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">🛡️</div>
                   <div>
@@ -402,7 +700,7 @@ export const ssr = false;
             ` : ''}
 
             ${widowsReportResolved ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="widow's playbook surviving spouse financial survival report saved widows playbook completed report" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">🕊️</div>
                   <div>
@@ -425,7 +723,7 @@ export const ssr = false;
             ` : ''}
 
             ${homeEquityReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="home equity intelligence report rentcast property report saved home equity intelligence latest property report" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">🏠</div>
                   <div>
@@ -448,7 +746,7 @@ export const ssr = false;
             ` : ''}
 
             ${emergencyBinderReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="after i'm gone emergency binder generator saved emergency binder completed binder report" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">📘</div>
                   <div>
@@ -471,7 +769,7 @@ export const ssr = false;
             ` : ''}
 
             ${retirementPaycheckReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="your retirement paycheck dividend income x-ray saved dividend income report completed retirement paycheck report" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">💵</div>
                   <div>
@@ -494,7 +792,7 @@ export const ssr = false;
             ` : ''}
 
             ${retirementRunwayReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="retirement runway money-lasts-until tracker saved runway report completed retirement runway summary" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">🛫</div>
                   <div>
@@ -517,7 +815,7 @@ export const ssr = false;
             ` : ''}
 
             ${incomeShieldReport ? `
-              <div class="doc-card" style="margin-top:24px;">
+              <div class="doc-card document-search-item" data-doc-search="income shield retirement income stress test saved income stress report completed retirement income stress test" style="margin-top:24px;">
                 <div class="doc-header">
                   <div class="doc-icon">🧱</div>
                   <div>
@@ -535,6 +833,259 @@ export const ssr = false;
 
                 <div class="doc-actions">
                   <button class="view-pdf-btn" id="viewIncomeShieldBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${inflationErosionReport ? `
+              <div class="doc-card document-search-item" data-doc-search="inflation erosion visualizer saved inflation report completed inflation curve comparison summary" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📉</div>
+                  <div>
+                    <h3>The Inflation Erosion Visualizer</h3>
+                    <div class="doc-meta">Generated ${new Date(inflationErosionReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${inflationErosionReport.full_name ?? inflationErosionReport.county_name ?? 'Saved inflation report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Inflation Erosion report is ready to review.
+                    Open it to jump directly to the completed inflation curve and comparison summary.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewInflationErosionBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${irmaaGuardReport ? `
+              <div class="doc-card document-search-item" data-doc-search="irmaa guard medicare premium surcharge analysis saved irmaa report completed medicare surcharge analysis" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">⚠️</div>
+                  <div>
+                    <h3>IRMAA Guard</h3>
+                    <div class="doc-meta">Generated ${new Date(irmaaGuardReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${irmaaGuardReport.full_name ?? irmaaGuardReport.county_name ?? 'Saved IRMAA report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved IRMAA Guard report is ready to review.
+                    Open it to jump directly to the completed Medicare premium surcharge analysis.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewIrmaaGuardBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${rmdCalendarReport ? `
+              <div class="doc-card document-search-item" data-doc-search="rmd calendar tax impact estimator saved rmd report completed deadline schedule tax estimate reminder summary" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🗓️</div>
+                  <div>
+                    <h3>RMD Calendar + Tax Impact Estimator</h3>
+                    <div class="doc-meta">Generated ${new Date(rmdCalendarReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${rmdCalendarReport.full_name ?? rmdCalendarReport.county_name ?? 'Saved RMD report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved RMD Calendar report is ready to review.
+                    Open it to jump directly to the completed deadline schedule, tax estimate, and reminder summary.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewRmdCalendarBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${annuityXrayReport ? `
+              <div class="doc-card document-search-item" data-doc-search="annuity x-ray report is your annuity ripping you off annuity transparency effective yield surrender fee opportunity cost" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📄</div>
+                  <div>
+                    <h3>Is Your Annuity Ripping You Off? — The Annuity X-Ray Report</h3>
+                    <div class="doc-meta">Generated ${new Date(annuityXrayReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${annuityXrayReport.full_name ?? 'Saved annuity report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Annuity X-Ray report is ready to review.
+                    Open it to jump directly to the completed benchmark comparison, fee breakdown, and opportunity-cost summary.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewAnnuityXrayBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${relocationReport ? `
+              <div class="doc-card document-search-item" data-doc-search="retirement relocation calculator should you move move comparison cost of living longevity probate homestead" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📍</div>
+                  <div>
+                    <h3>Should You Move? — The Retirement Relocation Calculator</h3>
+                    <div class="doc-meta">Generated ${new Date(relocationReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${relocationReport.current_state_name ?? 'Current state'} → ${relocationReport.primary_destination_state_name ?? 'Destination'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Retirement Relocation report is ready to review.
+                    Open it to jump directly to the latest side-by-side move comparison and shareable URL.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewRelocationReportBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${inheritanceCollisionReport ? `
+              <div class="doc-card document-search-item" data-doc-search="inheritance collision report blended family estate conflict detector remarriage intestacy elective share stepchildren" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">⚖️</div>
+                  <div>
+                    <h3>The Inheritance Collision Report</h3>
+                    <div class="doc-meta">Generated ${new Date(inheritanceCollisionReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${inheritanceCollisionReport.full_name ?? inheritanceCollisionReport.state_name ?? 'Saved blended-family report'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Inheritance Collision Report is ready to review.
+                    Open it to jump directly to the latest blended-family estate conflict analysis.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewInheritanceCollisionBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${afterDeathChecklistReport ? `
+              <div class="doc-card document-search-item" data-doc-search="72-hour checklist personalized after-death action plan death certificate probate deadline creditor notice family checklist emergency binder" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">⏱️</div>
+                  <div>
+                    <h3>The 72-Hour Checklist</h3>
+                    <div class="doc-meta">Generated ${new Date(afterDeathChecklistReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${afterDeathChecklistReport.full_name ?? afterDeathChecklistReport.state_name ?? 'Saved after-death action plan'}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved 72-Hour Checklist is ready to review.
+                    Open it to jump directly to the latest personalized after-death action plan.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewAfterDeathChecklistBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${shieldBriefReport ? `
+              <div class="doc-card document-search-item" data-doc-search="shield brief monthly retirement intelligence report retirement weather forecast county state segment monthly brief" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📰</div>
+                  <div>
+                    <h3>The Shield Brief</h3>
+                    <div class="doc-meta">Generated ${new Date(shieldBriefReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${shieldBriefReport.generated_month ?? ''}${shieldBriefReport.county_name ? ` · ${shieldBriefReport.county_name}` : ''}${shieldBriefReport.segment_label ? ` · ${shieldBriefReport.segment_label}` : ''}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Shield Brief is ready to review.
+                    Open it to jump directly to the latest monthly retirement intelligence report for your location and planning lens.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewShieldBriefBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${dividendWatchReport ? `
+              <div class="doc-card document-search-item" data-doc-search="dividend watch retirement income portfolio monitor dividend alerts ex-dividend payout ratio paycheck calendar dividend health score" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">📈</div>
+                  <div>
+                    <h3>Dividend Watch</h3>
+                    <div class="doc-meta">Generated ${new Date(dividendWatchReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${dividendWatchReport.portfolio_label ?? dividendWatchReport.full_name ?? 'Saved dividend monitor'}${dividendWatchReport.holdings_count ? ` · ${dividendWatchReport.holdings_count} holdings` : ''}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Dividend Watch report is ready to review.
+                    Open it to jump directly to the latest dividend alert stack, paycheck calendar, and health score.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewDividendWatchBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${unclaimedPropertyReport ? `
+              <div class="doc-card document-search-item" data-doc-search="unclaimed property finder missing money forgotten assets state property search dormant funds claim checklist" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🔎</div>
+                  <div>
+                    <h3>Unclaimed Property Finder</h3>
+                    <div class="doc-meta">Generated ${new Date(unclaimedPropertyReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${unclaimedPropertyReport.state_name ?? 'Saved unclaimed property report'}${unclaimedPropertyReport.proof_level ? ` · ${unclaimedPropertyReport.proof_level}` : ''}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Unclaimed Property Finder report is ready to review.
+                    Open it to jump directly to the state search link, claim-prep steps, and family search checklist.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewUnclaimedPropertyBtn">View My PDF</button>
+                </div>
+              </div>
+            ` : ''}
+
+            ${estateWatchReport ? `
+              <div class="doc-card document-search-item" data-doc-search="estate watch state law change tracker plan review alerts probate medicaid homestead estate tax power of attorney digital asset law annual health check" style="margin-top:24px;">
+                <div class="doc-header">
+                  <div class="doc-icon">🏛️</div>
+                  <div>
+                    <h3>Estate Watch</h3>
+                    <div class="doc-meta">Generated ${new Date(estateWatchReport.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · ${estateWatchReport.state_name ?? 'Saved estate watch report'}${estateWatchReport.quiz_profile ? ` · ${estateWatchReport.quiz_profile}` : ''}${typeof estateWatchReport.tracked_change_count === 'number' ? ` · ${estateWatchReport.tracked_change_count} tracked changes` : ''}</div>
+                  </div>
+                </div>
+
+                <div class="doc-body">
+                  <p>
+                    Your saved Estate Watch report is ready to review.
+                    Open it to jump directly to the latest state-change summary and annual plan-review alerts.
+                  </p>
+                </div>
+
+                <div class="doc-actions">
+                  <button class="view-pdf-btn" id="viewEstateWatchBtn">View My PDF</button>
                 </div>
               </div>
             ` : ''}
@@ -594,15 +1145,113 @@ export const ssr = false;
               window.location.href = `/income-shield-test?utm=${user.id}&report=latest`
             })
           }
+
+          const inflationErosionBtn = document.getElementById('viewInflationErosionBtn')
+          if (inflationErosionBtn) {
+            inflationErosionBtn.addEventListener('click', () => {
+              window.location.href = `/inflation-erosion-visualizer?utm=${user.id}&report=latest`
+            })
+          }
+
+          const irmaaGuardBtn = document.getElementById('viewIrmaaGuardBtn')
+          if (irmaaGuardBtn) {
+            irmaaGuardBtn.addEventListener('click', () => {
+              window.location.href = `/irmaa-guard?utm=${user.id}&report=latest`
+            })
+          }
+
+          const rmdCalendarBtn = document.getElementById('viewRmdCalendarBtn')
+          if (rmdCalendarBtn) {
+            rmdCalendarBtn.addEventListener('click', () => {
+              window.location.href = `/rmd-calendar-tax-estimator?utm=${user.id}&report=latest`
+            })
+          }
+
+          const annuityXrayBtn = document.getElementById('viewAnnuityXrayBtn')
+          if (annuityXrayBtn) {
+            annuityXrayBtn.addEventListener('click', () => {
+              window.location.href = `/annuity-x-ray-report?utm=${user.id}&report=latest`
+            })
+          }
+
+          const relocationReportBtn = document.getElementById('viewRelocationReportBtn')
+          if (relocationReportBtn) {
+            relocationReportBtn.addEventListener('click', () => {
+              window.location.href = `/retirement-relocation-calculator?utm=${user.id}&report=latest`
+            })
+          }
+
+          const inheritanceCollisionBtn = document.getElementById('viewInheritanceCollisionBtn')
+          if (inheritanceCollisionBtn) {
+            inheritanceCollisionBtn.addEventListener('click', () => {
+              window.location.href = `/inheritance-collision-report?utm=${user.id}&report=latest`
+            })
+          }
+
+          const afterDeathChecklistBtn = document.getElementById('viewAfterDeathChecklistBtn')
+          if (afterDeathChecklistBtn) {
+            afterDeathChecklistBtn.addEventListener('click', () => {
+              window.location.href = `/72-hour-checklist?utm=${user.id}&report=latest`
+            })
+          }
+
+          const shieldBriefBtn = document.getElementById('viewShieldBriefBtn')
+          if (shieldBriefBtn) {
+            shieldBriefBtn.addEventListener('click', () => {
+              window.location.href = `/shield-brief?utm=${user.id}&report=latest`
+            })
+          }
+
+          const dividendWatchBtn = document.getElementById('viewDividendWatchBtn')
+          if (dividendWatchBtn) {
+            dividendWatchBtn.addEventListener('click', () => {
+              window.location.href = `/dividend-watch?utm=${user.id}&report=latest`
+            })
+          }
+
+          const unclaimedPropertyBtn = document.getElementById('viewUnclaimedPropertyBtn')
+          if (unclaimedPropertyBtn) {
+            unclaimedPropertyBtn.addEventListener('click', () => {
+              window.location.href = `/unclaimed-property-finder?utm=${user.id}&report=latest`
+            })
+          }
+
+          const estateWatchBtn = document.getElementById('viewEstateWatchBtn')
+          if (estateWatchBtn) {
+            estateWatchBtn.addEventListener('click', () => {
+              window.location.href = `/estate-watch?utm=${user.id}&report=latest`
+            })
+          }
+
+          const documentSearch = document.getElementById('documentSearch')
+          const documentSearchEmpty = document.getElementById('documentSearchEmpty')
+          if (documentSearch && documentSearchEmpty) {
+            const items = Array.from(document.querySelectorAll('.document-search-item'))
+            const applyDocumentSearch = () => {
+              const query = documentSearch.value.trim().toLowerCase()
+              let visibleCount = 0
+
+              items.forEach(card => {
+                const haystack = `${card.dataset.docSearch ?? ''} ${card.textContent ?? ''}`.toLowerCase()
+                const match = !query || haystack.includes(query)
+                card.style.display = match ? '' : 'none'
+                if (match) visibleCount += 1
+              })
+
+              documentSearchEmpty.style.display = visibleCount === 0 ? '' : 'none'
+            }
+
+            documentSearch.addEventListener('input', applyDocumentSearch)
+            applyDocumentSearch()
+          }
         }
 
         async function renderTeam() {
+          if (!userTabCache.team) {
+            renderTabLoading('Loading your team...');
+          }
 
-          // Load ALL referral assignments for this user
-          const { data: assignments } = await supabase
-            .from('referral_assignments')
-            .select('referral_id')
-            .eq('user_id', user.id);
+          const { assignments, consultants } = await getTeamSnapshot();
 
           if (!assignments || assignments.length === 0) {
             contentDiv.innerHTML = `
@@ -625,14 +1274,6 @@ export const ssr = false;
             `;
             return;
           }
-
-          const referralIds = assignments.map(a => a.referral_id);
-
-          // Load all consultants linked to this user
-          const { data: consultants } = await supabase
-            .from('profiles')
-            .select('id, full_name, email')
-            .in('id', referralIds);
 
           const consultantCards = (consultants || []).map(c => `
             <div style="margin-top:14px;padding:16px;border:1px solid var(--rule-light);border-radius:12px;">
@@ -682,69 +1323,30 @@ export const ssr = false;
         }
 
         async function renderTools() {
-          const { data: familyPlanQuizReport } = await supabase
-            .from('family-plan-quiz-data')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          if (!userTabCache.reports) {
+            renderTabLoading('Loading your tools...');
+          }
 
-          const { data: widowsPlaybookReport } = await supabase
-            .from('widows_playbook_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const widowsReportResolved = widowsPlaybookReport || (await supabase
-            .from('widows-playbook-data')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()).data
-
-          const { data: homeEquityReport } = await supabase
-            .from('home_equity_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: emergencyBinderReport } = await supabase
-            .from('emergency_binder_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: retirementPaycheckReport } = await supabase
-            .from('retirement_paycheck_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: retirementRunwayReport } = await supabase
-            .from('retirement_runway_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
-
-          const { data: incomeShieldReport } = await supabase
-            .from('income_shield_reports')
-            .select('id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle()
+          const {
+            familyPlanQuizReport,
+            widowsReportResolved,
+            homeEquityReport,
+            emergencyBinderReport,
+            retirementPaycheckReport,
+            retirementRunwayReport,
+            incomeShieldReport,
+            inflationErosionReport,
+            irmaaGuardReport,
+            rmdCalendarReport,
+            annuityXrayReport,
+            unclaimedPropertyReport,
+            relocationReport,
+            inheritanceCollisionReport,
+            afterDeathChecklistReport,
+            shieldBriefReport,
+            dividendWatchReport,
+            estateWatchReport
+          } = await getUserReportsSnapshot();
 
           contentDiv.innerHTML = `
             <div class="doc-card">
@@ -830,75 +1432,120 @@ export const ssr = false;
                       targetTab: incomeShieldReport ? 'documents' : '',
                       restartHref: incomeShieldReport ? `/income-shield-test?utm=${user.id}` : ''
                     },
-                    {
-                      icon: '🔎',
-                      name: 'Unclaimed Property Finder',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
+
+                  
                     {
                       icon: '📉',
                       name: 'The Inflation Erosion Visualizer',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    {
-                      icon: '🗓️',
-                      name: 'RMD Calendar + Tax Impact Estimator',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                   
-                    
-                  
-                    {
-                      icon: '📍',
-                      name: 'Should You Move? — The Retirement Relocation Calculator',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    
-                    {
-                      icon: '📄',
-                      name: 'Is Your Annuity Ripping You Off? — The Annuity X-Ray Report',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    {
-                      icon: '⚖️',
-                      name: 'The Inheritance Collision Report — The Blended Family Estate Conflict Detector',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    {
-                      icon: '⏱️',
-                      name: 'The 72-Hour Checklist — The Personalized After-Death Action Plan',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    {
-                      icon: '📰',
-                      name: 'The Shield Brief — Your Monthly Retirement Intelligence Report',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
-                    },
-                    {
-                      icon: '📈',
-                      name: 'Dividend Watch — Retirement Income Portfolio Monitor',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
+                      description: '',
+                      action: inflationErosionReport ? 'Completed' : 'Open Tool',
+                      href: inflationErosionReport ? '' : `/inflation-erosion-visualizer?utm=${user.id}`,
+                      completed: Boolean(inflationErosionReport),
+                      targetTab: inflationErosionReport ? 'documents' : '',
+                      restartHref: inflationErosionReport ? `/inflation-erosion-visualizer?utm=${user.id}` : ''
                     },
                     {
                       icon: '⚠️',
                       name: 'IRMAA Guard — Medicare Premium Surcharge Early Warning System',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
+                      description: '',
+                      action: irmaaGuardReport ? 'Completed' : 'Open Tool',
+                      href: irmaaGuardReport ? '' : `/irmaa-guard?utm=${user.id}`,
+                      completed: Boolean(irmaaGuardReport),
+                      targetTab: irmaaGuardReport ? 'documents' : '',
+                      restartHref: irmaaGuardReport ? `/irmaa-guard?utm=${user.id}` : ''
                     },
+                    {
+                      icon: '🗓️',
+                      name: 'RMD Calendar + Tax Impact Estimator',
+                      description: '',
+                      action: rmdCalendarReport ? 'Completed' : 'Open Tool',
+                      href: rmdCalendarReport ? '' : `/rmd-calendar-tax-estimator?utm=${user.id}`,
+                      completed: Boolean(rmdCalendarReport),
+                      targetTab: rmdCalendarReport ? 'documents' : '',
+                      restartHref: rmdCalendarReport ? `/rmd-calendar-tax-estimator?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '📄',
+                      name: 'Is Your Annuity Ripping You Off? — The Annuity X-Ray Report',
+                      description: '',
+                      action: annuityXrayReport ? 'Completed' : 'Open Tool',
+                      href: annuityXrayReport ? '' : `/annuity-x-ray-report?utm=${user.id}`,
+                      completed: Boolean(annuityXrayReport),
+                      targetTab: annuityXrayReport ? 'documents' : '',
+                      restartHref: annuityXrayReport ? `/annuity-x-ray-report?utm=${user.id}` : ''
+                    },
+                      {
+                      icon: '🔎',
+                      name: 'Unclaimed Property Finder',
+                      description: '',
+                      action: unclaimedPropertyReport ? 'Completed' : 'Open Tool',
+                      href: unclaimedPropertyReport ? '' : `/unclaimed-property-finder?utm=${user.id}`,
+                      completed: Boolean(unclaimedPropertyReport),
+                      targetTab: unclaimedPropertyReport ? 'documents' : '',
+                      restartHref: unclaimedPropertyReport ? `/unclaimed-property-finder?utm=${user.id}` : ''
+                    },
+                  
+                    {
+                      icon: '📍',
+                      name: 'Should You Move? — The Retirement Relocation Calculator',
+                      description: '',
+                      action: relocationReport ? 'Completed' : 'Open Tool',
+                      href: relocationReport ? '' : `/retirement-relocation-calculator?utm=${user.id}`,
+                      completed: Boolean(relocationReport),
+                      targetTab: relocationReport ? 'documents' : '',
+                      restartHref: relocationReport ? `/retirement-relocation-calculator?utm=${user.id}` : ''
+                    },
+
+                    {
+                      icon: '⚖️',
+                      name: 'The Inheritance Collision Report — The Blended Family Estate Conflict Detector',
+                      description: '',
+                      action: inheritanceCollisionReport ? 'Completed' : 'Open Tool',
+                      href: inheritanceCollisionReport ? '' : `/inheritance-collision-report?utm=${user.id}`,
+                      completed: Boolean(inheritanceCollisionReport),
+                      targetTab: inheritanceCollisionReport ? 'documents' : '',
+                      restartHref: inheritanceCollisionReport ? `/inheritance-collision-report?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '⏱️',
+                      name: 'The 72-Hour Checklist — The Personalized After-Death Action Plan',
+                      description: '',
+                      action: afterDeathChecklistReport ? 'Completed' : 'Open Tool',
+                      href: afterDeathChecklistReport ? '' : `/72-hour-checklist?utm=${user.id}`,
+                      completed: Boolean(afterDeathChecklistReport),
+                      targetTab: afterDeathChecklistReport ? 'documents' : '',
+                      restartHref: afterDeathChecklistReport ? `/72-hour-checklist?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '📰',
+                      name: 'The Shield Brief — Your Monthly Retirement Intelligence Report',
+                      description: '',
+                      action: shieldBriefReport ? 'Completed' : 'Open Tool',
+                      href: shieldBriefReport ? '' : `/shield-brief?utm=${user.id}`,
+                      completed: Boolean(shieldBriefReport),
+                      targetTab: shieldBriefReport ? 'documents' : '',
+                      restartHref: shieldBriefReport ? `/shield-brief?utm=${user.id}` : ''
+                    },
+                    {
+                      icon: '📈',
+                      name: 'Dividend Watch — Retirement Income Portfolio Monitor',
+                      description: '',
+                      action: dividendWatchReport ? 'Completed' : 'Open Tool',
+                      href: dividendWatchReport ? '' : `/dividend-watch?utm=${user.id}`,
+                      completed: Boolean(dividendWatchReport),
+                      targetTab: dividendWatchReport ? 'documents' : '',
+                      restartHref: dividendWatchReport ? `/dividend-watch?utm=${user.id}` : ''
+                    },
+                  
                     {
                       icon: '🏛️',
                       name: 'Estate Watch — State Law Change Tracker & Plan Review Alerts',
-                      description: 'Coming soon',
-                      action: 'Coming Soon'
+                      description: '',
+                      action: estateWatchReport ? 'Completed' : 'Open Tool',
+                      href: estateWatchReport ? '' : `/estate-watch?utm=${user.id}`,
+                      completed: Boolean(estateWatchReport),
+                      targetTab: estateWatchReport ? 'documents' : '',
+                      restartHref: estateWatchReport ? `/estate-watch?utm=${user.id}` : ''
                     }
                   ].map(tool => `
                     <article class="tool-card">
@@ -991,6 +1638,7 @@ export const ssr = false;
         (async () => {
           await loadActionPlan();
           renderPlan();
+          prefetchUserPortalTabs();
         })();
 
         const tabs = document.querySelectorAll('.tab')
@@ -1003,13 +1651,17 @@ export const ssr = false;
             const type = tab.dataset.tab
 
             if (type === 'action') {
-              await loadActionPlan();
+              if (!actionPlanLoaded) {
+                renderTabLoading('Loading your action plan...');
+                await loadActionPlan();
+              }
               renderPlan();
             }
-            if (type === 'documents') renderDocuments()
-            if (type === 'team') renderTeam()
+            if (type === 'profile') renderProfile()
+            if (type === 'documents') await renderDocuments()
+            if (type === 'team') await renderTeam()
             if (type === 'timeline') renderTimeline()
-            if (type === 'tools') renderTools()
+            if (type === 'tools') await renderTools()
           })
         })
       }
@@ -2185,6 +2837,15 @@ modal.querySelectorAll('textarea').forEach(field => {
     overflow-x: hidden;
   }
 
+  html,
+  body,
+  .portal-root,
+  .content-wrap,
+  #portalContent {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   /* NAV */
   .portal-nav {
     flex-direction: column;
@@ -2285,23 +2946,38 @@ modal.querySelectorAll('textarea').forEach(field => {
   .tabs {
     overflow-x: auto;
     gap: 24px;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
   }
 
   /* CONTENT WRAP */
   .content-wrap {
-    padding: 0 20px;
-    margin: 30px auto 60px;
+    padding: 0 16px;
+    margin: 24px auto 56px;
+    box-sizing: border-box;
   }
 
   /* ACTION PLAN */
+  .plan-card {
+    margin-bottom: 16px;
+    border-radius: 18px;
+  }
+
   .plan-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
+    padding: 18px 18px 16px;
   }
 
   .plan-left {
+    width: 100%;
     gap: 12px;
+    align-items: flex-start;
   }
 
   .plan-number {
@@ -2312,22 +2988,64 @@ modal.querySelectorAll('textarea').forEach(field => {
 
   .plan-left h3 {
     font-size: 16px;
+    line-height: 1.35;
   }
 
   .plan-status {
     align-self: flex-start;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .plan-body {
+    padding: 0 18px 20px;
+  }
+
+  .subtasks {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .subtask {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .task-label {
+    line-height: 1.45;
+    overflow-wrap: anywhere;
   }
 
   /* DOCUMENTS */
-  .doc-card {
-    padding: 24px 20px;
+  .documents-search-wrap {
     max-width: 100%;
+    margin-bottom: 18px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .portal-search {
+    font-size: 16px;
+    padding: 15px 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .doc-card {
+    padding: 20px 16px;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.08);
+    box-sizing: border-box;
   }
 
   .doc-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .doc-icon {
@@ -2336,8 +3054,148 @@ modal.querySelectorAll('textarea').forEach(field => {
     font-size: 26px;
   }
 
+  .doc-header h3 {
+    font-size: 19px;
+    line-height: 1.3;
+  }
+
+  .doc-meta {
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .doc-body p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .doc-actions {
+    margin-top: 20px;
+  }
+
   .view-pdf-btn {
     width: 100%;
+    min-height: 48px;
+    padding: 14px 18px;
+  }
+
+  .profile-hero-card,
+  .profile-grid,
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-layout {
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .profile-hero-card {
+    padding: 24px 18px;
+    gap: 18px;
+    border-radius: 20px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .profile-hero-copy h2 {
+    font-size: 28px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-hero-copy p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .profile-pill-row {
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .profile-pill {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .profile-identity-card {
+    align-items: flex-start;
+    text-align: left;
+    padding: 18px;
+    width: 100%;
+  }
+
+  .profile-avatar-lg {
+    margin-bottom: 14px;
+    width: 74px;
+    height: 74px;
+    font-size: 24px;
+  }
+
+  .profile-identity-name {
+    font-size: 22px;
+  }
+
+  .profile-grid {
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .profile-card-head {
+    margin-bottom: 18px;
+  }
+
+  .profile-form {
+    gap: 16px;
+  }
+
+  .profile-form-grid {
+    gap: 14px;
+    width: 100%;
+  }
+
+  .profile-label {
+    font-size: 10px;
+  }
+
+  .profile-input {
+    min-height: 48px;
+    font-size: 16px;
+    padding: 14px 15px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-actions {
+    width: 100%;
+  }
+
+  .profile-actions .view-pdf-btn {
+    width: 100%;
+  }
+
+  .profile-alert {
+    padding: 13px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  .profile-usage-item {
+    padding: 16px;
+  }
+
+  .profile-usage-item strong {
+    font-size: 15px;
+  }
+
+  .profile-usage-item span {
+    font-size: 13px;
   }
 
   .tools-body {
@@ -3003,6 +3861,9 @@ modal.querySelectorAll('textarea').forEach(field => {
       border: 1px solid var(--rule-light);
       box-shadow: 0 20px 60px rgba(0,0,0,.08);
       max-width: 95%;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
     }
 
     .doc-header {
@@ -3035,6 +3896,51 @@ modal.querySelectorAll('textarea').forEach(field => {
       margin-top: 6px;
     }
 
+    .documents-search-wrap {
+      margin-bottom: 24px;
+      max-width: 97%;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .documents-search-title {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-family: 'Playfair Display', serif;
+      color: var(--navy);
+    }
+
+    .documents-search-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .portal-search {
+      width: 100%;
+      border: 1px solid var(--rule-light);
+      border-radius: 14px;
+      background: rgba(250, 247, 240, 0.92);
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    .portal-search:focus {
+      border-color: rgba(200,130,26,.45);
+      box-shadow: 0 0 0 4px rgba(200,130,26,.10);
+      background: var(--white);
+    }
+
+    .portal-search::placeholder {
+      color: var(--text-muted);
+    }
+
     .doc-body p {
       font-size: 15px;
       line-height: 1.6;
@@ -3061,6 +3967,254 @@ modal.querySelectorAll('textarea').forEach(field => {
       background: var(--amber-light);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(200,130,26,.3);
+    }
+
+    .view-pdf-btn:disabled {
+      opacity: .72;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .profile-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .profile-hero-card {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 68%, rgba(36,59,85,0.96) 100%);
+      border-radius: 24px;
+      padding: 34px;
+      color: var(--white);
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) 300px;
+      gap: 24px;
+      align-items: stretch;
+      box-shadow: 0 24px 60px rgba(13,27,42,.18);
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .profile-kicker {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--amber-light);
+      margin-bottom: 12px;
+    }
+
+    .profile-hero-copy h2 {
+      margin: 0 0 12px;
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      line-height: 1.08;
+    }
+
+    .profile-hero-copy p {
+      margin: 0;
+      color: rgba(255,255,255,.72);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 660px;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .profile-pill {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      letter-spacing: .4px;
+    }
+
+    .profile-identity-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .profile-avatar-lg {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), rgba(232,168,64,.22));
+      border: 2px solid rgba(232,168,64,.45);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 0 6px rgba(232,168,64,.08);
+    }
+
+    .profile-identity-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      line-height: 1.15;
+      margin-bottom: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-identity-email {
+      font-size: 14px;
+      color: rgba(255,255,255,.76);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .profile-identity-meta {
+      margin-top: 14px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.52);
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, .95fr);
+      gap: 24px;
+      align-items: start;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .profile-card {
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .profile-card-head {
+      margin-bottom: 22px;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .profile-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .profile-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .profile-field-full {
+      grid-column: 1 / -1;
+    }
+
+    .profile-label {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .profile-input {
+      width: 100%;
+      border: 1px solid var(--rule-light);
+      border-radius: 14px;
+      background: rgba(250,247,240,.92);
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      font-family: 'DM Sans', sans-serif;
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .profile-input:focus {
+      border-color: rgba(200,130,26,.45);
+      box-shadow: 0 0 0 4px rgba(200,130,26,.10);
+      background: var(--white);
+    }
+
+    .profile-actions {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .profile-alert {
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      margin-bottom: 18px;
+      border: 1px solid;
+    }
+
+    .profile-alert.success {
+      background: rgba(45,106,79,.08);
+      border-color: rgba(45,106,79,.22);
+      color: #2d6a4f;
+    }
+
+    .profile-alert.error {
+      background: rgba(177,48,48,.08);
+      border-color: rgba(177,48,48,.18);
+      color: #9b2c2c;
+    }
+
+    .profile-usage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .profile-usage-item {
+      border: 1px solid var(--rule-light);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.96) 0%, rgba(245,240,232,.78) 100%);
+      padding: 18px;
+    }
+
+    .profile-usage-item strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+      color: var(--navy);
+    }
+
+    .profile-usage-item span {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
     }
 
     .tools-body {
@@ -3386,6 +4540,94 @@ modal.querySelectorAll('textarea').forEach(field => {
 
       .launch-tool-btn {
         width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .profile-layout,
+      .profile-hero-card,
+      .profile-grid,
+      .profile-form,
+      .profile-form-grid,
+      .profile-field,
+      .profile-card,
+      .profile-card-head,
+      .profile-hero-copy,
+      .profile-identity-card,
+      .profile-pill-row {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      .profile-hero-card,
+      .profile-grid {
+        gap: 16px !important;
+      }
+
+      .profile-hero-card,
+      .profile-card,
+      .profile-identity-card {
+        padding: 18px !important;
+      }
+
+      .profile-hero-copy h2,
+      .profile-identity-name,
+      .profile-identity-email,
+      .profile-label,
+      .profile-alert,
+      .profile-usage-item span,
+      .profile-usage-item strong {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      .profile-hero-copy h2 {
+        font-size: 28px !important;
+        line-height: 1.15 !important;
+        margin-bottom: 10px !important;
+      }
+
+      .profile-hero-copy p {
+        max-width: 100% !important;
+        overflow-wrap: anywhere !important;
+      }
+
+      .profile-pill {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      .profile-identity-card {
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+      }
+
+      .profile-avatar-lg {
+        width: 72px !important;
+        height: 72px !important;
+        font-size: 24px !important;
+        margin-bottom: 12px !important;
+      }
+
+      .profile-form-grid,
+      .profile-field-full {
+        grid-column: auto !important;
+      }
+
+      .profile-input,
+      .profile-actions,
+      .profile-actions .view-pdf-btn {
+        width: 100% !important;
+        max-width: 100% !important;
       }
     }
 </style>

@@ -1,0 +1,1424 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMD Calendar + Tax Impact Estimator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --amber: #E67E22;
+  --red: #C0392B;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+.logo { text-decoration: none; }
+.logo-text { font-family: 'Playfair Display', serif; color: var(--white); font-size: 18px; font-weight: 600; }
+.logo-text span { color: var(--gold); }
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px;
+  padding: 8px 18px;
+  margin-bottom: 28px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.66);
+  line-height: 1.7;
+  max-width: 760px;
+  margin: 0 auto 38px;
+  font-weight: 300;
+}
+.hero-points { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hero-point {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+.wizard-section, .analysis-section, .report-section { padding: 52px 24px 30px; }
+.wizard-grid {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.sticky-sidebar { position: sticky; top: 94px; }
+.sidebar-card, .form-card, .analysis-card, .report-shell, .disclaimer {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+.sidebar-card { padding: 28px; }
+.sidebar-label, .step-label, .section-kicker, .report-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sidebar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 8px 0 14px;
+}
+.sidebar-copy { font-size: 14px; color: var(--text-mid); margin-bottom: 22px; }
+.step-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+.step-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid transparent;
+}
+.step-item.active { border-color: rgba(201,168,76,0.4); background: var(--gold-glow); }
+.step-item.done .step-num { background: var(--gold); color: var(--navy); }
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream-dark);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.step-title { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.step-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.sidebar-note {
+  border-radius: 14px;
+  background: var(--navy);
+  color: rgba(255,255,255,0.78);
+  padding: 18px;
+  font-size: 13px;
+}
+.sidebar-note strong { color: var(--white); display: block; margin-bottom: 6px; }
+.form-card { overflow: hidden; }
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 28px 30px;
+}
+.form-header-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.24);
+  color: var(--gold);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+.progress-inline { color: rgba(255,255,255,0.62); font-size: 12px; font-weight: 600; }
+.form-title {
+  font-family: 'Playfair Display', serif;
+  color: var(--white);
+  font-size: 34px;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+.form-sub { color: rgba(255,255,255,0.64); font-size: 15px; max-width: 760px; }
+.progress-bar {
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 999px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 33.33%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.step-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  line-height: 1.18;
+  color: var(--navy);
+  margin: 8px 0;
+}
+.step-help { font-size: 14px; color: var(--text-light); margin-bottom: 24px; max-width: 720px; }
+.field-grid, .insight-grid, .metric-grid, .compare-grid, .timeline-grid {
+  display: grid;
+  gap: 18px;
+}
+.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.insight-grid, .metric-grid, .compare-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.timeline-grid { grid-template-columns: 1fr; }
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-bottom: 8px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  background: var(--white);
+}
+.field-textarea { min-height: 120px; resize: vertical; }
+.field-note { margin-top: 7px; font-size: 12px; color: var(--text-light); }
+.btn-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; }
+.btn-back, .btn-next, .btn-print, .btn-secondary {
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-back, .btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--text-mid);
+  padding: 13px 18px;
+}
+.btn-next, .btn-print {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 13px 20px;
+}
+.btn-next:hover, .btn-print:hover { background: var(--gold-light); }
+.analysis-section, .report-section { display: none; }
+.analysis-section.active, .report-section.active { display: block; }
+.analysis-card { max-width: 920px; margin: 0 auto; padding: 42px 28px; text-align: center; }
+.analysis-orb {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold));
+  position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+.analysis-orb::after {
+  content: '';
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.16;
+}
+.analysis-title { font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); margin-bottom: 8px; }
+.analysis-sub { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
+.analysis-steps { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.analysis-step {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+.analysis-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.analysis-step.done .analysis-indicator { background: var(--gold); color: var(--navy); }
+.analysis-text { font-size: 14px; color: var(--text-mid); }
+.report-shell { max-width: 1080px; margin: 0 auto; overflow: hidden; }
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: 36px 32px 30px;
+  color: var(--white);
+}
+.report-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.1;
+  margin: 10px 0 12px;
+}
+.report-subtitle { color: rgba(255,255,255,0.72); font-size: 15px; max-width: 780px; }
+.report-meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+.report-meta-item, .pill {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.report-body { padding: 28px; display: grid; gap: 22px; }
+.hero-summary, .section-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+.hero-summary {
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; }
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  color: var(--navy);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+.summary-title em { color: var(--gold); font-style: normal; }
+.summary-copy { font-size: 15px; color: var(--text-mid); }
+.summary-benchmark {
+  background: var(--navy);
+  color: rgba(255,255,255,0.82);
+  border-radius: 16px;
+  padding: 22px;
+}
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--white);
+  line-height: 1.14;
+  margin: 8px 0 10px;
+}
+.metric-card, .compare-card, .timeline-card, .insight-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+.metric-label, .compare-card .label, .timeline-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-light);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.metric-value, .compare-card .value {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.metric-sub, .compare-card .sub, .timeline-sub, .insight-card span { font-size: 12px; color: var(--text-light); }
+.section-card { padding: 24px; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-top: 4px;
+}
+.section-copy { font-size: 13px; color: var(--text-light); max-width: 650px; }
+.pill { background: var(--cream); border-color: var(--border); color: var(--navy); }
+.timeline-card {
+  display: grid;
+  grid-template-columns: 110px 1fr 140px 140px 140px;
+  gap: 16px;
+  align-items: center;
+}
+.timeline-age {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--navy);
+  line-height: 1;
+}
+.timeline-meta { font-size: 13px; color: var(--text-mid); }
+.timeline-value { font-weight: 700; color: var(--navy); font-size: 14px; }
+.callout {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: var(--text-mid);
+}
+.report-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 0 28px 28px;
+}
+.report-note { font-size: 12px; color: var(--text-light); }
+.disclaimer { max-width: 1080px; margin: 0 auto 64px; padding: 24px 28px 32px; }
+.disclaimer p { font-size: 11px; color: var(--text-light); line-height: 1.7; }
+.disclaimer strong { color: var(--text-mid); }
+.fade-up { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 980px) {
+  .wizard-grid, .field-grid, .insight-grid, .metric-grid, .compare-grid, .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .sticky-sidebar { position: static; }
+  .timeline-card { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section, .analysis-section, .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card, .form-body, .report-body, .section-card, .hero-summary, .analysis-card, .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header, .report-header { padding: 28px 20px; }
+  .step-question, .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row, .section-head, .report-actions, .form-header-top { flex-direction: column; align-items: stretch; }
+  .report-actions > div:last-child { width: 100%; }
+  .report-actions > div:last-child button { width: 100%; }
+}
+@media print {
+  body { background: #fff; }
+  .site-header, .hero, .wizard-section, .analysis-section, .report-actions, .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell { max-width: none !important; border: none !important; box-shadow: none !important; }
+  .hero-summary, .section-card { break-inside: avoid; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">IRS Publication 590-B Tool</div>
+    <h1>RMD Calendar + <em>Tax Impact</em> Estimator</h1>
+    <p class="hero-sub">Calculate required minimum distributions using the IRS Uniform Lifetime Table, project the year-by-year tax drag, and frame the schedule against how many RMD years local longevity suggests you may need to plan for.</p>
+    <div class="hero-points">
+      <div class="hero-point">IRS 590-B Uniform Lifetime Table</div>
+      <div class="hero-point">Year-over-year withdrawal and tax view</div>
+      <div class="hero-point">County-aware longevity framing + reminder schedule</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">RMD Builder</div>
+        <div class="sidebar-title">This is the retirement tax deadline people keep meeting every single year.</div>
+        <div class="sidebar-copy">The job of this tool is not just showing one divisor. It turns RMDs into an annual calendar, a tax estimate, and a planning horizon so the user knows what future Decembers are likely to look like.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Deadline</div>
+              <div class="step-sub">Age, filing status, ZIP, and current RMD stage</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Account & Tax Inputs</div>
+              <div class="step-sub">Prior year-end balance, other income, growth, and tax rates</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Reminders & Planning</div>
+              <div class="step-sub">Reminder cadence and planner notes for the saved report</div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-note">
+          <strong>Method note</strong>
+          This tool uses the Uniform Lifetime Table from IRS Publication 590-B for standard owner calculations. It does not apply the special spouse table for a sole beneficiary more than 10 years younger.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See the RMD schedule before it becomes a year-end scramble.</div>
+        <div class="form-sub">This tool estimates the next RMD deadline, the yearly withdrawal path, and the rough tax cost if distributions continue through the likely planning horizon.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Whose RMD calendar are we building?</div>
+          <div class="step-help">These fields set the required beginning age, the first deadline logic, and the local longevity overlay shown in the saved report.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret Lewis">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="currentAge">Current Age</label>
+              <input class="field-input" id="currentAge" type="number" min="60" max="100" placeholder="e.g. 74">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateSelect">State</label>
+              <select class="field-select" id="stateSelect"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="zipCode">ZIP Code</label>
+              <input class="field-input" id="zipCode" type="text" maxlength="5" placeholder="e.g. 33480">
+              <div class="field-note">If a ZIP match is found, county and state can be auto-filled for the longevity overlay.</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="filingStatus">Tax Filing Status</label>
+              <select class="field-select" id="filingStatus">
+                <option value="" selected disabled>Select one...</option>
+                <option value="single">Single</option>
+                <option value="joint">Married filing jointly</option>
+                <option value="separate">Married filing separately</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="rmdStage">RMD Status Right Now</label>
+              <select class="field-select" id="rmdStage">
+                <option value="" selected disabled>Select one...</option>
+                <option value="not_yet">Not yet subject to RMDs</option>
+                <option value="first_year">This is the first RMD year</option>
+                <option value="ongoing">Already taking annual RMDs</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="metric-card">
+              <div class="metric-label">Why this matters</div>
+              <div class="metric-sub">RMDs create a recurring tax event that retirees often underestimate until late in the year.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What this catches</div>
+              <div class="metric-sub">The first-year April 1 deadline, the usual December 31 cadence, and how rising balances change future distributions.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What comes later</div>
+              <div class="metric-sub">Reminder rows are saved so this can become an annual re-engagement system instead of a one-time calculator.</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What account balance and tax assumptions should we project?</div>
+          <div class="step-help">Use the prior December 31 balance for the current-year RMD. The tax estimate applies the entered federal and state marginal rates to projected RMDs year by year.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="priorYearEndBalance">Prior Year-End IRA Balance</label>
+              <input class="field-input" id="priorYearEndBalance" type="text" placeholder="e.g. 850000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="otherTaxableIncome">Other Taxable Income This Year</label>
+              <input class="field-input" id="otherTaxableIncome" type="text" placeholder="e.g. 90000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="growthRate">Projected Annual Growth Rate</label>
+              <input class="field-input" id="growthRate" type="text" placeholder="e.g. 5.5">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="federalTaxRate">Estimated Marginal Federal Tax Rate</label>
+              <input class="field-input" id="federalTaxRate" type="text" placeholder="e.g. 22">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateTaxRate">Estimated State Tax Rate</label>
+              <input class="field-input" id="stateTaxRate" type="text" placeholder="e.g. 5">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="projectionYears">Projection Length</label>
+              <select class="field-select" id="projectionYears">
+                <option value="10">10 years</option>
+                <option value="15">15 years</option>
+                <option value="20">20 years</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">How should the reminder and planning layer be framed?</div>
+          <div class="step-help">The saved report will include the next deadline plus 90-day, 30-day, and 7-day reminder dates if enough time remains before the deadline.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="reminderPreference">Reminder Preference</label>
+              <select class="field-select" id="reminderPreference">
+                <option value="email_portal">Email + portal reminders</option>
+                <option value="portal_only">Portal reminders only</option>
+                <option value="summary_only">Summary only for now</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="distributionIntent">Distribution Intent</label>
+              <select class="field-select" id="distributionIntent">
+                <option value="as_needed">Spend what is needed and reinvest the rest later</option>
+                <option value="reinvest">Likely reinvest taxable excess</option>
+                <option value="cash_buffer">Likely hold part of it in cash for upcoming spending</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="notes">Planning Notes</label>
+              <textarea class="field-textarea" id="notes" placeholder="e.g. We want this scheduled before Thanksgiving every year so we do not bump into year-end custody delays."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateRmdReport()">Generate My RMD Report →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your RMD Calendar</div>
+    <div class="analysis-sub" id="analysisSub">Calculating the IRS divisor, next deadline, tax drag, and planning horizon.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Matching age to the required beginning age rule and the IRS divisor table...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Projecting the annual RMD schedule from the prior year-end balance forward...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Estimating the year-by-year federal and state tax drag on those distributions...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Saving the report and building reminder dates around the next RMD deadline...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">IRS 590-B RMD Planning Report</div>
+      <div class="report-title" id="reportTitle">RMD Calendar + Tax Impact Estimator</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved year-by-year required minimum distribution report with deadline reminders and local longevity framing.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County overlay pending</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="section-kicker">Annual Withdrawal Map</div>
+            <div class="summary-title" id="summaryTitle">Your next estimated <em>RMD</em> and the years after it.</div>
+            <div class="summary-copy" id="summaryCopy">The report summary appears here after the tool is run.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="section-kicker" style="color:rgba(255,255,255,0.6);">Longevity Overlay</div>
+            <div class="headline" id="benchmarkHeadline">How many RMD years are you statistically planning for?</div>
+            <div id="benchmarkCopy">The county-adjusted planning horizon will appear here.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid" style="margin-top:22px;">
+          <div class="metric-card">
+            <div class="metric-label">Next RMD</div>
+            <div class="metric-value" id="nextRmdValue">$0</div>
+            <div class="metric-sub" id="nextRmdSub">Current-year estimate</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Next Deadline</div>
+            <div class="metric-value" id="nextDeadlineValue">—</div>
+            <div class="metric-sub" id="nextDeadlineSub">Normal annual cadence</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Estimated Tax on Next RMD</div>
+            <div class="metric-value" id="nextTaxValue">$0</div>
+            <div class="metric-sub" id="nextTaxSub">Federal + state estimate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Planning Snapshot</div>
+            <div class="section-title">The three numbers that matter most right now</div>
+            <div class="section-copy">These cards anchor the conversation before someone dives into the yearly table.</div>
+          </div>
+          <div class="pill" id="statusPill">RMD status</div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Year-By-Year Projection</div>
+            <div class="section-title">How the withdrawal and tax drag change over time</div>
+            <div class="section-copy">Each row shows the projected year-end balance used for the next cycle, the divisor applied, and the estimated taxes tied to that year's RMD.</div>
+          </div>
+          <div class="pill" id="projectionPill">Projection</div>
+        </div>
+        <div class="timeline-grid" id="timelineGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Reminder Calendar</div>
+            <div class="section-title">What date should trigger follow-up before the deadline?</div>
+            <div class="section-copy">These dates are saved with the report so the product can re-engage the user every year instead of hoping they remember in December.</div>
+          </div>
+          <div class="pill" id="reminderPill">Reminder cadence</div>
+        </div>
+        <div class="compare-grid" id="reminderGrid"></div>
+      </div>
+
+      <div class="callout" id="rmdCallout">The planning callout appears here after the report is generated.</div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Saved to your portal Documents tab when generated. Use Edit to revise assumptions without losing the look and flow of the current tools.</div>
+      <div style="display:flex; gap:12px;">
+        <button class="btn-secondary" type="button" onclick="editRmdReport()">Edit Inputs</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This RMD tool is for educational purposes only and does not constitute tax, legal, investment, or financial advice. Required minimum distributions are estimated using the Uniform Lifetime Table from IRS Publication 590-B and simplified assumptions entered by the user. Tax impact estimates in this report are rough planning estimates that apply user-entered marginal tax rates to projected distributions; they are not a substitute for tax preparation, bracket-level modeling, or advice from a CPA or enrolled agent. County and ZIP-based longevity framing is illustrative and should be treated as a planning prompt, not a prediction. Review all RMD timing, withholding, beneficiary, and rollover decisions with a qualified tax professional before acting. © 2026 Retirement Shield. All rights reserved.</p>
+</div>
+
+<script is:inline>
+const CURRENT_DATE = new Date('2026-04-15T12:00:00');
+const CURRENT_YEAR = 2026;
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+const STATE_LONGEVITY = {
+  CA: 84.0, FL: 83.2, NY: 83.4, NJ: 83.8, WA: 83.2, MA: 84.1, MD: 82.8, CO: 82.6,
+  OR: 82.7, AZ: 82.1, TX: 80.9, NC: 80.7, GA: 80.1, PA: 81.3, OH: 79.8, MI: 79.9,
+  TN: 78.9, SC: 79.4, AL: 77.9, LA: 76.8
+};
+const UNIFORM_LIFETIME_DIVISORS = {
+  72:27.4,73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,79:21.1,80:20.2,81:19.4,
+  82:18.5,83:17.7,84:16.8,85:16.0,86:15.2,87:14.4,88:13.7,89:12.9,90:12.2,91:11.5,
+  92:10.8,93:10.1,94:9.5,95:8.9,96:8.4,97:7.8,98:7.3,99:6.8,100:6.4,101:6.0,
+  102:5.6,103:5.2,104:4.9,105:4.6,106:4.3,107:4.1,108:3.9,109:3.7,110:3.5,111:3.4,
+  112:3.3,113:3.1,114:3.0,115:2.9,116:2.8,117:2.7,118:2.5,119:2.3,120:2.0
+};
+
+let latestRmdPayload = null;
+
+const stateSelect = document.getElementById('stateSelect');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([code, name]) => {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function formatPercent(value) {
+  return `${Number(value || 0).toFixed(1)}%`;
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parsePercent(value, fallback = 0) {
+  const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function stateName(code) {
+  return STATE_OPTIONS.find(([v]) => v === code)?.[1] ?? code;
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function getGeoScalar(zip) {
+  const z = parseInt(zip, 10) || 33101;
+  if ((z >= 33101 && z <= 33299) || (z >= 80400 && z <= 80699) || (z >= 96700 && z <= 96899) || (z >= 10001 && z <= 10099)) return 0.92;
+  if ((z >= 38600 && z <= 39999) || (z >= 24700 && z <= 26899)) return 1.12;
+  return 1.0;
+}
+
+function getRequiredBeginningAge(birthYear) {
+  if (birthYear <= 1950) return 72;
+  if (birthYear <= 1959) return 73;
+  return 75;
+}
+
+function getLongevityAge(stateCode, currentAge, zipCode) {
+  const base = STATE_LONGEVITY[stateCode] || 81.5;
+  const geoScalar = getGeoScalar(zipCode);
+  const yearsAdjustment = (1 - geoScalar) * 10;
+  return Math.max(currentAge + 6, base + yearsAdjustment);
+}
+
+function getDivisor(age) {
+  if (UNIFORM_LIFETIME_DIVISORS[age]) return UNIFORM_LIFETIME_DIVISORS[age];
+  if (age < 72) return UNIFORM_LIFETIME_DIVISORS[72];
+  return UNIFORM_LIFETIME_DIVISORS[120];
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function addDays(date, days) {
+  const copy = new Date(date);
+  copy.setDate(copy.getDate() + days);
+  return copy;
+}
+
+function determineDeadline(stage) {
+  if (stage === 'first_year') return new Date('2027-04-01T12:00:00');
+  if (stage === 'ongoing') return new Date('2026-12-31T12:00:00');
+  return null;
+}
+
+async function resolveZipLocation(zip) {
+  const supabase = window.rmdCalendarSupabase;
+  if (!supabase || !zip || zip.length !== 5) return null;
+  const { data, error } = await supabase
+    .from('zip_county_lookup')
+    .select('county_name, state_name')
+    .eq('zip', zip)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data;
+}
+
+document.getElementById('zipCode').addEventListener('blur', async () => {
+  const zip = document.getElementById('zipCode').value.trim();
+  const location = await resolveZipLocation(zip);
+  if (!location) return;
+  if (!document.getElementById('countyName').value.trim()) {
+    document.getElementById('countyName').value = `${location.county_name} County`;
+  }
+  const stateCode = STATE_OPTIONS.find(([, name]) => name === location.state_name)?.[0];
+  if (stateCode && !document.getElementById('stateSelect').value) {
+    document.getElementById('stateSelect').value = stateCode;
+  }
+});
+
+function buildProjection(balance, startAge, startYear, years, growthRate, federalTaxRate, stateTaxRate, otherIncome) {
+  const rows = [];
+  let startingBalance = balance;
+
+  for (let offset = 0; offset < years; offset += 1) {
+    const age = startAge + offset;
+    const divisor = getDivisor(age);
+    const rmd = divisor > 0 ? startingBalance / divisor : 0;
+    const federalTax = rmd * (federalTaxRate / 100);
+    const stateTax = rmd * (stateTaxRate / 100);
+    const totalTax = federalTax + stateTax;
+    const afterTax = rmd - totalTax;
+    const endingBalance = Math.max(0, (startingBalance - rmd) * (1 + growthRate / 100));
+    const combinedIncome = otherIncome + rmd;
+
+    rows.push({
+      year: startYear + offset,
+      age,
+      divisor,
+      startingBalance,
+      rmd,
+      federalTax,
+      stateTax,
+      totalTax,
+      afterTax,
+      endingBalance,
+      combinedIncome
+    });
+
+    startingBalance = endingBalance;
+  }
+
+  return rows;
+}
+
+function buildReminderDates(deadline) {
+  if (!deadline) return [];
+  return [
+    { label: '90 days before', date: addDays(deadline, -90), type: 'ninety_day' },
+    { label: '30 days before', date: addDays(deadline, -30), type: 'thirty_day' },
+    { label: '7 days before', date: addDays(deadline, -7), type: 'seven_day' }
+  ]
+    .filter((item) => item.date >= CURRENT_DATE)
+    .map((item) => ({ ...item, date: item.date.toISOString() }));
+}
+
+function buildNarrative(payload) {
+  const nextRow = payload.projectionRows[0];
+  const lastRow = payload.projectionRows[payload.projectionRows.length - 1];
+  return `The current estimate shows an RMD of about ${formatMoney(nextRow.rmd)} due by ${formatDate(payload.nextDeadline)}. At the entered tax rates, that year's distribution may create roughly ${formatMoney(nextRow.totalTax)} of tax drag. If the account grows near ${formatPercent(payload.growthRate)}, the projected annual RMD rises to about ${formatMoney(lastRow.rmd)} by age ${lastRow.age}. ${payload.notes ? payload.notes : 'That is why this should be treated like an annual operating calendar item, not a one-time tax task.'}`;
+}
+
+function buildRmdPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const currentAge = Number(document.getElementById('currentAge').value || 0);
+  const stateCode = document.getElementById('stateSelect').value;
+  const stateFullName = stateName(stateCode);
+  const zipCode = document.getElementById('zipCode').value.trim();
+  const countyName = document.getElementById('countyName').value.trim();
+  const filingStatus = document.getElementById('filingStatus').value;
+  const rmdStage = document.getElementById('rmdStage').value;
+  const priorYearEndBalance = parseMoney(document.getElementById('priorYearEndBalance').value);
+  const otherTaxableIncome = parseMoney(document.getElementById('otherTaxableIncome').value);
+  const growthRate = parsePercent(document.getElementById('growthRate').value, 5);
+  const federalTaxRate = parsePercent(document.getElementById('federalTaxRate').value, 22);
+  const stateTaxRate = parsePercent(document.getElementById('stateTaxRate').value, 0);
+  const projectionYears = Number(document.getElementById('projectionYears').value || 10);
+  const reminderPreference = document.getElementById('reminderPreference').value;
+  const distributionIntent = document.getElementById('distributionIntent').value;
+  const notes = document.getElementById('notes').value.trim();
+
+  const birthYear = CURRENT_YEAR - currentAge;
+  const requiredBeginningAge = getRequiredBeginningAge(birthYear);
+  const firstRmdYear = birthYear + requiredBeginningAge;
+  const isRmdEligible = CURRENT_YEAR >= firstRmdYear;
+  const inferredStage = !isRmdEligible ? 'not_yet' : (rmdStage || 'ongoing');
+  const nextDeadline = determineDeadline(inferredStage) || new Date(`${firstRmdYear}-12-31T12:00:00`);
+  const projectionStartAge = Math.max(requiredBeginningAge, currentAge);
+  const projectionStartYear = Math.max(CURRENT_YEAR, firstRmdYear);
+  const longevityAge = getLongevityAge(stateCode, currentAge, zipCode);
+  const projectionLimit = Math.max(1, Math.min(projectionYears, Math.ceil(longevityAge - projectionStartAge + 1)));
+  const projectionRows = buildProjection(
+    priorYearEndBalance,
+    projectionStartAge,
+    projectionStartYear,
+    projectionLimit,
+    growthRate,
+    federalTaxRate,
+    stateTaxRate,
+    otherTaxableIncome
+  );
+  const reminderDates = buildReminderDates(nextDeadline);
+  const nextRow = projectionRows[0];
+  const planningYears = Math.max(0, longevityAge - projectionStartAge);
+  const narrative = buildNarrative({
+    projectionRows,
+    nextDeadline,
+    growthRate,
+    notes
+  });
+
+  return {
+    fullName,
+    currentAge,
+    birthYear,
+    stateCode,
+    stateName: stateFullName,
+    zipCode,
+    countyName,
+    filingStatus,
+    rmdStage: inferredStage,
+    requiredBeginningAge,
+    firstRmdYear,
+    priorYearEndBalance,
+    otherTaxableIncome,
+    growthRate,
+    federalTaxRate,
+    stateTaxRate,
+    projectionYears: projectionLimit,
+    reminderPreference,
+    distributionIntent,
+    notes,
+    nextDeadline: nextDeadline.toISOString(),
+    longevityAge,
+    planningYears,
+    projectionRows,
+    reminderDates,
+    narrative,
+    headlineRmd: nextRow ? nextRow.rmd : 0,
+    headlineTax: nextRow ? nextRow.totalTax : 0,
+    headlineAge: projectionStartAge
+  };
+}
+
+function renderReminderGrid(reminders, deadline) {
+  const items = reminders.length ? reminders.map((item) => ({
+    label: item.label,
+    value: formatDate(item.date),
+    sub: `Relative to ${formatDate(deadline)}`
+  })) : [{
+    label: 'Next reminder',
+    value: 'Deadline soon',
+    sub: `The next deadline is ${formatDate(deadline)} and some earlier reminder windows have already passed.`
+  }];
+
+  document.getElementById('reminderGrid').innerHTML = items.map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value" style="font-size:24px;">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+}
+
+function renderTimeline(rows) {
+  document.getElementById('timelineGrid').innerHTML = rows.map((row) => `
+    <div class="timeline-card">
+      <div>
+        <div class="timeline-label">Age ${row.age}</div>
+        <div class="timeline-age">${row.year}</div>
+      </div>
+      <div class="timeline-meta">
+        <div><strong>Divisor:</strong> ${row.divisor.toFixed(1)}</div>
+        <div><strong>Start balance:</strong> ${formatMoney(row.startingBalance)}</div>
+      </div>
+      <div>
+        <div class="timeline-label">RMD</div>
+        <div class="timeline-value">${formatMoney(row.rmd)}</div>
+      </div>
+      <div>
+        <div class="timeline-label">Est. Tax</div>
+        <div class="timeline-value">${formatMoney(row.totalTax)}</div>
+      </div>
+      <div>
+        <div class="timeline-label">End Balance</div>
+        <div class="timeline-value">${formatMoney(row.endingBalance)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRmdReport(payload) {
+  latestRmdPayload = payload;
+  const nextRow = payload.projectionRows[0];
+
+  document.getElementById('reportTitle').textContent = `RMD Calendar + Tax Impact Estimator for ${payload.fullName || 'Your Plan'}`;
+  document.getElementById('reportSubtitle').textContent = `A saved RMD schedule for ${payload.countyName || 'your local area'}${payload.stateName ? `, ${payload.stateName}` : ''}, built from IRS Publication 590-B tables and your tax assumptions.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'} · ${payload.stateName || 'State not entered'} longevity overlay`;
+  document.getElementById('metaDate').textContent = `Generated ${formatDate(CURRENT_DATE)}`;
+
+  document.getElementById('summaryTitle').innerHTML = `Your next estimated <em>RMD</em> is ${formatMoney(nextRow.rmd)}.`;
+  document.getElementById('summaryCopy').textContent = payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `${payload.planningYears.toFixed(1)} expected RMD planning years from age ${payload.headlineAge}`;
+  document.getElementById('benchmarkCopy').textContent = `Using a ${payload.zipCode ? 'ZIP-adjusted' : 'state-based'} longevity overlay for ${payload.countyName || payload.stateName || 'your area'}, this plan is framing roughly ${payload.planningYears.toFixed(1)} years of RMD decisions through about age ${payload.longevityAge.toFixed(1)}.`;
+
+  document.getElementById('nextRmdValue').textContent = formatMoney(nextRow.rmd);
+  document.getElementById('nextRmdSub').textContent = `Age ${nextRow.age} divisor ${nextRow.divisor.toFixed(1)}`;
+  document.getElementById('nextDeadlineValue').textContent = formatDate(new Date(payload.nextDeadline));
+  document.getElementById('nextDeadlineSub').textContent = payload.rmdStage === 'first_year' ? 'First-year RMD may be delayed to April 1, 2027' : 'Normal annual deadline cadence';
+  document.getElementById('nextTaxValue').textContent = formatMoney(nextRow.totalTax);
+  document.getElementById('nextTaxSub').textContent = `${formatPercent(payload.federalTaxRate)} federal + ${formatPercent(payload.stateTaxRate)} state estimate`;
+
+  document.getElementById('statusPill').textContent = payload.rmdStage === 'not_yet' ? `First RMD year: ${payload.firstRmdYear}` : `Required beginning age: ${payload.requiredBeginningAge}`;
+  document.getElementById('projectionPill').textContent = `${payload.projectionRows.length} projected RMD years`;
+  document.getElementById('reminderPill').textContent = payload.reminderPreference.replaceAll('_', ' ');
+
+  document.getElementById('compareGrid').innerHTML = [
+    {
+      label: 'Required Beginning Age',
+      value: `${payload.requiredBeginningAge}`,
+      sub: `Based on birth year ${payload.birthYear}`
+    },
+    {
+      label: 'Projected Taxable Income',
+      value: formatMoney(nextRow.combinedIncome),
+      sub: `${formatMoney(payload.otherTaxableIncome)} other income plus next RMD`
+    },
+    {
+      label: 'After-Tax RMD',
+      value: formatMoney(nextRow.afterTax),
+      sub: 'Estimated spendable amount after projected taxes'
+    }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  renderTimeline(payload.projectionRows);
+  renderReminderGrid(payload.reminderDates.map((item) => ({ ...item, date: new Date(item.date) })), new Date(payload.nextDeadline));
+  document.getElementById('rmdCallout').textContent = payload.distributionIntent === 'reinvest'
+    ? `${payload.narrative} Because the intent is to reinvest excess distributions, the key planning friction is not cash flow. It is avoiding a last-minute taxable event with no withholding plan.`
+    : payload.distributionIntent === 'cash_buffer'
+      ? `${payload.narrative} Because part of the distribution may be held in cash, the planning conversation should pair the RMD calendar with near-term spending and withholding decisions.`
+      : payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Calculating the RMD schedule for ${payload.fullName || 'your plan'} in ${payload.stateName || 'your state'}.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveRmdReminders(reportId, payload) {
+  const supabase = window.rmdCalendarSupabase;
+  if (!supabase) return;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId || !payload.reminderDates.length) return;
+
+  const rows = payload.reminderDates.map((item) => ({
+    user_id: userId,
+    report_id: reportId,
+    tool_slug: 'rmd-calendar-tax-estimator',
+    reminder_type: item.type,
+    target_deadline_date: payload.nextDeadline.slice(0, 10),
+    scheduled_for: item.date.slice(0, 10),
+    delivery_channel: payload.reminderPreference,
+    status: 'pending',
+    payload: {
+      fullName: payload.fullName,
+      nextDeadline: payload.nextDeadline,
+      headlineRmd: payload.headlineRmd
+    }
+  }));
+
+  const { error } = await supabase
+    .from('rmd_deadline_reminders')
+    .upsert(rows, { onConflict: 'user_id,tool_slug,reminder_type,target_deadline_date' });
+
+  if (error) {
+    console.error('Failed to save RMD reminder rows:', error);
+  }
+}
+
+async function saveRmdReport(payload) {
+  const supabase = window.rmdCalendarSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_code: payload.stateCode || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    zip_code: payload.zipCode || null,
+    filing_status: payload.filingStatus || null,
+    current_age: payload.currentAge || null,
+    birth_year: payload.birthYear || null,
+    required_beginning_age: payload.requiredBeginningAge,
+    first_rmd_year: payload.firstRmdYear,
+    rmd_stage: payload.rmdStage,
+    prior_year_end_balance: payload.priorYearEndBalance,
+    projected_growth_rate_pct: payload.growthRate,
+    marginal_federal_tax_rate_pct: payload.federalTaxRate,
+    state_tax_rate_pct: payload.stateTaxRate,
+    other_taxable_income: payload.otherTaxableIncome,
+    next_rmd_amount: payload.headlineRmd,
+    next_rmd_deadline: payload.nextDeadline.slice(0, 10),
+    next_rmd_estimated_tax: payload.headlineTax,
+    longevity_target_age: payload.longevityAge,
+    projected_rmd_years: payload.planningYears,
+    reminder_preference: payload.reminderPreference,
+    report_title: `RMD Calendar + Tax Impact Estimator for ${payload.fullName || 'Your Plan'}`,
+    report_payload: payload
+  };
+
+  const { data: inserted, error } = await supabase
+    .from('rmd_calendar_reports')
+    .insert(insertPayload)
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('Failed to save RMD report:', error);
+    return null;
+  }
+
+  if (inserted?.id) {
+    await saveRmdReminders(inserted.id, payload);
+  }
+
+  return inserted;
+}
+
+function showGeneratedRmdReport(payload) {
+  renderRmdReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedRmdReport(payload) {
+  renderRmdReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedRmdReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+
+  const fields = {
+    fullName: payload.fullName,
+    currentAge: payload.currentAge,
+    zipCode: payload.zipCode,
+    countyName: payload.countyName,
+    priorYearEndBalance: payload.priorYearEndBalance,
+    otherTaxableIncome: payload.otherTaxableIncome,
+    growthRate: payload.growthRate,
+    federalTaxRate: payload.federalTaxRate,
+    stateTaxRate: payload.stateTaxRate,
+    notes: payload.notes
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = String(value);
+  });
+
+  if (payload.stateCode) document.getElementById('stateSelect').value = payload.stateCode;
+  if (payload.filingStatus) document.getElementById('filingStatus').value = payload.filingStatus;
+  if (payload.rmdStage) document.getElementById('rmdStage').value = payload.rmdStage;
+  if (payload.projectionYears) document.getElementById('projectionYears').value = String(Math.max(10, Math.min(20, Math.ceil(payload.projectionYears / 5) * 5)));
+  if (payload.reminderPreference) document.getElementById('reminderPreference').value = payload.reminderPreference;
+  if (payload.distributionIntent) document.getElementById('distributionIntent').value = payload.distributionIntent;
+
+  showHydratedRmdReport(payload);
+  return true;
+}
+
+async function generateRmdReport() {
+  const payload = buildRmdPayload();
+  await saveRmdReport(payload);
+  showGeneratedRmdReport(payload);
+}
+
+function editRmdReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateRmdReport = generateRmdReport;
+window.editRmdReport = editRmdReport;
+window.hydrateRmdCalendarReport = hydrateSavedRmdReport;
+</script>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+window.rmdCalendarSupabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+);
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateRmdCalendarReport) {
+  const { data: report } = await window.rmdCalendarSupabase
+    .from('rmd_calendar_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateRmdCalendarReport(report);
+  }
+}
+</script>
+</body>
+</html>

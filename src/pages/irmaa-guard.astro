@@ -1,0 +1,993 @@
+---
+export const prerender = false;
+export const ssr = false;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRMAA Guard — Medicare Premium Surcharge Early Warning System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style is:global>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --navy: #0F1F3D;
+  --navy-light: #1A2D52;
+  --navy-mid: #152847;
+  --gold: #C9A84C;
+  --gold-light: #D4B96A;
+  --gold-glow: rgba(201,168,76,0.12);
+  --cream: #FAF7F0;
+  --cream-dark: #F0EBE0;
+  --white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-mid: #4A4A4A;
+  --text-light: #7A7A7A;
+  --green: #27AE60;
+  --green-bg: #F0FDF4;
+  --amber: #E67E22;
+  --amber-bg: #FFF8F0;
+  --red: #C0392B;
+  --red-bg: #FDF2F0;
+  --border: #E8E3D8;
+  --shadow: 0 2px 20px rgba(15,31,61,0.08);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.site-header {
+  background: var(--navy);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+.logo { text-decoration: none; }
+.logo-text { font-family: 'Playfair Display', serif; color: var(--white); font-size: 18px; font-weight: 600; }
+.logo-text span { color: var(--gold); }
+.hero {
+  background: var(--navy);
+  padding: 78px 24px 94px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 18%, rgba(201,168,76,0.08) 0%, transparent 48%),
+    radial-gradient(ellipse at 76% 74%, rgba(201,168,76,0.05) 0%, transparent 54%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.22);
+  border-radius: 999px; padding: 8px 18px; margin-bottom: 28px;
+  font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1.2px; text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.12;
+  margin-bottom: 18px;
+}
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 18px; color: rgba(255,255,255,0.66); line-height: 1.7;
+  max-width: 760px; margin: 0 auto 38px; font-weight: 300;
+}
+.hero-points { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.hero-point {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.84); border-radius: 999px; padding: 10px 16px; font-size: 13px;
+}
+.wizard-section, .analysis-section, .report-section { padding: 52px 24px 30px; }
+.wizard-grid {
+  max-width: 1180px; margin: 0 auto; display: grid;
+  grid-template-columns: 340px minmax(0, 1fr); gap: 28px; align-items: start;
+}
+.sticky-sidebar { position: sticky; top: 94px; }
+.sidebar-card, .form-card, .analysis-card, .report-shell, .disclaimer {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+}
+.sidebar-card { padding: 28px; }
+.sidebar-label, .step-label, .section-kicker, .report-kicker {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold);
+}
+.sidebar-title {
+  font-family: 'Playfair Display', serif; font-size: 28px; line-height: 1.15; color: var(--navy); margin: 8px 0 14px;
+}
+.sidebar-copy { font-size: 14px; color: var(--text-mid); margin-bottom: 22px; }
+.step-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+.step-item {
+  display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+  padding: 12px 14px; border-radius: 12px; background: var(--cream); border: 1px solid transparent;
+}
+.step-item.active { border-color: rgba(201,168,76,0.4); background: var(--gold-glow); }
+.step-item.done .step-num { background: var(--gold); color: var(--navy); }
+.step-num {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--cream-dark); color: var(--navy);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+}
+.step-title { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.35; }
+.step-sub { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.sidebar-note {
+  border-radius: 14px; background: var(--navy); color: rgba(255,255,255,0.78); padding: 18px; font-size: 13px;
+}
+.sidebar-note strong { color: var(--white); display: block; margin-bottom: 6px; }
+.form-card { overflow: hidden; }
+.form-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding: 28px 30px;
+}
+.form-header-top {
+  display: flex; justify-content: space-between; gap: 16px; align-items: center; margin-bottom: 18px;
+}
+.form-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px;
+  background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.24); color: var(--gold);
+  border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase;
+}
+.progress-inline { color: rgba(255,255,255,0.62); font-size: 12px; font-weight: 600; }
+.form-title {
+  font-family: 'Playfair Display', serif; color: var(--white); font-size: 34px; line-height: 1.1; margin-bottom: 10px;
+}
+.form-sub { color: rgba(255,255,255,0.64); font-size: 15px; max-width: 760px; }
+.progress-bar {
+  height: 5px; background: rgba(255,255,255,0.1); border-radius: 999px; margin-top: 18px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; width: 33.33%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 999px; transition: width 0.35s ease;
+}
+.form-body { padding: 30px; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.step-question {
+  font-family: 'Playfair Display', serif; font-size: 28px; line-height: 1.18; color: var(--navy); margin: 8px 0;
+}
+.step-help { font-size: 14px; color: var(--text-light); margin-bottom: 24px; max-width: 720px; }
+.field-grid, .insight-grid, .metric-grid, .compare-grid, .scenario-grid {
+  display: grid; gap: 18px;
+}
+.field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.insight-grid, .metric-grid, .compare-grid, .scenario-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field-group { margin-bottom: 18px; }
+.field-group.full { grid-column: 1 / -1; }
+.field-label {
+  display: block; font-size: 11px; font-weight: 700; color: var(--text-light);
+  text-transform: uppercase; letter-spacing: 0.9px; margin-bottom: 8px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 10px; background: var(--cream);
+  color: var(--text-dark); font-size: 15px; font-family: 'DM Sans', sans-serif; padding: 14px 16px;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); background: var(--white);
+}
+.field-textarea { min-height: 120px; resize: vertical; }
+.field-note { margin-top: 7px; font-size: 12px; color: var(--text-light); }
+.btn-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; }
+.btn-back, .btn-next, .btn-print, .btn-secondary {
+  border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s ease;
+}
+.btn-back, .btn-secondary {
+  background: transparent; border: 1.5px solid var(--border); color: var(--text-mid); padding: 13px 18px;
+}
+.btn-next, .btn-print { background: var(--gold); color: var(--navy); padding: 13px 20px; }
+.btn-next:hover, .btn-print:hover { background: var(--gold-light); }
+.analysis-section, .report-section { display: none; }
+.analysis-section.active, .report-section.active { display: block; }
+.analysis-card { max-width: 920px; margin: 0 auto; padding: 42px 28px; text-align: center; }
+.analysis-orb {
+  width: 96px; height: 96px; margin: 0 auto 20px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold)); position: relative;
+  box-shadow: 0 0 0 16px rgba(201,168,76,0.08), 0 0 0 32px rgba(201,168,76,0.04);
+}
+.analysis-orb::after {
+  content: ''; position: absolute; inset: 24px; border-radius: 50%; background: var(--navy); opacity: 0.16;
+}
+.analysis-title { font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); margin-bottom: 8px; }
+.analysis-sub { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
+.analysis-steps { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.analysis-step {
+  display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: center; text-align: left;
+  padding: 14px 16px; border-radius: 12px; background: var(--cream); border: 1px solid var(--border);
+}
+.analysis-indicator {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--gold-glow); color: var(--gold);
+  display: flex; align-items: center; justify-content: center; font-weight: 700;
+}
+.analysis-step.done .analysis-indicator { background: var(--gold); color: var(--navy); }
+.analysis-text { font-size: 14px; color: var(--text-mid); }
+.report-shell { max-width: 1080px; margin: 0 auto; overflow: hidden; }
+.report-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%); padding: 36px 32px 30px; color: var(--white);
+}
+.report-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(30px, 4vw, 44px); line-height: 1.1; margin: 10px 0 12px;
+}
+.report-subtitle { color: rgba(255,255,255,0.72); font-size: 15px; max-width: 780px; }
+.report-meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+.report-meta-item, .pill {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px;
+  padding: 8px 14px; font-size: 12px; color: rgba(255,255,255,0.8); white-space: normal; overflow-wrap: anywhere;
+}
+.report-body { padding: 28px; display: grid; gap: 22px; }
+.hero-summary, .section-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+}
+.hero-summary {
+  padding: 28px; background: linear-gradient(135deg, rgba(15,31,61,0.03), rgba(201,168,76,0.08)), var(--white);
+}
+.hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 22px; }
+.summary-title {
+  font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); line-height: 1.08; margin-bottom: 10px;
+}
+.summary-title em { color: var(--gold); font-style: normal; }
+.summary-copy { font-size: 15px; color: var(--text-mid); }
+.summary-benchmark {
+  background: var(--navy); color: rgba(255,255,255,0.82); border-radius: 16px; padding: 22px;
+}
+.summary-benchmark .headline {
+  font-family: 'Playfair Display', serif; font-size: 24px; color: var(--white); line-height: 1.14; margin: 8px 0 10px;
+}
+.metric-card, .compare-card, .scenario-card, .insight-card {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 14px; padding: 16px;
+}
+.metric-label, .compare-card .label, .scenario-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--text-light); font-weight: 700; margin-bottom: 6px;
+}
+.metric-value, .compare-card .value, .scenario-value {
+  font-family: 'Playfair Display', serif; font-size: 30px; color: var(--navy); line-height: 1; margin-bottom: 6px;
+}
+.metric-sub, .compare-card .sub, .scenario-sub, .insight-card span { font-size: 12px; color: var(--text-light); }
+.section-card { padding: 24px; }
+.section-head {
+  display: flex; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 18px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: 26px; color: var(--navy); line-height: 1.15; margin-top: 4px;
+}
+.section-copy { font-size: 13px; color: var(--text-light); max-width: 650px; }
+.pill { background: var(--cream); border-color: var(--border); color: var(--navy); }
+.scenario-card.safe { border-left: 4px solid var(--green); }
+.scenario-card.watch { border-left: 4px solid var(--amber); }
+.scenario-card.risk { border-left: 4px solid var(--red); }
+.scenario-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.scenario-list-item {
+  display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--text-light);
+}
+.scenario-list-item span:last-child { color: var(--navy); font-weight: 700; }
+.callout {
+  background: var(--cream); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+  border-radius: 14px; padding: 18px; font-size: 14px; color: var(--text-mid);
+}
+.report-actions {
+  display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 0 28px 28px;
+}
+.report-note { font-size: 12px; color: var(--text-light); }
+.disclaimer { max-width: 1080px; margin: 0 auto 64px; padding: 24px 28px 32px; }
+.disclaimer p { font-size: 11px; color: var(--text-light); line-height: 1.7; }
+.disclaimer strong { color: var(--text-mid); }
+.fade-up { opacity: 0; transform: translateY(16px); transition: opacity 0.45s ease, transform 0.45s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 980px) {
+  .wizard-grid, .field-grid, .insight-grid, .metric-grid, .compare-grid, .scenario-grid, .hero-grid {
+    grid-template-columns: 1fr;
+  }
+  .sticky-sidebar { position: static; }
+}
+@media (max-width: 768px) {
+  .site-header { padding: 14px 16px; }
+  .hero { padding: 54px 20px 72px; }
+  .wizard-section, .analysis-section, .report-section { padding-left: 16px; padding-right: 16px; }
+  .sidebar-card, .form-body, .report-body, .section-card, .hero-summary, .analysis-card, .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .form-header, .report-header { padding: 28px 20px; }
+  .step-question, .section-title { font-size: 23px; }
+  .summary-title { font-size: 28px; }
+  .btn-row, .section-head, .report-actions, .form-header-top { flex-direction: column; align-items: stretch; }
+  .report-actions > div:last-child { width: 100%; }
+  .report-actions > div:last-child button { width: 100%; }
+}
+@media print {
+  body { background: #fff; }
+  .site-header, .hero, .wizard-section, .analysis-section, .report-actions, .disclaimer { display: none !important; }
+  .report-section { display: block !important; padding: 0 !important; }
+  .report-shell { max-width: none !important; border: none !important; box-shadow: none !important; }
+  .hero-summary, .section-card { break-inside: avoid; page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a href="/portal" class="logo">
+    <div class="logo-text">Retirement <span>Shield</span></div>
+  </a>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">CMS-Based Medicare Tool</div>
+    <h1>IRMAA <em>Guard</em> — Medicare Premium Surcharge Early Warning System</h1>
+    <p class="hero-sub">Show exactly where someone sits in the 2026 IRMAA brackets, what a Roth conversion or home sale could do to Medicare premiums, and how the two-year MAGI lookback changes the timing.</p>
+    <div class="hero-points">
+      <div class="hero-point">Official 2026 CMS bracket thresholds</div>
+      <div class="hero-point">Roth conversion and home-sale what-if testing</div>
+      <div class="hero-point">Two-year lookback timing explained clearly</div>
+    </div>
+  </div>
+</section>
+
+<section class="wizard-section" id="wizardSection">
+  <div class="wizard-grid">
+    <aside class="sticky-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-label">IRMAA Builder</div>
+        <div class="sidebar-title">This is one of the few tax numbers that changes healthcare premiums directly.</div>
+        <div class="sidebar-copy">The point of the tool is not just showing the bracket. It’s showing how close the user is to the next bracket and how easily a one-time income event can trigger a surcharge.</div>
+        <div class="step-list">
+          <div class="step-item active" data-step-indicator="1">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Profile & Filing Status</div>
+              <div class="step-sub">Name, state, county, filing status, and premium year</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="2">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Current MAGI</div>
+              <div class="step-sub">Approximate MAGI and Medicare enrollment status</div>
+            </div>
+          </div>
+          <div class="step-item" data-step-indicator="3">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">What-If Triggers</div>
+              <div class="step-sub">Roth conversion, home sale, and timing notes</div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-note">
+          <strong>Data note</strong>
+          This version is built on the official CMS 2026 Medicare Part B and Part D IRMAA amounts released on November 14, 2025. For 2026 premiums, the normal lookback year is tax year 2024.
+        </div>
+      </div>
+    </aside>
+
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-header-top">
+          <div class="form-badge">Retirement Shield Tool</div>
+          <div class="progress-inline" id="progressText">Step 1 of 3</div>
+        </div>
+        <div class="form-title">See your Medicare surcharge risk before it hits.</div>
+        <div class="form-sub">This tool uses 2026 official CMS IRMAA brackets to show the current tier, the next threshold, and what common income events would do to Part B and Part D costs.</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <div class="step-question">Whose Medicare premiums are we checking?</div>
+          <div class="step-help">These fields drive the bracket table and the lookback timing shown in the saved report.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="fullName">Your Name</label>
+              <input class="field-input" id="fullName" type="text" placeholder="e.g. Margaret">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="stateName">State</label>
+              <select class="field-select" id="stateName"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="countyName">County</label>
+              <input class="field-input" id="countyName" type="text" placeholder="e.g. Palm Beach County">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="filingStatus">Tax Filing Status</label>
+              <select class="field-select" id="filingStatus">
+                <option value="" selected disabled>Select one...</option>
+                <option value="individual">Single / individual return</option>
+                <option value="joint">Married filing jointly</option>
+                <option value="separate">Married filing separately and lived with spouse</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="premiumYear">Premium Year</label>
+              <input class="field-input" id="premiumYear" type="text" value="2026" readonly>
+              <div class="field-note">2026 premiums normally look back to 2024 MAGI.</div>
+            </div>
+          </div>
+
+          <div class="insight-grid">
+            <div class="metric-card">
+              <div class="metric-label">Why this matters</div>
+              <div class="metric-sub">IRMAA is one of the clearest examples of a tax number directly changing a healthcare bill.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What this catches</div>
+              <div class="metric-sub">Roth conversions, home sales, and other income spikes that quietly push Medicare costs higher later.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">What comes later</div>
+              <div class="metric-sub">Live annual threshold updates and deeper tax-aware planning integrations.</div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div></div>
+            <button class="btn-next" type="button" onclick="nextStep(2)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <div class="step-question">What MAGI are we testing against the 2026 brackets?</div>
+          <div class="step-help">Use approximate modified adjusted gross income for the lookback year. The tool will map it to the correct Part B and Part D tier.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="magi">Approximate MAGI</label>
+              <input class="field-input" id="magi" type="text" placeholder="e.g. 180000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="partBEnrollment">Medicare Part B Coverage</label>
+              <select class="field-select" id="partBEnrollment">
+                <option value="" selected disabled>Select one...</option>
+                <option value="full">Full Part B coverage</option>
+                <option value="drug_only">Immunosuppressive drug-only Part B coverage</option>
+              </select>
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="notes">Notes</label>
+              <textarea class="field-textarea" id="notes" placeholder="e.g. We may do a Roth conversion this year and may also sell a rental property."></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(1)">← Back</button>
+            <button class="btn-next" type="button" onclick="nextStep(3)">Continue →</button>
+          </div>
+        </div>
+
+        <div class="form-step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <div class="step-question">What one-time income events should we test?</div>
+          <div class="step-help">These are the classic IRMAA traps: a Roth conversion, a large capital gain, or a home sale that changes MAGI for the lookback year.</div>
+          <div class="field-grid">
+            <div class="field-group">
+              <label class="field-label" for="rothConversion">Planned Roth Conversion</label>
+              <input class="field-input" id="rothConversion" type="text" placeholder="e.g. 40000">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="homeSaleGain">Taxable Home Sale / Capital Gain</label>
+              <input class="field-input" id="homeSaleGain" type="text" placeholder="e.g. 60000">
+            </div>
+            <div class="field-group full">
+              <label class="field-label" for="timingQuestion">What timing question is top of mind?</label>
+              <textarea class="field-textarea" id="timingQuestion" placeholder="e.g. If we convert this year, when do the Medicare premiums actually change?"></textarea>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-back" type="button" onclick="nextStep(2)">← Back</button>
+            <button class="btn-next" type="button" onclick="generateIrmaaReport()">Generate My IRMAA Report →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="analysis-section" id="analysisSection">
+  <div class="analysis-card">
+    <div class="analysis-orb"></div>
+    <div class="analysis-title">Building Your IRMAA Guard Report</div>
+    <div class="analysis-sub" id="analysisSub">Checking the current bracket, the next threshold, and the what-if surcharge changes.</div>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="analysisStep1"><div class="analysis-indicator">1</div><div class="analysis-text">Matching the filing status to the correct 2026 CMS IRMAA table...</div></div>
+      <div class="analysis-step" id="analysisStep2"><div class="analysis-indicator">2</div><div class="analysis-text">Calculating current Part B and Part D IRMAA tier placement...</div></div>
+      <div class="analysis-step" id="analysisStep3"><div class="analysis-indicator">3</div><div class="analysis-text">Testing Roth conversion and home-sale gain scenarios against the thresholds...</div></div>
+      <div class="analysis-step" id="analysisStep4"><div class="analysis-indicator">4</div><div class="analysis-text">Explaining the two-year lookback and saving the report to your portal...</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="report-section" id="reportSection">
+  <div class="report-shell fade-up" id="reportShell">
+    <div class="report-header">
+      <div class="report-kicker">2026 CMS IRMAA Review</div>
+      <div class="report-title" id="reportTitle">IRMAA Guard</div>
+      <div class="report-subtitle" id="reportSubtitle">A saved Medicare surcharge report showing the current bracket, what-if triggers, and lookback timing.</div>
+      <div class="report-meta">
+        <div class="report-meta-item" id="metaName">Prepared for —</div>
+        <div class="report-meta-item" id="metaLocation">County frame —</div>
+        <div class="report-meta-item" id="metaDate">Generated —</div>
+      </div>
+    </div>
+
+    <div class="report-body">
+      <div class="hero-summary">
+        <div class="hero-grid">
+          <div>
+            <div class="summary-title">Medicare premiums can jump later because of income you recognize now.</div>
+            <div class="summary-copy" id="summaryCopy">This report uses the official 2026 CMS IRMAA thresholds to show where the household sits now and how quickly one-time income events can change the premium tier.</div>
+          </div>
+          <div class="summary-benchmark">
+            <div class="report-kicker">Current Tier</div>
+            <div class="headline" id="benchmarkHeadline">You are currently in bracket —</div>
+            <div id="benchmarkCopy">The report headline appears here with the annual surcharge implications.</div>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Current Total Part B Premium</div>
+            <div class="metric-value" id="partBValue">$0</div>
+            <div class="metric-sub">Monthly premium at the current 2026 IRMAA tier</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Current Part D IRMAA</div>
+            <div class="metric-value" id="partDValue">$0</div>
+            <div class="metric-sub">Monthly Part D surcharge on top of the plan premium</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Room Before Next Tier</div>
+            <div class="metric-value" id="roomValue">$0</div>
+            <div class="metric-sub">Approximate MAGI room left before the next 2026 threshold</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 1</div>
+            <div class="section-title">Current and What-If IRMAA Outcomes</div>
+            <div class="section-copy">This compares the current MAGI with a Roth conversion scenario and a home-sale / capital-gain scenario using the same 2026 CMS brackets.</div>
+          </div>
+          <div class="pill" id="scenarioPill">2026 premium year</div>
+        </div>
+        <div class="scenario-grid" id="scenarioGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Section 2</div>
+            <div class="section-title">Comparison Points</div>
+            <div class="section-copy">These are the three practical numbers that matter most in planning conversations.</div>
+          </div>
+        </div>
+        <div class="compare-grid" id="compareGrid"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Summary</div>
+            <div class="section-title">IRMAA lookback timing</div>
+            <div class="section-copy">A plain-English explanation of when a MAGI change is likely to affect Medicare premiums.</div>
+          </div>
+        </div>
+        <div class="callout" id="irmaaCallout">Your IRMAA timing summary will appear here.</div>
+      </div>
+    </div>
+
+    <div class="report-actions">
+      <div class="report-note">Print tip: use “Save as PDF” with background graphics enabled for the cleanest export.</div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" type="button" onclick="editIrmaaReport()">Edit Responses</button>
+        <button class="btn-print" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  <p><strong>Important Disclosures:</strong> This IRMAA tool is for educational purposes only and does not constitute tax, legal, healthcare, or financial advice. The 2026 threshold data in this report is based on the official CMS release dated November 14, 2025. Actual Medicare premium liability can depend on Social Security Administration determinations, appeal rights, amended returns, life-changing-event exceptions, and plan-specific Part D premiums. Always confirm final premium consequences with Medicare, SSA, or a qualified advisor before acting. Source: CMS 2026 Medicare Parts A &amp; B Premiums and Deductibles fact sheet published November 14, 2025. </p>
+</div>
+
+<script is:inline>
+const IRMAA_2026 = {
+  standardPartB: 202.90,
+  lookbackTaxYear: 2024,
+  individual: [
+    { min: 0, max: 109000, partB: 202.90, partD: 0, label: 'Base premium tier' },
+    { min: 109000, max: 137000, partB: 284.10, partD: 14.50, label: 'IRMAA tier 1' },
+    { min: 137000, max: 171000, partB: 405.80, partD: 37.50, label: 'IRMAA tier 2' },
+    { min: 171000, max: 205000, partB: 527.50, partD: 60.40, label: 'IRMAA tier 3' },
+    { min: 205000, max: 500000, partB: 649.20, partD: 83.30, label: 'IRMAA tier 4' },
+    { min: 500000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top IRMAA tier' }
+  ],
+  joint: [
+    { min: 0, max: 218000, partB: 202.90, partD: 0, label: 'Base premium tier' },
+    { min: 218000, max: 274000, partB: 284.10, partD: 14.50, label: 'IRMAA tier 1' },
+    { min: 274000, max: 342000, partB: 405.80, partD: 37.50, label: 'IRMAA tier 2' },
+    { min: 342000, max: 410000, partB: 527.50, partD: 60.40, label: 'IRMAA tier 3' },
+    { min: 410000, max: 750000, partB: 649.20, partD: 83.30, label: 'IRMAA tier 4' },
+    { min: 750000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top IRMAA tier' }
+  ],
+  separate: [
+    { min: 0, max: 109000, partB: 202.90, partD: 0, label: 'Base premium tier' },
+    { min: 109000, max: 391000, partB: 649.20, partD: 83.30, label: 'IRMAA separate-filer tier' },
+    { min: 391000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top separate-filer tier' }
+  ],
+  drugOnlyFactor: {
+    base: 121.60,
+    14.50: 202.70,
+    37.50: 324.30,
+    60.40: 445.90,
+    83.30: 567.50,
+    91.00: 608.10
+  }
+};
+
+const STATE_OPTIONS = [
+  ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
+  ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
+  ['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],
+  ['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],
+  ['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],
+  ['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],
+  ['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],
+  ['OR','Oregon'],['PA','Pennsylvania'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],
+  ['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],
+  ['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']
+];
+
+let latestIrmaaPayload = null;
+
+const stateSelect = document.getElementById('stateName');
+const placeholderOption = document.createElement('option');
+placeholderOption.value = '';
+placeholderOption.textContent = 'Select your state...';
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+stateSelect.appendChild(placeholderOption);
+
+STATE_OPTIONS.forEach(([, name]) => {
+  const option = document.createElement('option');
+  option.value = name;
+  option.textContent = name;
+  stateSelect.appendChild(option);
+});
+
+function formatMoney(value) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value || 0);
+}
+
+function parseMoney(value) {
+  const parsed = Number(String(value || '').replace(/[^0-9.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function nextStep(step) {
+  document.querySelectorAll('.form-step').forEach((panel) => panel.classList.remove('active'));
+  document.getElementById(`step${step}`).classList.add('active');
+  document.querySelectorAll('[data-step-indicator]').forEach((item, index) => {
+    const num = index + 1;
+    item.classList.toggle('active', num === step);
+    item.classList.toggle('done', num < step);
+  });
+  document.getElementById('progressText').textContent = `Step ${step} of 3`;
+  document.getElementById('progressFill').style.width = `${(step / 3) * 100}%`;
+  window.scrollTo({ top: document.getElementById('wizardSection').offsetTop - 76, behavior: 'smooth' });
+}
+
+function getBracket(status, magi) {
+  const table = IRMAA_2026[status] || IRMAA_2026.individual;
+  return table.find((row) => magi <= row.max) || table[table.length - 1];
+}
+
+function getPremiumForCoverage(bracket, coverage) {
+  if (coverage === 'drug_only') {
+    const key = String(bracket.partD.toFixed(2));
+    return IRMAA_2026.drugOnlyFactor[key] ?? IRMAA_2026.drugOnlyFactor.base;
+  }
+  return bracket.partB;
+}
+
+function getNextThreshold(status, magi) {
+  const table = IRMAA_2026[status] || IRMAA_2026.individual;
+  const currentIndex = table.findIndex((row) => magi <= row.max);
+  if (currentIndex === -1 || currentIndex === table.length - 1) return null;
+  return table[currentIndex].max;
+}
+
+function evaluateScenario(status, magi, coverage) {
+  const bracket = getBracket(status, magi);
+  const nextThreshold = getNextThreshold(status, magi);
+  const partBPremium = getPremiumForCoverage(bracket, coverage);
+  const roomBeforeNext = nextThreshold ? Math.max(0, nextThreshold - magi) : 0;
+  return {
+    magi,
+    bracket,
+    nextThreshold,
+    partBPremium,
+    partDPremium: bracket.partD,
+    roomBeforeNext
+  };
+}
+
+function buildIrmaaPayload() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const stateName = document.getElementById('stateName').value.trim();
+  const countyName = document.getElementById('countyName').value.trim();
+  const filingStatus = document.getElementById('filingStatus').value;
+  const premiumYear = Number(document.getElementById('premiumYear').value || 2026);
+  const magi = parseMoney(document.getElementById('magi').value);
+  const partBEnrollment = document.getElementById('partBEnrollment').value;
+  const notes = document.getElementById('notes').value.trim();
+  const rothConversion = parseMoney(document.getElementById('rothConversion').value);
+  const homeSaleGain = parseMoney(document.getElementById('homeSaleGain').value);
+  const timingQuestion = document.getElementById('timingQuestion').value.trim();
+
+  const currentScenario = evaluateScenario(filingStatus, magi, partBEnrollment);
+  const rothScenario = evaluateScenario(filingStatus, magi + rothConversion, partBEnrollment);
+  const saleScenario = evaluateScenario(filingStatus, magi + homeSaleGain, partBEnrollment);
+
+  const lookbackYear = premiumYear - 2;
+  const narrative = `For ${premiumYear} Medicare premiums, the normal lookback year is ${lookbackYear}. Based on a MAGI of about ${formatMoney(magi)}, this household currently falls in ${currentScenario.bracket.label}. ${rothConversion ? `A Roth conversion of ${formatMoney(rothConversion)} would move the tested MAGI to ${formatMoney(magi + rothConversion)}.` : ''} ${homeSaleGain ? `A taxable home sale or capital gain of ${formatMoney(homeSaleGain)} would move the tested MAGI to ${formatMoney(magi + homeSaleGain)}.` : ''} ${timingQuestion ? timingQuestion : 'That means income decisions made in the lookback year can change Medicare premiums later, not immediately.'}`;
+
+  return {
+    fullName,
+    stateName,
+    countyName,
+    filingStatus,
+    premiumYear,
+    lookbackYear,
+    magi,
+    partBEnrollment,
+    notes,
+    rothConversion,
+    homeSaleGain,
+    timingQuestion,
+    currentScenario,
+    rothScenario,
+    saleScenario,
+    narrative
+  };
+}
+
+function renderIrmaaReport(payload) {
+  latestIrmaaPayload = payload;
+  document.getElementById('reportTitle').textContent = `IRMAA Guard for ${payload.fullName || 'Your Household'}`;
+  document.getElementById('reportSubtitle').textContent = `A ${payload.premiumYear} Medicare surcharge review showing the current tier, what-if scenarios, and the ${payload.lookbackYear} lookback-year implication.`;
+  document.getElementById('metaName').textContent = `Prepared for ${payload.fullName || '—'}`;
+  document.getElementById('metaLocation').textContent = `${payload.countyName || 'County not entered'}${payload.stateName ? ` · ${payload.stateName}` : ''}`;
+  document.getElementById('metaDate').textContent = `Generated ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+
+  document.getElementById('summaryCopy').textContent = payload.notes || payload.narrative;
+  document.getElementById('benchmarkHeadline').textContent = `You are currently in ${payload.currentScenario.bracket.label}`;
+  document.getElementById('benchmarkCopy').textContent = `At the tested MAGI of ${formatMoney(payload.magi)}, the monthly Part B premium is ${formatMoney(payload.currentScenario.partBPremium)} and the Part D IRMAA is ${formatMoney(payload.currentScenario.partDPremium)}.`;
+  document.getElementById('partBValue').textContent = formatMoney(payload.currentScenario.partBPremium);
+  document.getElementById('partDValue').textContent = formatMoney(payload.currentScenario.partDPremium);
+  document.getElementById('roomValue').textContent = payload.currentScenario.nextThreshold ? formatMoney(payload.currentScenario.roomBeforeNext) : 'Top tier';
+  document.getElementById('scenarioPill').textContent = `${payload.premiumYear} premiums · ${payload.lookbackYear} lookback`;
+
+  const scenarios = [
+    {
+      label: 'Current MAGI',
+      value: payload.currentScenario,
+      tone: payload.currentScenario.roomBeforeNext > 20000 ? 'safe' : payload.currentScenario.roomBeforeNext > 0 ? 'watch' : 'risk',
+      sub: 'Current tested income'
+    },
+    {
+      label: 'With Roth Conversion',
+      value: payload.rothScenario,
+      tone: payload.rothScenario.partBPremium === payload.currentScenario.partBPremium ? 'safe' : 'watch',
+      sub: payload.rothConversion ? `Adds ${formatMoney(payload.rothConversion)}` : 'No Roth conversion entered'
+    },
+    {
+      label: 'With Home Sale / Gain',
+      value: payload.saleScenario,
+      tone: payload.saleScenario.partBPremium === payload.currentScenario.partBPremium ? 'safe' : 'risk',
+      sub: payload.homeSaleGain ? `Adds ${formatMoney(payload.homeSaleGain)}` : 'No gain entered'
+    }
+  ];
+
+  document.getElementById('scenarioGrid').innerHTML = scenarios.map((scenario) => `
+    <div class="scenario-card ${scenario.tone}">
+      <div class="scenario-label">${scenario.label}</div>
+      <div class="scenario-value">${formatMoney(scenario.value.partBPremium)}</div>
+      <div class="scenario-sub">${scenario.sub}</div>
+      <div class="scenario-list">
+        <div class="scenario-list-item"><span>Tested MAGI</span><span>${formatMoney(scenario.value.magi)}</span></div>
+        <div class="scenario-list-item"><span>Part D IRMAA</span><span>${formatMoney(scenario.value.partDPremium)}</span></div>
+        <div class="scenario-list-item"><span>Tier</span><span>${scenario.value.bracket.label}</span></div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('compareGrid').innerHTML = [
+    {
+      label: 'Current MAGI',
+      value: formatMoney(payload.magi),
+      sub: `Normal ${payload.premiumYear} lookback year: ${payload.lookbackYear}`
+    },
+    {
+      label: 'Next threshold',
+      value: payload.currentScenario.nextThreshold ? formatMoney(payload.currentScenario.nextThreshold) : 'Top tier',
+      sub: payload.currentScenario.nextThreshold ? 'Approximate MAGI line for the next 2026 IRMAA jump' : 'No higher IRMAA threshold above this point'
+    },
+    {
+      label: 'Annual Part B impact',
+      value: formatMoney(payload.currentScenario.partBPremium * 12),
+      sub: 'Current annualized Part B premium at this tier'
+    }
+  ].map((item) => `
+    <div class="compare-card">
+      <div class="label">${item.label}</div>
+      <div class="value">${item.value}</div>
+      <div class="sub">${item.sub}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('irmaaCallout').textContent = payload.narrative;
+}
+
+function runAnalysisAnimation(payload) {
+  document.getElementById('analysisSub').textContent = `Checking ${payload.premiumYear} IRMAA placement for ${payload.fullName || 'your household'} using the ${payload.lookbackYear} lookback year.`;
+  ['analysisStep1','analysisStep2','analysisStep3','analysisStep4'].forEach((id, index) => {
+    const el = document.getElementById(id);
+    el.classList.remove('done');
+    setTimeout(() => el.classList.add('done'), (index + 1) * 360);
+  });
+}
+
+async function saveIrmaaReport(payload) {
+  const supabase = window.irmaaGuardSupabase;
+  if (!supabase) return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id || new URLSearchParams(window.location.search).get('utm');
+  if (!userId) return null;
+
+  const insertPayload = {
+    user_id: userId,
+    full_name: payload.fullName || null,
+    state_name: payload.stateName || null,
+    county_name: payload.countyName || null,
+    filing_status: payload.filingStatus || null,
+    premium_year: payload.premiumYear,
+    lookback_year: payload.lookbackYear,
+    magi: payload.magi,
+    part_b_coverage_type: payload.partBEnrollment || null,
+    roth_conversion_amount: payload.rothConversion,
+    home_sale_gain_amount: payload.homeSaleGain,
+    current_part_b_premium: payload.currentScenario.partBPremium,
+    current_part_d_irmaa: payload.currentScenario.partDPremium,
+    current_tier_label: payload.currentScenario.bracket.label,
+    report_title: `IRMAA Guard for ${payload.fullName || 'Your Household'}`,
+    report_payload: payload
+  };
+
+  const { error } = await supabase
+    .from('irmaa_guard_reports')
+    .insert(insertPayload);
+
+  if (error) {
+    console.error('Failed to save IRMAA Guard report:', error);
+  }
+}
+
+function showGeneratedIrmaaReport(payload) {
+  renderIrmaaReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.add('active');
+  runAnalysisAnimation(payload);
+
+  setTimeout(() => {
+    document.getElementById('analysisSection').classList.remove('active');
+    document.getElementById('reportSection').classList.add('active');
+    document.getElementById('reportShell').classList.add('visible');
+    document.getElementById('reportShell').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 1800);
+}
+
+function showHydratedIrmaaReport(payload) {
+  renderIrmaaReport(payload);
+  document.getElementById('wizardSection').style.display = 'none';
+  document.getElementById('analysisSection').classList.remove('active');
+  document.getElementById('reportSection').classList.add('active');
+  document.getElementById('reportShell').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function hydrateSavedIrmaaReport(report) {
+  const payload = report?.report_payload;
+  if (!payload) return false;
+  const fields = {
+    fullName: payload.fullName,
+    stateName: payload.stateName,
+    countyName: payload.countyName,
+    magi: payload.magi,
+    notes: payload.notes,
+    rothConversion: payload.rothConversion,
+    homeSaleGain: payload.homeSaleGain,
+    timingQuestion: payload.timingQuestion
+  };
+  Object.entries(fields).forEach(([id, value]) => {
+    const input = document.getElementById(id);
+    if (input && value !== undefined && value !== null) input.value = String(value);
+  });
+  if (payload.filingStatus) document.getElementById('filingStatus').value = payload.filingStatus;
+  if (payload.partBEnrollment) document.getElementById('partBEnrollment').value = payload.partBEnrollment;
+  if (payload.premiumYear) document.getElementById('premiumYear').value = String(payload.premiumYear);
+
+  showHydratedIrmaaReport(payload);
+  return true;
+}
+
+async function generateIrmaaReport() {
+  const payload = buildIrmaaPayload();
+  await saveIrmaaReport(payload);
+  showGeneratedIrmaaReport(payload);
+}
+
+function editIrmaaReport() {
+  document.getElementById('reportSection').classList.remove('active');
+  document.getElementById('wizardSection').style.display = 'block';
+  nextStep(3);
+}
+
+window.nextStep = nextStep;
+window.generateIrmaaReport = generateIrmaaReport;
+window.editIrmaaReport = editIrmaaReport;
+window.hydrateIrmaaReport = hydrateSavedIrmaaReport;
+</script>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const supabase = createClient(
+  "https://nyiturqeotdxucfdurzu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55aXR1cnFlb3RkeHVjZmR1cnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzI0ODgsImV4cCI6MjA4NzcwODQ4OH0.CvYju6UTaCGD_Zd-8FVTcB-yW9YVG_jQtwkd0l7mIV0",
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce'
+    }
+  }
+)
+
+window.irmaaGuardSupabase = supabase;
+
+const params = new URLSearchParams(window.location.search);
+const utm = params.get('utm');
+const reportMode = params.get('report');
+
+if (utm && reportMode === 'latest' && window.hydrateIrmaaReport) {
+  const { data: report } = await supabase
+    .from('irmaa_guard_reports')
+    .select('*')
+    .eq('user_id', utm)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (report) {
+    await window.hydrateIrmaaReport(report);
+  }
+}
+</script>
+</body>
+</html>
