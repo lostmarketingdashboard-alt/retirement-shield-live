@@ -1365,13 +1365,13 @@
               </div>
 
               <div class="report-cta-price">
-                <div class="price-main">Free</div>
-                <div class="price-was">$4.95</div>
+                <div class="price-main">$4.95</div>
+                <div class="price-was">$14.95</div>
                 <div class="price-label">One-time payment</div>
               </div>
 
              <button class="cta-btn" onclick="openRegisterModal()">
-  Unlock My Full Report
+  Create Your Secure Portal Access
   <span class="cta-btn-arrow">→</span>
 </button>
 
@@ -2103,6 +2103,7 @@ async function registerFromQuiz() {
         full_name: `${answers.firstName || ''} ${answers.lastName || ''}`.trim(),
         email: user.email,
         role: 'user',
+        paid: false,
         state: answers.state || null,
         county: answers.county || null,
         phone: phone || null
@@ -2128,34 +2129,42 @@ async function registerFromQuiz() {
   }
 
   // Send submission to CRM webhook (after phone is captured)
-  await fetch('https://services.leadconnectorhq.com/hooks/t6CIiDKX4tJt5AYWbWxc/webhook-trigger/6bfde984-ec5d-43b9-9e4e-e632ecd41894', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      submittedAt: new Date().toISOString(),
-      score: calcScore(),
-      firstName: answers.firstName || '',
-      lastName: answers.lastName || '',
-      email: answers.email || '',
-      phone: answers.phone || '',
-      state: answers.state || '',
-      county: answers.county || '',
-      age: answers.age || '',
-      marital: answers.marital || '',
-      dependents: answers.dependents || '',
-      will: answers.will || '',
-      trust: answers.trust || '',
-      beneficiary: answers.beneficiary || '',
-      poa: answers.poa || '',
-      healthcare: answers.healthcare || '',
-      ltc: answers.ltc || '',
-      insurance: answers.insurance || '',
-      networth: answers.networth || '',
-      fullAnswers: answers
-    })
-  });
+  try {
+    const webhookResponse = await fetch('https://services.leadconnectorhq.com/hooks/t6CIiDKX4tJt5AYWbWxc/webhook-trigger/6bfde984-ec5d-43b9-9e4e-e632ecd41894', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        submittedAt: new Date().toISOString(),
+        score: calcScore(),
+        firstName: answers.firstName || '',
+        lastName: answers.lastName || '',
+        email: answers.email || '',
+        phone: answers.phone || '',
+        state: answers.state || '',
+        county: answers.county || '',
+        age: answers.age || '',
+        marital: answers.marital || '',
+        dependents: answers.dependents || '',
+        will: answers.will || '',
+        trust: answers.trust || '',
+        beneficiary: answers.beneficiary || '',
+        poa: answers.poa || '',
+        healthcare: answers.healthcare || '',
+        ltc: answers.ltc || '',
+        insurance: answers.insurance || '',
+        networth: answers.networth || '',
+        fullAnswers: answers
+      })
+    });
+
+    if (!webhookResponse.ok) {
+      console.error('LeadConnector webhook failed:', webhookResponse.status);
+    }
+  } catch (webhookError) {
+    console.error('LeadConnector webhook error:', webhookError);
+  }
 
   // 4. Sign user in explicitly (guarantee session)
   const { error: signInError } = await supabase.auth.signInWithPassword({
@@ -2171,9 +2180,9 @@ async function registerFromQuiz() {
     return;
   }
 
-  console.log('User logged in — redirecting to portal');
+  console.log('User logged in — redirecting to checkout');
 
-  window.location.href = '/portal';
+  window.location.href = 'https://app.retirementshield.io/checkout-page';
 }
 
 function startQuiz() {
