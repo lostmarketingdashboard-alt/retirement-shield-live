@@ -721,18 +721,8 @@ if (utm && reportMode === 'latest' && window.hydrateAfterDeathChecklistSubmissio
   if (report) {
     await window.hydrateAfterDeathChecklistSubmission(report);
   }
-} else if (utm) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name')
-    .eq('id', utm)
-    .maybeSingle();
-
-  if (profile?.full_name) {
-    const input = document.getElementById('fullName');
-    if (input && !input.value) input.value = profile.full_name;
-  }
 }
 </script>
+<script type="module" src="/profile-prefill.js"></script>
 </body>
 </html>

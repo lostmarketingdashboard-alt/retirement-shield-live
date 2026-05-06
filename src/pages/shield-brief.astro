@@ -713,30 +713,8 @@ if (utm && reportMode === 'latest' && window.hydrateShieldBriefSubmission) {
   if (report) {
     await window.hydrateShieldBriefSubmission(report);
   }
-} else if (utm) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name,state,county')
-    .eq('id', utm)
-    .maybeSingle();
-
-  if (profile?.full_name) {
-    const nameInput = document.getElementById('fullName');
-    if (nameInput && !nameInput.value) nameInput.value = profile.full_name;
-  }
-
-  const stateOptions = window.SHIELD_BRIEF_STATE_OPTIONS || [];
-  const matchedState = stateOptions.find(([, name]) => String(profile?.state || '').toLowerCase() === name.toLowerCase());
-  if (matchedState) {
-    document.getElementById('stateSelect').value = matchedState[0];
-    await window.onShieldBriefStateChange?.(matchedState[0]);
-  }
-
-  if (profile?.county) {
-    const countySelect = document.getElementById('countySelect');
-    countySelect.value = profile.county;
-  }
 }
 </script>
+<script type="module" src="/profile-prefill.js"></script>
 </body>
 </html>

@@ -632,23 +632,8 @@ if (utm && reportMode === 'latest' && window.hydrateEstateWatchSubmission) {
   if (report) {
     await window.hydrateEstateWatchSubmission(report);
   }
-} else if (utm) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name,state')
-    .eq('id', utm)
-    .maybeSingle();
-
-  if (profile?.full_name) {
-    const input = document.getElementById('fullName');
-    if (input && !input.value) input.value = profile.full_name;
-  }
-
-  const matchedState = (window.ESTATE_WATCH_STATE_OPTIONS || []).find(([, name]) => String(profile?.state || '').toLowerCase() === name.toLowerCase());
-  if (matchedState) {
-    document.getElementById('stateSelect').value = matchedState[0];
-  }
 }
 </script>
+<script type="module" src="/profile-prefill.js"></script>
 </body>
 </html>

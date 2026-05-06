@@ -750,23 +750,8 @@ if (utm && reportMode === 'latest' && window.hydrateUnclaimedPropertySubmission)
   if (report) {
     await window.hydrateUnclaimedPropertySubmission(report);
   }
-} else if (utm) {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name,state')
-    .eq('id', utm)
-    .maybeSingle();
-
-  if (profile?.full_name) {
-    const input = document.getElementById('fullName');
-    if (input && !input.value) input.value = profile.full_name;
-  }
-
-  const matchedState = (window.UNCLAIMED_PROPERTY_STATE_OPTIONS || []).find(([, name]) => String(profile?.state || '').toLowerCase() === name.toLowerCase());
-  if (matchedState) {
-    document.getElementById('stateSelect').value = matchedState[0];
-  }
 }
 </script>
+<script type="module" src="/profile-prefill.js"></script>
 </body>
 </html>

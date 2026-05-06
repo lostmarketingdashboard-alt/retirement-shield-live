@@ -2454,38 +2454,11 @@ if (utm) {
 
     if (report && window.hydrateSavedSubmission) {
       window.hydrateSavedSubmission(report)
-    } else {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', utm)
-        .single()
-
-      if (profile?.full_name) {
-        const firstNameInput = document.getElementById('firstName')
-        if (firstNameInput && !firstNameInput.dataset.prefilled) {
-          firstNameInput.value = profile.full_name
-          firstNameInput.dataset.prefilled = 'true'
-        }
-      }
-    }
-  } else {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name')
-      .eq('id', utm)
-      .single()
-
-    if (profile?.full_name) {
-      const firstNameInput = document.getElementById('firstName')
-      if (firstNameInput && !firstNameInput.dataset.prefilled) {
-        firstNameInput.value = profile.full_name
-        firstNameInput.dataset.prefilled = 'true'
-      }
     }
   }
 }
 </script>
 
+<script type="module" src="/profile-prefill.js"></script>
 </body>
 </html>
