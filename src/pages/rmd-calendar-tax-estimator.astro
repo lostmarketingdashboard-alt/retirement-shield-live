@@ -1,4 +1,7 @@
 ---
+import irsUniformLifetimeTable from '../data/irs-uniform-lifetime-table.json';
+import irmaaBracketData from '../data/irmaa-brackets.json';
+
 export const prerender = false;
 export const ssr = false;
 ---
@@ -441,7 +444,7 @@ body {
 .pill { background: var(--cream); border-color: var(--border); color: var(--navy); }
 .timeline-card {
   display: grid;
-  grid-template-columns: 110px 1fr 140px 140px 140px;
+  grid-template-columns: 96px 1fr 130px 130px 130px 130px;
   gap: 16px;
   align-items: center;
 }
@@ -828,12 +831,14 @@ body {
 </section>
 
 <div class="disclaimer">
-  <p><strong>Important Disclosures:</strong> This RMD tool is for educational purposes only and does not constitute tax, legal, investment, or financial advice. Required minimum distributions are estimated using the Uniform Lifetime Table from IRS Publication 590-B and simplified assumptions entered by the user. Tax impact estimates in this report are rough planning estimates that apply user-entered marginal tax rates to projected distributions; they are not a substitute for tax preparation, bracket-level modeling, or advice from a CPA or enrolled agent. County and ZIP-based longevity framing is illustrative and should be treated as a planning prompt, not a prediction. Review all RMD timing, withholding, beneficiary, and rollover decisions with a qualified tax professional before acting. © 2026 Retirement Shield. All rights reserved.</p>
+  <p><strong>Important Disclosures:</strong> This RMD tool is for educational purposes only and does not constitute tax, legal, investment, or financial advice. Required minimum distributions are estimated using the Uniform Lifetime Table from IRS Publication 590-B and simplified assumptions entered by the user. Tax and IRMAA estimates are rough planning estimates; they are not a substitute for tax preparation, bracket-level modeling, Medicare premium determinations, or advice from a CPA or enrolled agent. County and ZIP-based longevity framing is illustrative and should be treated as a planning prompt, not a prediction. Review all RMD timing, withholding, beneficiary, and rollover decisions with a qualified tax professional before acting. © 2026 Retirement Shield. All rights reserved.</p>
 </div>
 
+<script type="application/json" id="irsUniformLifetimeTable" set:html={JSON.stringify(irsUniformLifetimeTable)}></script>
+<script type="application/json" id="irmaaBracketData" set:html={JSON.stringify(irmaaBracketData)}></script>
 <script is:inline>
-const CURRENT_DATE = new Date('2026-04-15T12:00:00');
-const CURRENT_YEAR = 2026;
+const CURRENT_DATE = new Date();
+const CURRENT_YEAR = CURRENT_DATE.getFullYear();
 const STATE_OPTIONS = [
   ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
   ['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['FL','Florida'],['GA','Georgia'],
@@ -851,15 +856,20 @@ const STATE_LONGEVITY = {
   OR: 82.7, AZ: 82.1, TX: 80.9, NC: 80.7, GA: 80.1, PA: 81.3, OH: 79.8, MI: 79.9,
   TN: 78.9, SC: 79.4, AL: 77.9, LA: 76.8
 };
-const UNIFORM_LIFETIME_DIVISORS = {
-  72:27.4,73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,79:21.1,80:20.2,81:19.4,
-  82:18.5,83:17.7,84:16.8,85:16.0,86:15.2,87:14.4,88:13.7,89:12.9,90:12.2,91:11.5,
-  92:10.8,93:10.1,94:9.5,95:8.9,96:8.4,97:7.8,98:7.3,99:6.8,100:6.4,101:6.0,
-  102:5.6,103:5.2,104:4.9,105:4.6,106:4.3,107:4.1,108:3.9,109:3.7,110:3.5,111:3.4,
-  112:3.3,113:3.1,114:3.0,115:2.9,116:2.8,117:2.7,118:2.5,119:2.3,120:2.0
-};
+const IRS_RMD_SOURCE = readJsonScript('irsUniformLifetimeTable');
+const IRMAA_SOURCE = readJsonScript('irmaaBracketData');
+const UNIFORM_LIFETIME_DIVISORS = Object.fromEntries((IRS_RMD_SOURCE.distribution_periods || []).map((row) => [row.age, row.distribution_period]));
 
 let latestRmdPayload = null;
+
+function readJsonScript(id) {
+  try {
+    return JSON.parse(document.getElementById(id)?.textContent || '{}');
+  } catch (error) {
+    console.error(`Unable to read ${id}:`, error);
+    return {};
+  }
+}
 
 const stateSelect = document.getElementById('stateSelect');
 const placeholderOption = document.createElement('option');
@@ -933,8 +943,27 @@ function getLongevityAge(stateCode, currentAge, zipCode) {
 
 function getDivisor(age) {
   if (UNIFORM_LIFETIME_DIVISORS[age]) return UNIFORM_LIFETIME_DIVISORS[age];
-  if (age < 72) return UNIFORM_LIFETIME_DIVISORS[72];
+  if (age < 73) return UNIFORM_LIFETIME_DIVISORS[73];
   return UNIFORM_LIFETIME_DIVISORS[120];
+}
+
+function mapFilingStatusToIrmaa(status) {
+  if (status === 'joint') return 'joint';
+  if (status === 'separate') return 'separate';
+  return 'individual';
+}
+
+function getIrmaaTier(filingStatus, taxableIncome) {
+  const status = mapFilingStatusToIrmaa(filingStatus);
+  const brackets = (IRMAA_SOURCE.brackets || [])
+    .filter((row) => row.type === 'part_b' && row.filing_status === status)
+    .sort((a, b) => a.income_min - b.income_min);
+  const bracket = brackets.find((row) => taxableIncome >= row.income_min && (row.income_max === null || taxableIncome <= row.income_max)) || brackets[brackets.length - 1];
+  return {
+    label: bracket?.label || 'IRMAA review needed',
+    partBPremium: bracket?.total_premium || 0,
+    irmaaAmount: bracket?.irmaa_amount || 0
+  };
 }
 
 function formatDate(date) {
@@ -947,9 +976,9 @@ function addDays(date, days) {
   return copy;
 }
 
-function determineDeadline(stage) {
-  if (stage === 'first_year') return new Date('2027-04-01T12:00:00');
-  if (stage === 'ongoing') return new Date('2026-12-31T12:00:00');
+function determineDeadline(stage, firstRmdYear) {
+  if (stage === 'first_year') return new Date(`${firstRmdYear + 1}-04-01T12:00:00`);
+  if (stage === 'ongoing') return new Date(`${CURRENT_YEAR}-12-31T12:00:00`);
   return null;
 }
 
@@ -978,7 +1007,7 @@ document.getElementById('zipCode').addEventListener('blur', async () => {
   }
 });
 
-function buildProjection(balance, startAge, startYear, years, growthRate, federalTaxRate, stateTaxRate, otherIncome) {
+function buildProjection(balance, startAge, startYear, years, growthRate, federalTaxRate, stateTaxRate, otherIncome, filingStatus) {
   const rows = [];
   let startingBalance = balance;
 
@@ -992,6 +1021,7 @@ function buildProjection(balance, startAge, startYear, years, growthRate, federa
     const afterTax = rmd - totalTax;
     const endingBalance = Math.max(0, (startingBalance - rmd) * (1 + growthRate / 100));
     const combinedIncome = otherIncome + rmd;
+    const irmaaTier = getIrmaaTier(filingStatus, combinedIncome);
 
     rows.push({
       year: startYear + offset,
@@ -1004,7 +1034,8 @@ function buildProjection(balance, startAge, startYear, years, growthRate, federa
       totalTax,
       afterTax,
       endingBalance,
-      combinedIncome
+      combinedIncome,
+      irmaaTier
     });
 
     startingBalance = endingBalance;
@@ -1054,7 +1085,7 @@ function buildRmdPayload() {
   const firstRmdYear = birthYear + requiredBeginningAge;
   const isRmdEligible = CURRENT_YEAR >= firstRmdYear;
   const inferredStage = !isRmdEligible ? 'not_yet' : (rmdStage || 'ongoing');
-  const nextDeadline = determineDeadline(inferredStage) || new Date(`${firstRmdYear}-12-31T12:00:00`);
+  const nextDeadline = determineDeadline(inferredStage, firstRmdYear) || new Date(`${firstRmdYear}-12-31T12:00:00`);
   const projectionStartAge = Math.max(requiredBeginningAge, currentAge);
   const projectionStartYear = Math.max(CURRENT_YEAR, firstRmdYear);
   const longevityAge = getLongevityAge(stateCode, currentAge, zipCode);
@@ -1067,7 +1098,8 @@ function buildRmdPayload() {
     growthRate,
     federalTaxRate,
     stateTaxRate,
-    otherTaxableIncome
+    otherTaxableIncome,
+    filingStatus
   );
   const reminderDates = buildReminderDates(nextDeadline);
   const nextRow = projectionRows[0];
@@ -1108,7 +1140,11 @@ function buildRmdPayload() {
     narrative,
     headlineRmd: nextRow ? nextRow.rmd : 0,
     headlineTax: nextRow ? nextRow.totalTax : 0,
-    headlineAge: projectionStartAge
+    headlineAge: projectionStartAge,
+    dataSources: {
+      rmd: `${IRS_RMD_SOURCE.source || 'IRS Publication 590-B'} ${IRS_RMD_SOURCE.version || ''}`.trim(),
+      irmaa: `${IRMAA_SOURCE.source?.publisher || 'CMS'} ${IRMAA_SOURCE.year || ''}`.trim()
+    }
   };
 }
 
@@ -1152,6 +1188,10 @@ function renderTimeline(rows) {
         <div class="timeline-value">${formatMoney(row.totalTax)}</div>
       </div>
       <div>
+        <div class="timeline-label">IRMAA Tier</div>
+        <div class="timeline-value">${row.irmaaTier.label}</div>
+      </div>
+      <div>
         <div class="timeline-label">End Balance</div>
         <div class="timeline-value">${formatMoney(row.endingBalance)}</div>
       </div>
@@ -1177,7 +1217,7 @@ function renderRmdReport(payload) {
   document.getElementById('nextRmdValue').textContent = formatMoney(nextRow.rmd);
   document.getElementById('nextRmdSub').textContent = `Age ${nextRow.age} divisor ${nextRow.divisor.toFixed(1)}`;
   document.getElementById('nextDeadlineValue').textContent = formatDate(new Date(payload.nextDeadline));
-  document.getElementById('nextDeadlineSub').textContent = payload.rmdStage === 'first_year' ? 'First-year RMD may be delayed to April 1, 2027' : 'Normal annual deadline cadence';
+  document.getElementById('nextDeadlineSub').textContent = payload.rmdStage === 'first_year' ? `First-year RMD may be delayed to April 1, ${payload.firstRmdYear + 1}` : 'Normal annual deadline cadence';
   document.getElementById('nextTaxValue').textContent = formatMoney(nextRow.totalTax);
   document.getElementById('nextTaxSub').textContent = `${formatPercent(payload.federalTaxRate)} federal + ${formatPercent(payload.stateTaxRate)} state estimate`;
 
@@ -1195,6 +1235,11 @@ function renderRmdReport(payload) {
       label: 'Projected Taxable Income',
       value: formatMoney(nextRow.combinedIncome),
       sub: `${formatMoney(payload.otherTaxableIncome)} other income plus next RMD`
+    },
+    {
+      label: 'IRMAA Tier',
+      value: nextRow.irmaaTier.label,
+      sub: `Estimated from ${payload.dataSources.irmaa} Part B thresholds`
     },
     {
       label: 'After-Tax RMD',

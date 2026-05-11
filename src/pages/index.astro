@@ -691,6 +691,280 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ══════════════════════════════════════════════════
+   RETIREMENT SHIELD ASSISTANT
+══════════════════════════════════════════════════ */
+.assistant-shell {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 220;
+  font-family: 'Source Serif 4', Georgia, serif;
+}
+.assistant-nudge {
+  position: absolute;
+  right: 76px;
+  bottom: 9px;
+  width: 238px;
+  background: var(--white);
+  border: 1px solid rgba(200,184,154,0.7);
+  color: var(--text-secondary);
+  padding: 12px 14px;
+  box-shadow: 0 14px 40px rgba(13,27,42,0.18);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.assistant-nudge.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.assistant-nudge::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  bottom: 20px;
+  width: 14px;
+  height: 14px;
+  background: var(--white);
+  border-right: 1px solid rgba(200,184,154,0.7);
+  border-bottom: 1px solid rgba(200,184,154,0.7);
+  transform: rotate(-45deg);
+}
+.assistant-launcher {
+  width: 82px;
+  height: 82px;
+  border: 1px solid rgba(232,168,64,0.82);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 24%, rgba(232,168,64,0.18), transparent 35%),
+    linear-gradient(145deg, #10243a 0%, #071522 100%);
+  color: var(--amber-light);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding: 14px 10px 12px;
+  cursor: pointer;
+  box-shadow:
+    0 18px 46px rgba(13,27,42,0.34),
+    inset 0 0 0 7px rgba(245,240,232,0.035),
+    0 0 0 6px rgba(200,130,26,0.08);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.assistant-launcher:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 22px 54px rgba(13,27,42,0.4),
+    inset 0 0 0 7px rgba(245,240,232,0.045),
+    0 0 0 8px rgba(200,130,26,0.1);
+}
+.assistant-launcher-mark {
+  width: 40px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 2px solid var(--amber-light);
+  border-radius: 15px;
+  background: rgba(245,240,232,0.04);
+}
+.assistant-launcher-mark::after {
+  content: "";
+  position: absolute;
+  right: 9px;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  background: #071522;
+  border-right: 2px solid var(--amber-light);
+  border-bottom: 2px solid var(--amber-light);
+  transform: rotate(45deg);
+}
+.assistant-chat-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cream);
+  box-shadow: -9px 0 0 var(--cream), 9px 0 0 var(--cream);
+}
+.assistant-launcher-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.54rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  opacity: 0.95;
+}
+.assistant-panel {
+  position: absolute;
+  right: 0;
+  bottom: 82px;
+  width: min(390px, calc(100vw - 32px));
+  max-height: min(660px, calc(100vh - 120px));
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  box-shadow: 0 22px 70px rgba(13,27,42,0.32);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.assistant-shell.open .assistant-panel { display: flex; }
+.assistant-header {
+  background: var(--navy);
+  color: var(--cream);
+  padding: 18px 18px 16px;
+  border-bottom: 2px solid var(--amber);
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+}
+.assistant-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber-light);
+  margin-bottom: 4px;
+}
+.assistant-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.16rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.assistant-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(245,240,232,0.18);
+  background: transparent;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+.assistant-messages {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 260px;
+}
+.assistant-message {
+  max-width: 88%;
+  padding: 13px 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-radius: 16px;
+}
+.assistant-message.user {
+  align-self: flex-end;
+  background: linear-gradient(145deg, var(--navy), var(--navy-light));
+  color: var(--cream);
+  border: 1px solid rgba(245,240,232,0.08);
+  border-bottom-right-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+.assistant-message.bot {
+  align-self: flex-start;
+  background: var(--white);
+  border: 1px solid rgba(200,184,154,0.72);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 8px 24px rgba(13,27,42,0.06);
+}
+.assistant-links {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.assistant-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 11px;
+  background: var(--white);
+  border: 1px solid rgba(200,184,154,0.55);
+  color: var(--navy);
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.assistant-links a::after { content: "→"; color: var(--amber); }
+.assistant-prompts {
+  padding: 0 18px 14px;
+  display: grid;
+  gap: 8px;
+}
+.assistant-prompts button {
+  border: 1px solid rgba(200,184,154,0.68);
+  background: rgba(255,255,255,0.72);
+  color: var(--navy);
+  padding: 11px 12px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.assistant-prompts button:hover {
+  border-color: var(--amber);
+  background: var(--white);
+  transform: translateX(2px);
+}
+.assistant-form {
+  border-top: 1px solid var(--rule-light);
+  background: var(--cream-dark);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.assistant-form input {
+  min-width: 0;
+  border: 1px solid rgba(13,27,42,0.18);
+  background: rgba(255,255,255,0.7);
+  color: var(--text-primary);
+  padding: 12px 12px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 0.94rem;
+  outline: none;
+}
+.assistant-form input:focus { border-color: var(--amber); }
+.assistant-form button {
+  border: none;
+  background: var(--amber);
+  color: var(--navy);
+  padding: 0 14px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.assistant-status {
+  padding: 0 18px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.56rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════════════════
    ████ MOBILE RESPONSIVE — 768px and below ████
 ══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -854,6 +1128,11 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
 
   /* ── Sticky CTA bar ── */
   .sticky-cta-bar { display: flex; }
+  .assistant-shell { right: 16px; bottom: 92px; }
+  .assistant-panel { bottom: 74px; max-height: calc(100vh - 176px); }
+  .assistant-launcher { width: 66px; height: 66px; }
+  .assistant-launcher-label { display: none; }
+  .assistant-nudge { right: 74px; width: 204px; font-size: 0.78rem; }
 
   /* ── Disable heavy desktop animations on mobile for performance ── */
   .margaret-section::after { display: none; }
@@ -872,6 +1151,7 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
   .bucket-card.featured .bucket-desc { display: block; }
   .footer-top { grid-template-columns: 1fr; gap: 28px; }
   .testimonial-card { padding: 24px 18px 20px; }
+  .assistant-nudge { display: none; }
 }
 
 /* ══════════════════════════════════════════════════
@@ -896,6 +1176,96 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
   .trust-bar { padding: 28px 32px; }
 }
 
+</style>
+<style is:global>
+.assistant-messages {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 260px;
+}
+.assistant-message {
+  width: fit-content;
+  max-width: 82%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 0.92rem;
+  line-height: 1.48;
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+.assistant-message.user {
+  align-self: flex-end;
+  margin-left: auto;
+  background: linear-gradient(145deg, var(--navy), var(--navy-light));
+  color: var(--cream);
+  border: 1px solid rgba(245,240,232,0.1);
+  border-bottom-right-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+.assistant-message.bot {
+  align-self: flex-start;
+  margin-right: auto;
+  background: var(--white);
+  color: var(--text-secondary);
+  border: 1px solid rgba(200,184,154,0.72);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 8px 24px rgba(13,27,42,0.06);
+}
+.assistant-message + .assistant-message.user { margin-top: 2px; }
+.assistant-message + .assistant-message.bot { margin-top: 2px; }
+.assistant-links {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.assistant-links a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 11px;
+  background: var(--cream);
+  border: 1px solid rgba(200,184,154,0.55);
+  color: var(--navy);
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.assistant-links a::after {
+  content: "→";
+  color: var(--amber);
+}
+.assistant-prompts {
+  padding: 0 18px 14px;
+  display: grid;
+  gap: 8px;
+}
+.assistant-prompts button {
+  border: 1px solid rgba(200,184,154,0.68);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.78);
+  color: var(--navy);
+  padding: 11px 12px;
+  cursor: pointer;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.assistant-prompts button:hover {
+  border-color: var(--amber);
+  background: var(--white);
+  transform: translateX(2px);
+}
 </style>
   </head>
 
@@ -1457,6 +1827,33 @@ footer { background: var(--navy); padding: 60px 48px 40px; color: rgba(245,240,2
     </div>
   </div>
 
+<!-- RETIREMENT SHIELD ASSISTANT -->
+<div class="assistant-shell" id="assistantShell">
+  <div class="assistant-nudge" id="assistantNudge">Need help finding a county page or tool? Ask me.</div>
+  <div class="assistant-panel" id="assistantPanel" aria-live="polite">
+    <div class="assistant-header">
+      <div>
+        <div class="assistant-kicker">Retirement Shield AI</div>
+        <div class="assistant-title">Find the right page or data point.</div>
+      </div>
+      <button class="assistant-close" type="button" id="assistantClose" aria-label="Close assistant">×</button>
+    </div>
+    <div class="assistant-messages" id="assistantMessages"></div>
+    <div class="assistant-prompts" id="assistantPrompts"></div>
+    <div class="assistant-status" id="assistantStatus">Uses Retirement Shield pages and database tables.</div>
+    <form class="assistant-form" id="assistantForm">
+      <input id="assistantInput" type="text" autocomplete="off" placeholder="Ask for a tool, state, or county..." />
+      <button type="submit">Ask</button>
+    </form>
+  </div>
+  <button class="assistant-launcher" id="assistantLauncher" type="button" aria-label="Open Retirement Shield AI assistant" aria-expanded="false">
+    <span class="assistant-launcher-mark">
+      <i class="assistant-chat-dot" aria-hidden="true"></i>
+    </span>
+    <span class="assistant-launcher-label">Chat</span>
+  </button>
+</div>
+
 <!-- ══ FOOTER ═════════════════════════════════════════ -->
 <footer>
   <div class="footer-top">
@@ -1658,6 +2055,124 @@ function toggleCheck(item) {
         window.closeContactModal();
       }
     });
+
+/* ── Retirement Shield homepage assistant ── */
+const assistantShell = document.getElementById('assistantShell');
+const assistantLauncher = document.getElementById('assistantLauncher');
+const assistantClose = document.getElementById('assistantClose');
+const assistantMessages = document.getElementById('assistantMessages');
+const assistantPrompts = document.getElementById('assistantPrompts');
+const assistantStatus = document.getElementById('assistantStatus');
+const assistantForm = document.getElementById('assistantForm');
+const assistantInput = document.getElementById('assistantInput');
+const assistantNudge = document.getElementById('assistantNudge');
+let assistantContext = {};
+
+function assistantEscape(value) {
+  return String(value || '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function setAssistantOpen(isOpen) {
+  if (!assistantShell) return;
+  assistantShell.classList.toggle('open', isOpen);
+  assistantLauncher?.setAttribute('aria-expanded', String(isOpen));
+  assistantNudge?.classList.remove('visible');
+  if (isOpen) {
+    setTimeout(() => assistantInput?.focus(), 80);
+  }
+}
+
+function renderAssistantPrompts(prompts = []) {
+  if (!assistantPrompts) return;
+  assistantPrompts.innerHTML = prompts.map((prompt) => `
+    <button type="button" data-assistant-prompt="${assistantEscape(prompt)}">${assistantEscape(prompt)}</button>
+  `).join('');
+}
+
+function appendAssistantMessage(role, text, links = []) {
+  if (!assistantMessages) return;
+  const bubble = document.createElement('div');
+  bubble.className = `assistant-message ${role}`;
+  bubble.innerHTML = `
+    <div>${assistantEscape(text)}</div>
+    ${links.length ? `
+      <div class="assistant-links">
+        ${links.map((link) => `<a href="${assistantEscape(link.href)}">${assistantEscape(link.label)}</a>`).join('')}
+      </div>
+    ` : ''}
+  `;
+  assistantMessages.appendChild(bubble);
+  assistantMessages.scrollTop = assistantMessages.scrollHeight;
+}
+
+async function askAssistant(message) {
+  const cleanMessage = String(message || '').trim();
+  if (!cleanMessage) return;
+
+  appendAssistantMessage('user', cleanMessage);
+  assistantInput.value = '';
+  assistantStatus.textContent = 'Checking Retirement Shield data...';
+
+  try {
+    const response = await fetch('/api/assistant/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: cleanMessage, context: assistantContext })
+    });
+    const data = await response.json();
+    assistantContext = data.context || {};
+    appendAssistantMessage('bot', data.reply || 'I found a few places to start.', data.links || []);
+    renderAssistantPrompts(data.prompts || []);
+    assistantStatus.textContent = response.ok ? 'Uses Retirement Shield pages and database tables.' : 'Try a different tool, state, or county.';
+  } catch (error) {
+    console.error('Assistant request failed:', error);
+    appendAssistantMessage('bot', 'I had trouble reaching the assistant. Try asking again in a moment.', []);
+    assistantStatus.textContent = 'Connection issue.';
+  }
+}
+
+assistantLauncher?.addEventListener('click', () => {
+  const willOpen = !assistantShell?.classList.contains('open');
+  setAssistantOpen(willOpen);
+});
+
+assistantClose?.addEventListener('click', () => setAssistantOpen(false));
+
+assistantForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  askAssistant(assistantInput.value);
+});
+
+assistantPrompts?.addEventListener('click', (event) => {
+  const target = event.target.closest('[data-assistant-prompt]');
+  if (!target) return;
+  askAssistant(target.dataset.assistantPrompt);
+});
+
+if (assistantMessages && assistantMessages.children.length === 0) {
+  appendAssistantMessage('bot', 'Ask me for a tool, article, state guide, or county life expectancy page. If you ask for life expectancy, I will ask for state and county when I need them.');
+  renderAssistantPrompts([
+    'Life expectancy in Alaska, Aleutians West Census Area',
+    'Show me IRMAA Guard',
+    'Probate in Florida'
+  ]);
+}
+
+setTimeout(() => {
+  if (!assistantShell?.classList.contains('open')) {
+    assistantNudge?.classList.add('visible');
+  }
+}, 3500);
+
+setTimeout(() => {
+  assistantNudge?.classList.remove('visible');
+}, 10500);
 </script>
 
 </body>

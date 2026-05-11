@@ -890,8 +890,8 @@ body {
         </div>
 
         <div class="sidebar-note">
-          <strong>Prototype note</strong>
-          This version uses bundled CPI-style assumptions and state longevity benchmarks so the whole product flow is live before the FRED integration is wired.
+          <strong>CPI-backed</strong>
+          This version uses the uploaded FRED CPIAUCSL history to calculate the baseline inflation rate, with an optional stress assumption for planning.
         </div>
       </div>
     </aside>
@@ -943,7 +943,7 @@ body {
             </div>
             <div class="metric-card">
               <div class="metric-label">What comes later</div>
-              <div class="metric-sub">Live FRED CPI feeds and updated county longevity benchmarks.</div>
+              <div class="metric-sub">The baseline can be auto-filled from the uploaded FRED CPIAUCSL history.</div>
             </div>
           </div>
 
@@ -1130,7 +1130,7 @@ body {
 </section>
 
 <div class="disclaimer">
-  <p><strong>Important Disclosures:</strong> This visualizer is for educational purposes only and does not constitute financial, legal, tax, or actuarial advice. Inflation assumptions shown here are prototype planning assumptions and are not live forecasts. Longevity framing is illustrative and based on bundled state-level planning assumptions in this version. Actual inflation, healthcare expenses, tax changes, and household spending patterns can materially change the real future cost of retirement. Use this report as a planning prompt and consult a qualified professional before making decisions. © 2026 Retirement Shield. All rights reserved.</p>
+  <p><strong>Important Disclosures:</strong> This visualizer is for educational purposes only and does not constitute financial, legal, tax, or actuarial advice. Baseline inflation can be calculated from the uploaded FRED CPIAUCSL history, while stress assumptions remain planning inputs rather than forecasts. Longevity framing is illustrative and based on bundled state-level planning assumptions in this version. Actual inflation, healthcare expenses, tax changes, and household spending patterns can materially change the real future cost of retirement. Use this report as a planning prompt and consult a qualified professional before making decisions. © 2026 Retirement Shield. All rights reserved.</p>
 </div>
 
 <script is:inline>
@@ -1154,6 +1154,7 @@ const STATE_LONGEVITY = {
 };
 
 let latestInflationPayload = null;
+let cpiSnapshotPromise = null;
 
 const stateSelect = document.getElementById('stateSelect');
 const placeholderOption = document.createElement('option');
@@ -1182,6 +1183,70 @@ function parseMoney(value) {
 function parsePercent(value, fallback = 0) {
   const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function parseCpiCsv(text) {
+  return String(text || '')
+    .trim()
+    .split(/\r?\n/)
+    .slice(1)
+    .map((line) => {
+      const [date, value] = line.split(',');
+      const cpi = Number(value);
+      return date && Number.isFinite(cpi) ? { date, cpi } : null;
+    })
+    .filter(Boolean);
+}
+
+function annualizedChange(startValue, endValue, years) {
+  if (!startValue || !endValue || years <= 0) return null;
+  return (Math.pow(endValue / startValue, 1 / years) - 1) * 100;
+}
+
+async function loadCpiSnapshot() {
+  if (cpiSnapshotPromise) return cpiSnapshotPromise;
+
+  cpiSnapshotPromise = fetch('/data/CPIAUCSL.csv')
+    .then((response) => {
+      if (!response.ok) throw new Error('CPI CSV could not be loaded.');
+      return response.text();
+    })
+    .then((text) => {
+      const rows = parseCpiCsv(text);
+      const latest = rows[rows.length - 1];
+      const priorYear = rows[rows.length - 13];
+      const priorFiveYear = rows[rows.length - 61];
+      const priorTenYear = rows[rows.length - 121];
+      const latestYoY = latest && priorYear ? ((latest.cpi - priorYear.cpi) / priorYear.cpi) * 100 : null;
+      const fiveYearAnnualized = latest && priorFiveYear ? annualizedChange(priorFiveYear.cpi, latest.cpi, 5) : null;
+      const tenYearAnnualized = latest && priorTenYear ? annualizedChange(priorTenYear.cpi, latest.cpi, 10) : null;
+      const baselineRate = fiveYearAnnualized ?? tenYearAnnualized ?? latestYoY ?? 3;
+      const stressRate = Math.max(baselineRate + 2, latestYoY != null ? latestYoY + 1 : 5.5);
+
+      return {
+        source: 'FRED CPIAUCSL CSV',
+        latestDate: latest?.date || null,
+        latestYoY,
+        fiveYearAnnualized,
+        tenYearAnnualized,
+        baselineRate,
+        stressRate
+      };
+    })
+    .catch((error) => {
+      console.warn('CPI snapshot fallback used:', error);
+      return {
+        source: 'Fallback assumption',
+        latestDate: null,
+        latestYoY: null,
+        fiveYearAnnualized: null,
+        tenYearAnnualized: null,
+        baselineRate: 3,
+        stressRate: 5.5
+      };
+    });
+
+  return cpiSnapshotPromise;
 }
 
 function stateName(code) {
@@ -1216,7 +1281,8 @@ function buildInflationSeries(startAge, endAge, monthlyBudget, rate) {
   return years;
 }
 
-function buildInflationPayload() {
+async function buildInflationPayload() {
+  const cpiSnapshot = await loadCpiSnapshot();
   const fullName = document.getElementById('fullName').value.trim();
   const stateCode = document.getElementById('stateSelect').value;
   const stateFullName = stateName(stateCode);
@@ -1226,8 +1292,8 @@ function buildInflationPayload() {
   const budgetPriority = document.getElementById('budgetPriority').value.trim();
   const budgetNotes = document.getElementById('budgetNotes').value.trim();
   const targetAge = Number(document.getElementById('targetAge').value || 85);
-  const inflationRate = parsePercent(document.getElementById('inflationRate').value, 3);
-  const stressInflationRate = parsePercent(document.getElementById('stressInflationRate').value, 5.5);
+  const inflationRate = parsePercent(document.getElementById('inflationRate').value, cpiSnapshot.baselineRate);
+  const stressInflationRate = parsePercent(document.getElementById('stressInflationRate').value, cpiSnapshot.stressRate);
   const planningGoal = document.getElementById('planningGoal').value;
 
   const longevityAge = getLongevityAge(stateCode, currentAge);
@@ -1237,7 +1303,10 @@ function buildInflationPayload() {
   const targetPoint = baselineSeries.find((point) => point.age === targetAge) || baselineSeries[baselineSeries.length - 1];
   const longevityPoint = baselineSeries.find((point) => point.age === Math.ceil(longevityAge)) || baselineSeries[baselineSeries.length - 1];
 
-  const narrative = `A ${formatMoney(monthlyBudget)} monthly budget today grows to about ${formatMoney(targetPoint.monthlyCost)} by age ${targetAge} at a ${inflationRate.toFixed(1)}% inflation assumption. If this household needs the budget to last through roughly age ${longevityAge.toFixed(1)} in ${countyName || stateFullName || 'their area'}, the same lifestyle could require about ${formatMoney(longevityPoint.monthlyCost)} per month. ${budgetNotes ? budgetNotes : 'That is why retirement income planning has to keep pace with cost growth, not just today’s spending.'}`;
+  const cpiLine = cpiSnapshot.latestDate
+    ? ` The baseline is anchored to the uploaded FRED CPIAUCSL history through ${cpiSnapshot.latestDate}, using a ${cpiSnapshot.fiveYearAnnualized != null ? 'five-year annualized' : 'latest available'} CPI rate.`
+    : '';
+  const narrative = `A ${formatMoney(monthlyBudget)} monthly budget today grows to about ${formatMoney(targetPoint.monthlyCost)} by age ${targetAge} at a ${inflationRate.toFixed(1)}% inflation assumption.${cpiLine} If this household needs the budget to last through roughly age ${longevityAge.toFixed(1)} in ${countyName || stateFullName || 'their area'}, the same lifestyle could require about ${formatMoney(longevityPoint.monthlyCost)} per month. ${budgetNotes ? budgetNotes : 'That is why retirement income planning has to keep pace with cost growth, not just today’s spending.'}`;
 
   return {
     fullName,
@@ -1251,6 +1320,7 @@ function buildInflationPayload() {
     targetAge,
     inflationRate,
     stressInflationRate,
+    cpiSnapshot,
     planningGoal,
     longevityAge,
     baselineSeries,
@@ -1322,13 +1392,13 @@ function renderInflationReport(payload) {
 
   document.getElementById('summaryCopy').textContent = payload.budgetNotes || payload.narrative;
   document.getElementById('benchmarkHeadline').textContent = `${formatMoney(payload.monthlyBudget)} today becomes about ${formatMoney(payload.targetBudget)} by age ${payload.targetAge}`;
-  document.getElementById('benchmarkCopy').textContent = `Using a baseline inflation assumption of ${payload.inflationRate.toFixed(1)}%, this budget could rise to about ${formatMoney(payload.targetBudget)} by age ${payload.targetAge} and roughly ${formatMoney(payload.longevityBudget)} by age ${payload.longevityAge.toFixed(1)}.`;
+  document.getElementById('benchmarkCopy').textContent = `Using a baseline inflation assumption of ${payload.inflationRate.toFixed(1)}%${payload.cpiSnapshot?.latestDate ? ` from CPIAUCSL history through ${payload.cpiSnapshot.latestDate}` : ''}, this budget could rise to about ${formatMoney(payload.targetBudget)} by age ${payload.targetAge} and roughly ${formatMoney(payload.longevityBudget)} by age ${payload.longevityAge.toFixed(1)}.`;
   document.getElementById('currentBudgetValue').textContent = formatMoney(payload.monthlyBudget);
   document.getElementById('targetBudgetValue').textContent = formatMoney(payload.targetBudget);
   document.getElementById('longevityBudgetValue').textContent = formatMoney(payload.longevityBudget);
   document.getElementById('targetBudgetSub').textContent = `Projected monthly need at age ${payload.targetAge}`;
   document.getElementById('longevityBudgetSub').textContent = `Projected monthly need near age ${payload.longevityAge.toFixed(1)}`;
-  document.getElementById('chartPill').textContent = `${payload.inflationRate.toFixed(1)}% baseline · ${payload.stressInflationRate.toFixed(1)}% stress`;
+  document.getElementById('chartPill').textContent = `${payload.inflationRate.toFixed(1)}% CPI baseline · ${payload.stressInflationRate.toFixed(1)}% stress`;
 
   drawChart(payload);
 
@@ -1454,9 +1524,13 @@ async function hydrateSavedInflationReport(report) {
 }
 
 async function generateInflationReport() {
-  const payload = buildInflationPayload();
-  await saveInflationReport(payload);
-  showGeneratedInflationReport(payload);
+  try {
+    const payload = await buildInflationPayload();
+    await saveInflationReport(payload);
+    showGeneratedInflationReport(payload);
+  } catch (error) {
+    alert(error instanceof Error ? error.message : 'Unable to generate the inflation report.');
+  }
 }
 
 function editInflationReport() {

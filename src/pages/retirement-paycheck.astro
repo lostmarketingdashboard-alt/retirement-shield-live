@@ -1205,7 +1205,7 @@ body {
               <button class="btn-add" type="button" onclick="addHoldingRow()">Add Holding</button>
               <button class="btn-ghost" type="button" onclick="clearHoldings()">Clear All</button>
             </div>
-            <div class="holdings-supported">Unsupported tickers will still save in the report, but they’ll be flagged as needing live market data coverage.</div>
+            <div class="holdings-supported">Ticker data is pulled live from Financial Modeling Prep when you generate the report.</div>
           </div>
 
           <div class="btn-row">
@@ -1342,7 +1342,7 @@ body {
           <div>
             <div class="section-kicker">Section 3</div>
             <div class="section-title">Holdings Included in This Report</div>
-            <div class="section-copy">Unsupported symbols are saved too, but flagged for live data coverage when the API layer is connected.</div>
+            <div class="section-copy">Each holding is checked against live quote, dividend, and payout-ratio data from Financial Modeling Prep.</div>
           </div>
         </div>
         <table class="holdings-table">
@@ -1382,7 +1382,7 @@ body {
 </section>
 
 <div class="disclaimer">
-  <p><strong>Important Disclosures:</strong> This retirement paycheck tool is for educational purposes only and does not constitute investment, legal, tax, or financial advice. Dividend yields, payout ratios, dividend growth streaks, and payment timing shown here are prototype estimates based on a bundled dataset for common retirement holdings, not live market data. Actual dividends can be reduced, suspended, or changed at any time. County benchmark comparisons are simplified educational benchmarks only. Always verify current company filings, fund distribution notices, and personal tax consequences before making portfolio decisions. © 2026 Retirement Shield. All rights reserved.</p>
+  <p><strong>Important Disclosures:</strong> This retirement paycheck tool is for educational purposes only and does not constitute investment, legal, tax, or financial advice. Dividend yields, payout ratios, dividend history, and payment timing are pulled from Financial Modeling Prep when available and may be incomplete, delayed, or different from issuer notices. Actual dividends can be reduced, suspended, or changed at any time. County benchmark comparisons are simplified educational benchmarks only. Always verify current company filings, fund distribution notices, and personal tax consequences before making portfolio decisions. © 2026 Retirement Shield. All rights reserved.</p>
 </div>
 
 <script is:inline>
@@ -1402,24 +1402,6 @@ const STATE_OPTIONS = [
 const COUNTY_BENCHMARKS = {
   FL: 1975, CA: 2050, TX: 1885, NY: 2010, NJ: 2060, AZ: 1910, NC: 1840, SC: 1805,
   GA: 1825, TN: 1810, PA: 1900, OH: 1855, MI: 1865, IL: 1930, WA: 2015, OR: 1960
-};
-
-const DIVIDEND_DATA = {
-  JNJ: { name: 'Johnson & Johnson', annualDividendPerShare: 4.96, yield: 3.2, payoutRatio: 46, increaseYears: 62, months: [3,6,9,12] },
-  KO: { name: 'Coca-Cola', annualDividendPerShare: 1.94, yield: 3.1, payoutRatio: 74, increaseYears: 62, months: [4,7,10,12] },
-  PG: { name: 'Procter & Gamble', annualDividendPerShare: 4.03, yield: 2.4, payoutRatio: 68, increaseYears: 68, months: [2,5,8,11] },
-  O: { name: 'Realty Income', annualDividendPerShare: 3.15, yield: 5.7, payoutRatio: 78, increaseYears: 29, months: [1,2,3,4,5,6,7,8,9,10,11,12] },
-  SCHD: { name: 'Schwab U.S. Dividend Equity ETF', annualDividendPerShare: 2.68, yield: 3.4, payoutRatio: null, increaseYears: 13, months: [3,6,9,12] },
-  VYM: { name: 'Vanguard High Dividend Yield ETF', annualDividendPerShare: 3.38, yield: 3.0, payoutRatio: null, increaseYears: 12, months: [3,6,9,12] },
-  XOM: { name: 'Exxon Mobil', annualDividendPerShare: 3.80, yield: 3.2, payoutRatio: 38, increaseYears: 42, months: [3,6,9,12] },
-  CVX: { name: 'Chevron', annualDividendPerShare: 6.52, yield: 4.1, payoutRatio: 62, increaseYears: 37, months: [3,6,9,12] },
-  ABBV: { name: 'AbbVie', annualDividendPerShare: 6.56, yield: 3.9, payoutRatio: 56, increaseYears: 52, months: [2,5,8,11] },
-  T: { name: 'AT&T', annualDividendPerShare: 1.11, yield: 6.1, payoutRatio: 58, increaseYears: 3, months: [2,5,8,11] },
-  VZ: { name: 'Verizon', annualDividendPerShare: 2.66, yield: 6.4, payoutRatio: 61, increaseYears: 18, months: [2,5,8,11] },
-  PEP: { name: 'PepsiCo', annualDividendPerShare: 5.42, yield: 3.1, payoutRatio: 68, increaseYears: 52, months: [1,3,6,9] },
-  HD: { name: 'Home Depot', annualDividendPerShare: 9.00, yield: 2.5, payoutRatio: 57, increaseYears: 15, months: [3,6,9,12] },
-  MCD: { name: 'McDonald’s', annualDividendPerShare: 6.68, yield: 2.4, payoutRatio: 58, increaseYears: 47, months: [3,6,9,12] },
-  JPM: { name: 'JPMorgan Chase', annualDividendPerShare: 5.00, yield: 2.3, payoutRatio: 29, increaseYears: 14, months: [1,4,7,10] }
 };
 
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1527,19 +1509,32 @@ function getHoldings() {
   }).filter((row) => row.ticker || row.shares);
 }
 
-function classifySafety(data) {
-  if (!data) return { label: 'Needs data', tone: 'risk' };
-  if (data.payoutRatio !== null && data.payoutRatio >= 80) return { label: 'Watch closely', tone: 'watch' };
-  if (data.payoutRatio !== null && data.payoutRatio >= 95) return { label: 'Higher risk', tone: 'risk' };
-  if (data.increaseYears >= 20 || data.payoutRatio === null || data.payoutRatio < 65) return { label: 'Relatively steady', tone: 'safe' };
-  return { label: 'Monitor', tone: 'watch' };
-}
-
 function getCountyBenchmark(stateCode) {
   return COUNTY_BENCHMARKS[stateCode] || 1890;
 }
 
-function buildReportPayload() {
+function normalizeFmpTone(tone) {
+  if (tone === 'good') return 'safe';
+  if (tone === 'risk') return 'risk';
+  return 'watch';
+}
+
+async function analyzeDividendHoldings(holdings) {
+  const response = await fetch('/api/dividend-watch/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ holdings })
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.error || 'Financial Modeling Prep analysis failed.');
+  }
+
+  return payload?.portfolio || null;
+}
+
+async function buildReportPayload() {
   const fullName = document.getElementById('fullName').value.trim();
   const stateCode = document.getElementById('stateSelect').value;
   const stateName = titleState(stateCode);
@@ -1549,48 +1544,52 @@ function buildReportPayload() {
   const newsletterInterest = document.getElementById('newsletterInterest').value;
   const incomeUse = document.getElementById('incomeUse').value.trim();
   const holdingsInput = getHoldings();
+  const portfolio = await analyzeDividendHoldings(holdingsInput);
 
-  const holdings = holdingsInput.map((row) => {
-    const marketData = DIVIDEND_DATA[row.ticker];
-    const annualIncome = marketData ? marketData.annualDividendPerShare * row.shares : 0;
-    const quarterlyIncome = annualIncome / (marketData?.months?.length || 4);
-    const safety = classifySafety(marketData);
+  const holdings = (portfolio?.holdings || []).map((holding) => ({
+    ticker: holding.ticker,
+    shares: holding.shares,
+    companyName: holding.name || holding.ticker,
+    annualDividendPerShare: holding.annualDividendPerShare,
+    annualIncome: holding.annualIncome ?? 0,
+    yield: holding.dividendYield,
+    payoutRatio: holding.payoutRatio,
+    increaseYears: null,
+    months: holding.expectedMonths || [],
+    supported: holding.annualIncome != null,
+    quarterlyIncome: holding.expectedMonthlyAmount ?? 0,
+    safetyLabel: holding.payoutWarningLabel || holding.dividendChangeLabel || 'Review needed',
+    safetyTone: normalizeFmpTone(holding.payoutWarningTone || holding.dividendChangeTone),
+    healthScore: holding.healthScore,
+    nextExDividendDateLabel: holding.nextExDividendDateLabel,
+    nextPaymentDateLabel: holding.nextPaymentDateLabel
+  }));
+
+  const monthTotals = (portfolio?.calendar || []).map((month, index) => {
+    const fallbackMonth = MONTH_NAMES[index] || month.month;
+    const contributors = (month.items || []).map((item) => {
+      const [ticker, amountLabel] = String(item).split(/\s+(.+)/);
+      return {
+        ticker: ticker || item,
+        amount: parseMoney(amountLabel || 0)
+      };
+    });
     return {
-      ...row,
-      companyName: marketData?.name || 'Live API data needed',
-      annualDividendPerShare: marketData?.annualDividendPerShare ?? null,
-      annualIncome,
-      yield: marketData?.yield ?? null,
-      payoutRatio: marketData?.payoutRatio ?? null,
-      increaseYears: marketData?.increaseYears ?? null,
-      months: marketData?.months ?? [],
-      supported: Boolean(marketData),
-      quarterlyIncome,
-      safetyLabel: safety.label,
-      safetyTone: safety.tone
+      month: month.month || fallbackMonth,
+      total: month.income || 0,
+      contributors
     };
-  }).filter((row) => row.ticker && row.shares > 0);
-
-  const monthTotals = MONTH_NAMES.map((name, monthIndex) => {
-    const contributors = holdings
-      .filter((holding) => holding.months.includes(monthIndex + 1))
-      .map((holding) => ({
-        ticker: holding.ticker,
-        amount: holding.annualIncome / holding.months.length
-      }));
-    const total = contributors.reduce((sum, item) => sum + item.amount, 0);
-    return { month: name, total, contributors };
   });
 
-  const annualIncome = holdings.reduce((sum, row) => sum + row.annualIncome, 0);
-  const averageMonthlyIncome = annualIncome / 12;
+  const annualIncome = portfolio?.annualIncome ?? holdings.reduce((sum, row) => sum + row.annualIncome, 0);
+  const averageMonthlyIncome = portfolio?.averageMonthlyIncome ?? (annualIncome / 12);
   const countyBenchmark = getCountyBenchmark(stateCode);
   const coveragePercent = countyBenchmark ? (averageMonthlyIncome / countyBenchmark) * 100 : 0;
   const bestMonth = [...monthTotals].sort((a, b) => b.total - a.total)[0] || { month: '—', total: 0 };
   const supportedHoldings = holdings.filter((row) => row.supported);
   const unsupportedHoldings = holdings.filter((row) => !row.supported);
 
-  let narrative = `Based on the holdings entered, the portfolio is projecting about ${formatMoney(annualIncome)} in annual dividends, or roughly ${formatMoney(averageMonthlyIncome)} per month on average.`;
+  let narrative = `Based on live Financial Modeling Prep data for the holdings entered, the portfolio is projecting about ${formatMoney(annualIncome)} in annual dividends, or roughly ${formatMoney(averageMonthlyIncome)} per month on average.`;
   if (incomeUse) narrative += ` The report is framed around ${incomeUse.toLowerCase()}.`;
   if (monthlyIncomeGoal) {
     const gap = monthlyIncomeGoal - averageMonthlyIncome;
@@ -1599,7 +1598,7 @@ function buildReportPayload() {
       : ` That exceeds the stated monthly goal by about ${formatMoney(Math.abs(gap))}.`;
   }
   if (unsupportedHoldings.length) {
-    narrative += ` ${unsupportedHoldings.length} holding${unsupportedHoldings.length > 1 ? 's need' : ' needs'} live market coverage before this becomes a complete production report.`;
+    narrative += ` ${unsupportedHoldings.length} holding${unsupportedHoldings.length > 1 ? 's returned' : ' returned'} incomplete dividend coverage from FMP and should be manually reviewed.`;
   }
 
   return {
@@ -1620,6 +1619,8 @@ function buildReportPayload() {
     monthTotals,
     supportedCount: supportedHoldings.length,
     unsupportedCount: unsupportedHoldings.length,
+    portfolioScore: portfolio?.portfolioScore ?? null,
+    dataSource: 'Financial Modeling Prep',
     narrative
   };
 }
@@ -1640,12 +1641,12 @@ function renderReport(payload) {
   document.getElementById('monthlyIncomeValue').textContent = formatMoney(payload.averageMonthlyIncome);
   document.getElementById('bestMonthValue').textContent = payload.bestMonth.month;
   document.getElementById('coverageValue').textContent = `${Math.round(payload.coveragePercent)}%`;
-  document.getElementById('annualIncomeSub').textContent = `${payload.supportedCount} supported holding${payload.supportedCount === 1 ? '' : 's'} analyzed`;
+  document.getElementById('annualIncomeSub').textContent = `${payload.supportedCount} FMP-backed holding${payload.supportedCount === 1 ? '' : 's'} analyzed`;
   document.getElementById('monthlyIncomeSub').textContent = payload.monthlyIncomeGoal ? `Goal entered: ${formatMoney(payload.monthlyIncomeGoal)}` : 'Average over 12 months';
   document.getElementById('bestMonthSub').textContent = payload.bestMonth.total ? formatMoney(payload.bestMonth.total) : 'No projected payout month yet';
   document.getElementById('coverageSub').textContent = `${formatMoney(payload.countyBenchmark)} local monthly benchmark`;
 
-  document.getElementById('calendarPill').textContent = payload.unsupportedCount ? `${payload.unsupportedCount} holding${payload.unsupportedCount > 1 ? 's' : ''} need live data` : '12-month payout view';
+  document.getElementById('calendarPill').textContent = payload.unsupportedCount ? `${payload.unsupportedCount} incomplete holding${payload.unsupportedCount > 1 ? 's' : ''}` : 'Live FMP payout view';
 
   const calendarGrid = document.getElementById('calendarGrid');
   calendarGrid.innerHTML = payload.monthTotals.map((month) => `
@@ -1701,7 +1702,7 @@ function renderReport(payload) {
       <td data-label="Shares">${holding.shares}</td>
       <td data-label="Annual Income">${formatMoney(holding.annualIncome)}</td>
       <td data-label="Yield">${holding.yield !== null ? `${holding.yield.toFixed(1)}%` : '—'}</td>
-      <td data-label="Status">${holding.supported ? holding.safetyLabel : 'Unsupported in prototype dataset'}</td>
+      <td data-label="Status">${holding.supported ? holding.safetyLabel : 'Incomplete FMP coverage'}</td>
     </tr>
   `).join('');
 
@@ -1802,9 +1803,13 @@ async function hydrateSavedReport(report) {
 }
 
 async function generateReport() {
-  const payload = buildReportPayload();
-  await saveRetirementPaycheckReport(payload);
-  showGeneratedReport(payload);
+  try {
+    const payload = await buildReportPayload();
+    await saveRetirementPaycheckReport(payload);
+    showGeneratedReport(payload);
+  } catch (error) {
+    alert(error instanceof Error ? error.message : 'Unable to analyze these holdings.');
+  }
 }
 
 function editReport() {

@@ -1,0 +1,56 @@
+{
+  "year": 2026,
+  "lookback_tax_year": 2024,
+  "standard_part_b_premium": 202.9,
+  "source": {
+    "publisher": "CMS",
+    "title": "2026 Medicare Parts A & B Premiums and Deductibles",
+    "published_date": "2025-11-14",
+    "url": "https://www.cms.gov/newsroom/fact-sheets/2026-medicare-parts-b-premiums-and-deductibles"
+  },
+  "drug_only_part_b_premiums": [
+    { "part_d_irmaa_amount": 0, "total_premium": 121.6 },
+    { "part_d_irmaa_amount": 14.5, "total_premium": 202.7 },
+    { "part_d_irmaa_amount": 37.5, "total_premium": 324.3 },
+    { "part_d_irmaa_amount": 60.4, "total_premium": 445.9 },
+    { "part_d_irmaa_amount": 83.3, "total_premium": 567.5 },
+    { "part_d_irmaa_amount": 91, "total_premium": 608.1 }
+  ],
+  "brackets": [
+    { "type": "part_b", "filing_status": "individual", "income_min": 0, "income_max": 109000, "irmaa_amount": 0, "total_premium": 202.9, "label": "Base premium tier" },
+    { "type": "part_b", "filing_status": "individual", "income_min": 109000, "income_max": 137000, "irmaa_amount": 81.2, "total_premium": 284.1, "label": "IRMAA tier 1" },
+    { "type": "part_b", "filing_status": "individual", "income_min": 137000, "income_max": 171000, "irmaa_amount": 202.9, "total_premium": 405.8, "label": "IRMAA tier 2" },
+    { "type": "part_b", "filing_status": "individual", "income_min": 171000, "income_max": 205000, "irmaa_amount": 324.6, "total_premium": 527.5, "label": "IRMAA tier 3" },
+    { "type": "part_b", "filing_status": "individual", "income_min": 205000, "income_max": 500000, "irmaa_amount": 446.3, "total_premium": 649.2, "label": "IRMAA tier 4" },
+    { "type": "part_b", "filing_status": "individual", "income_min": 500000, "income_max": null, "irmaa_amount": 487, "total_premium": 689.9, "label": "Top IRMAA tier" },
+
+    { "type": "part_b", "filing_status": "joint", "income_min": 0, "income_max": 218000, "irmaa_amount": 0, "total_premium": 202.9, "label": "Base premium tier" },
+    { "type": "part_b", "filing_status": "joint", "income_min": 218000, "income_max": 274000, "irmaa_amount": 81.2, "total_premium": 284.1, "label": "IRMAA tier 1" },
+    { "type": "part_b", "filing_status": "joint", "income_min": 274000, "income_max": 342000, "irmaa_amount": 202.9, "total_premium": 405.8, "label": "IRMAA tier 2" },
+    { "type": "part_b", "filing_status": "joint", "income_min": 342000, "income_max": 410000, "irmaa_amount": 324.6, "total_premium": 527.5, "label": "IRMAA tier 3" },
+    { "type": "part_b", "filing_status": "joint", "income_min": 410000, "income_max": 750000, "irmaa_amount": 446.3, "total_premium": 649.2, "label": "IRMAA tier 4" },
+    { "type": "part_b", "filing_status": "joint", "income_min": 750000, "income_max": null, "irmaa_amount": 487, "total_premium": 689.9, "label": "Top IRMAA tier" },
+
+    { "type": "part_b", "filing_status": "separate", "income_min": 0, "income_max": 109000, "irmaa_amount": 0, "total_premium": 202.9, "label": "Base premium tier" },
+    { "type": "part_b", "filing_status": "separate", "income_min": 109000, "income_max": 391000, "irmaa_amount": 446.3, "total_premium": 649.2, "label": "IRMAA separate-filer tier" },
+    { "type": "part_b", "filing_status": "separate", "income_min": 391000, "income_max": null, "irmaa_amount": 487, "total_premium": 689.9, "label": "Top separate-filer tier" },
+
+    { "type": "part_d", "filing_status": "individual", "income_min": 0, "income_max": 109000, "irmaa_amount": 0, "label": "Base premium tier" },
+    { "type": "part_d", "filing_status": "individual", "income_min": 109000, "income_max": 137000, "irmaa_amount": 14.5, "label": "IRMAA tier 1" },
+    { "type": "part_d", "filing_status": "individual", "income_min": 137000, "income_max": 171000, "irmaa_amount": 37.5, "label": "IRMAA tier 2" },
+    { "type": "part_d", "filing_status": "individual", "income_min": 171000, "income_max": 205000, "irmaa_amount": 60.4, "label": "IRMAA tier 3" },
+    { "type": "part_d", "filing_status": "individual", "income_min": 205000, "income_max": 500000, "irmaa_amount": 83.3, "label": "IRMAA tier 4" },
+    { "type": "part_d", "filing_status": "individual", "income_min": 500000, "income_max": null, "irmaa_amount": 91, "label": "Top IRMAA tier" },
+
+    { "type": "part_d", "filing_status": "joint", "income_min": 0, "income_max": 218000, "irmaa_amount": 0, "label": "Base premium tier" },
+    { "type": "part_d", "filing_status": "joint", "income_min": 218000, "income_max": 274000, "irmaa_amount": 14.5, "label": "IRMAA tier 1" },
+    { "type": "part_d", "filing_status": "joint", "income_min": 274000, "income_max": 342000, "irmaa_amount": 37.5, "label": "IRMAA tier 2" },
+    { "type": "part_d", "filing_status": "joint", "income_min": 342000, "income_max": 410000, "irmaa_amount": 60.4, "label": "IRMAA tier 3" },
+    { "type": "part_d", "filing_status": "joint", "income_min": 410000, "income_max": 750000, "irmaa_amount": 83.3, "label": "IRMAA tier 4" },
+    { "type": "part_d", "filing_status": "joint", "income_min": 750000, "income_max": null, "irmaa_amount": 91, "label": "Top IRMAA tier" },
+
+    { "type": "part_d", "filing_status": "separate", "income_min": 0, "income_max": 109000, "irmaa_amount": 0, "label": "Base premium tier" },
+    { "type": "part_d", "filing_status": "separate", "income_min": 109000, "income_max": 391000, "irmaa_amount": 83.3, "label": "IRMAA separate-filer tier" },
+    { "type": "part_d", "filing_status": "separate", "income_min": 391000, "income_max": null, "irmaa_amount": 91, "label": "Top separate-filer tier" }
+  ]
+}

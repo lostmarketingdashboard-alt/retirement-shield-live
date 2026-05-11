@@ -1,4 +1,6 @@
 ---
+import irmaaBracketData from '../data/irmaa-brackets.json';
+
 export const prerender = false;
 export const ssr = false;
 ---
@@ -605,40 +607,19 @@ body {
   <p><strong>Important Disclosures:</strong> This IRMAA tool is for educational purposes only and does not constitute tax, legal, healthcare, or financial advice. The 2026 threshold data in this report is based on the official CMS release dated November 14, 2025. Actual Medicare premium liability can depend on Social Security Administration determinations, appeal rights, amended returns, life-changing-event exceptions, and plan-specific Part D premiums. Always confirm final premium consequences with Medicare, SSA, or a qualified advisor before acting. Source: CMS 2026 Medicare Parts A &amp; B Premiums and Deductibles fact sheet published November 14, 2025. </p>
 </div>
 
+<script type="application/json" id="irmaaBracketData" set:html={JSON.stringify(irmaaBracketData)}></script>
 <script is:inline>
-const IRMAA_2026 = {
-  standardPartB: 202.90,
-  lookbackTaxYear: 2024,
-  individual: [
-    { min: 0, max: 109000, partB: 202.90, partD: 0, label: 'Base premium tier' },
-    { min: 109000, max: 137000, partB: 284.10, partD: 14.50, label: 'IRMAA tier 1' },
-    { min: 137000, max: 171000, partB: 405.80, partD: 37.50, label: 'IRMAA tier 2' },
-    { min: 171000, max: 205000, partB: 527.50, partD: 60.40, label: 'IRMAA tier 3' },
-    { min: 205000, max: 500000, partB: 649.20, partD: 83.30, label: 'IRMAA tier 4' },
-    { min: 500000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top IRMAA tier' }
-  ],
-  joint: [
-    { min: 0, max: 218000, partB: 202.90, partD: 0, label: 'Base premium tier' },
-    { min: 218000, max: 274000, partB: 284.10, partD: 14.50, label: 'IRMAA tier 1' },
-    { min: 274000, max: 342000, partB: 405.80, partD: 37.50, label: 'IRMAA tier 2' },
-    { min: 342000, max: 410000, partB: 527.50, partD: 60.40, label: 'IRMAA tier 3' },
-    { min: 410000, max: 750000, partB: 649.20, partD: 83.30, label: 'IRMAA tier 4' },
-    { min: 750000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top IRMAA tier' }
-  ],
-  separate: [
-    { min: 0, max: 109000, partB: 202.90, partD: 0, label: 'Base premium tier' },
-    { min: 109000, max: 391000, partB: 649.20, partD: 83.30, label: 'IRMAA separate-filer tier' },
-    { min: 391000, max: Infinity, partB: 689.90, partD: 91.00, label: 'Top separate-filer tier' }
-  ],
-  drugOnlyFactor: {
-    base: 121.60,
-    14.50: 202.70,
-    37.50: 324.30,
-    60.40: 445.90,
-    83.30: 567.50,
-    91.00: 608.10
+function readIrmaaSourceData() {
+  try {
+    return JSON.parse(document.getElementById('irmaaBracketData')?.textContent || '{}');
+  } catch (error) {
+    console.error('Unable to read IRMAA bracket data:', error);
+    return {};
   }
-};
+}
+
+const IRMAA_SOURCE_DATA = readIrmaaSourceData();
+const IRMAA_2026 = buildIrmaaTables(IRMAA_SOURCE_DATA);
 
 const STATE_OPTIONS = [
   ['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],
@@ -654,6 +635,44 @@ const STATE_OPTIONS = [
 ];
 
 let latestIrmaaPayload = null;
+
+function buildIrmaaTables(source) {
+  const statuses = ['individual', 'joint', 'separate'];
+  const tables = {
+    standardPartB: source.standard_part_b_premium || 202.90,
+    lookbackTaxYear: source.lookback_tax_year || ((source.year || 2026) - 2),
+    source
+  };
+
+  statuses.forEach((status) => {
+    const partBRows = (source.brackets || [])
+      .filter((row) => row.type === 'part_b' && row.filing_status === status)
+      .sort((a, b) => a.income_min - b.income_min);
+    const partDRows = (source.brackets || [])
+      .filter((row) => row.type === 'part_d' && row.filing_status === status)
+      .sort((a, b) => a.income_min - b.income_min);
+
+    tables[status] = partBRows.map((partBRow, index) => {
+      const partDRow = partDRows[index] || partDRows.find((row) => row.income_min === partBRow.income_min) || {};
+      return {
+        min: partBRow.income_min,
+        max: partBRow.income_max === null ? Infinity : partBRow.income_max,
+        partB: partBRow.total_premium,
+        partD: partDRow.irmaa_amount || 0,
+        label: partBRow.label || partDRow.label || 'IRMAA tier'
+      };
+    });
+  });
+
+  tables.drugOnlyFactor = (source.drug_only_part_b_premiums || []).reduce((acc, row) => {
+    const key = Number(row.part_d_irmaa_amount || 0).toFixed(2);
+    acc[key] = row.total_premium;
+    if (Number(row.part_d_irmaa_amount || 0) === 0) acc.base = row.total_premium;
+    return acc;
+  }, {});
+
+  return tables;
+}
 
 const stateSelect = document.getElementById('stateName');
 const placeholderOption = document.createElement('option');

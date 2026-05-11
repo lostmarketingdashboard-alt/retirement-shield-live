@@ -957,8 +957,8 @@ body {
         </div>
 
         <div class="sidebar-note">
-          <strong>Prototype note</strong>
-          This version uses bundled scenario assumptions so the full product flow is live now. The API-connected monthly recalculation layer can plug in afterward without changing the user experience.
+          <strong>Live-data aware</strong>
+          This version uses CPI history plus FMP/Treasury benchmark data to set inflation, rate, and market-stress assumptions when fields are left blank.
         </div>
       </div>
     </aside>
@@ -1219,7 +1219,7 @@ body {
           <div>
             <div class="section-kicker">Section 3</div>
             <div class="section-title">Rebalancing Alerts</div>
-            <div class="section-copy">These are prototype quarterly-style recommendations based on resilience, concentration, and the user’s stated goal.</div>
+            <div class="section-copy">These recommendations use resilience, concentration, the user’s stated goal, and live benchmark context where available.</div>
           </div>
         </div>
         <div class="rebalance-grid" id="rebalanceGrid"></div>
@@ -1248,7 +1248,7 @@ body {
 </section>
 
 <div class="disclaimer">
-  <p><strong>Important Disclosures:</strong> This income stress test is for educational purposes only and does not constitute investment, insurance, tax, legal, or financial advice. Scenario assumptions used here are prototype planning assumptions and are not live market forecasts. Actual dividend cuts, rate moves, inflation shocks, healthcare spending changes, and survivor-income rules can differ materially from these estimates. Use this report as a planning prompt and discuss major retirement income decisions with a qualified professional. © 2026 Retirement Shield. All rights reserved.</p>
+  <p><strong>Important Disclosures:</strong> This income stress test is for educational purposes only and does not constitute investment, insurance, tax, legal, or financial advice. Scenario assumptions use user-entered income plus CPI history and FMP/Treasury benchmark context where available, but they are not market forecasts. Actual dividend cuts, rate moves, inflation shocks, healthcare spending changes, and survivor-income rules can differ materially from these estimates. Use this report as a planning prompt and discuss major retirement income decisions with a qualified professional. © 2026 Retirement Shield. All rights reserved.</p>
 </div>
 
 <script is:inline>
@@ -1277,6 +1277,7 @@ const REBALANCE_LABELS = {
 };
 
 let latestShieldPayload = null;
+let incomeShieldDataPromise = null;
 
 const stateSelect = document.getElementById('stateSelect');
 const placeholderOption = document.createElement('option');
@@ -1305,6 +1306,75 @@ function parseMoney(value) {
 function parsePercent(value, fallback = 0) {
   const parsed = Number(String(value || '').replace(/[^0-9.-]/g, ''));
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function parseCpiCsv(text) {
+  return String(text || '')
+    .trim()
+    .split(/\r?\n/)
+    .slice(1)
+    .map((line) => {
+      const [date, value] = line.split(',');
+      const cpi = Number(value);
+      return date && Number.isFinite(cpi) ? { date, cpi } : null;
+    })
+    .filter(Boolean);
+}
+
+function annualizedChange(startValue, endValue, years) {
+  if (!startValue || !endValue || years <= 0) return null;
+  return (Math.pow(endValue / startValue, 1 / years) - 1) * 100;
+}
+
+function buildCpiSnapshot(rows) {
+  const latest = rows[rows.length - 1];
+  const priorYear = rows[rows.length - 13];
+  const priorFiveYear = rows[rows.length - 61];
+  const latestYoY = latest && priorYear ? ((latest.cpi - priorYear.cpi) / priorYear.cpi) * 100 : null;
+  const fiveYearAnnualized = latest && priorFiveYear ? annualizedChange(priorFiveYear.cpi, latest.cpi, 5) : null;
+  const baselineRate = fiveYearAnnualized ?? latestYoY ?? 3;
+  const stressRate = Math.max(baselineRate + 2, latestYoY != null ? latestYoY + 1 : 6);
+
+  return {
+    source: 'FRED CPIAUCSL CSV',
+    latestDate: latest?.date || null,
+    latestYoY,
+    fiveYearAnnualized,
+    baselineRate,
+    stressRate
+  };
+}
+
+async function loadIncomeShieldDataSources() {
+  if (incomeShieldDataPromise) return incomeShieldDataPromise;
+
+  incomeShieldDataPromise = Promise.all([
+    fetch('/data/CPIAUCSL.csv').then((response) => response.ok ? response.text() : ''),
+    fetch('/api/annuity-xray/benchmarks').then((response) => response.ok ? response.json() : null).catch(() => null)
+  ]).then(([cpiText, benchmarkPayload]) => {
+    const cpiSnapshot = buildCpiSnapshot(parseCpiCsv(cpiText));
+    const benchmarks = benchmarkPayload?.benchmarks || null;
+    const treasuryRate = benchmarks?.treasury?.fiveYear ?? benchmarks?.marketableAvgRate ?? 4;
+
+    return {
+      cpiSnapshot,
+      treasuryRate,
+      benchmarkSource: benchmarks?.source || 'Fallback Treasury benchmark',
+      marketDividendShockPct: treasuryRate >= 5 ? 22 : treasuryRate >= 4 ? 26 : 30,
+      bondIncomeLiftPct: treasuryRate >= 5 ? 14 : treasuryRate >= 4 ? 10 : 6
+    };
+  }).catch((error) => {
+    console.warn('Income Shield data source fallback used:', error);
+    return {
+      cpiSnapshot: { source: 'Fallback CPI assumption', latestDate: null, stressRate: 6 },
+      treasuryRate: 4,
+      benchmarkSource: 'Fallback Treasury benchmark',
+      marketDividendShockPct: 30,
+      bondIncomeLiftPct: 10
+    };
+  });
+
+  return incomeShieldDataPromise;
 }
 
 function stateName(code) {
@@ -1347,7 +1417,8 @@ function scenarioCardTone(gap) {
   return 'risk';
 }
 
-function buildIncomeShieldPayload() {
+async function buildIncomeShieldPayload() {
+  const dataSources = await loadIncomeShieldDataSources();
   const fullName = document.getElementById('fullName').value.trim();
   const stateCode = document.getElementById('stateSelect').value;
   const stateFullName = stateName(stateCode);
@@ -1355,8 +1426,8 @@ function buildIncomeShieldPayload() {
   const householdType = document.getElementById('householdType').value;
   const riskPriority = document.getElementById('riskPriority').value;
   const monthlySpending = parseMoney(document.getElementById('monthlySpending').value);
-  const healthShockIncrease = parsePercent(document.getElementById('healthShockIncrease').value, 22);
-  const inflationShockRate = parsePercent(document.getElementById('inflationShockRate').value, 6);
+  const healthShockIncrease = parsePercent(document.getElementById('healthShockIncrease').value, Math.max(18, dataSources.cpiSnapshot.stressRate * 4));
+  const inflationShockRate = parsePercent(document.getElementById('inflationShockRate').value, dataSources.cpiSnapshot.stressRate);
   const rebalancingGoal = document.getElementById('rebalancingGoal').value;
   const portfolioNotes = document.getElementById('portfolioNotes').value.trim();
   const incomeSources = buildIncomeSourceMap();
@@ -1367,16 +1438,16 @@ function buildIncomeShieldPayload() {
     {
       key: 'market_crash',
       name: 'Stock market crash',
-      income: totalIncome - (incomeSources.dividends * 0.30),
+      income: totalIncome - (incomeSources.dividends * (dataSources.marketDividendShockPct / 100)),
       spending: monthlySpending,
-      note: 'Assumes a 30% dividend-income reduction across the equity-income sleeve.'
+      note: `Uses a ${dataSources.marketDividendShockPct.toFixed(0)}% dividend-income shock, calibrated from the current Treasury/FMP benchmark backdrop.`
     },
     {
       key: 'rising_rates',
       name: 'Rising interest rates',
-      income: totalIncome + (incomeSources.bonds * 0.10),
+      income: totalIncome + (incomeSources.bonds * (dataSources.bondIncomeLiftPct / 100)),
       spending: monthlySpending,
-      note: 'Assumes lower bond prices but modestly better reinvestment income.'
+      note: `Uses a ${dataSources.bondIncomeLiftPct.toFixed(0)}% bond-income lift as a reinvestment-income proxy from Treasury benchmark context.`
     },
     {
       key: 'spouse_death',
@@ -1397,7 +1468,7 @@ function buildIncomeShieldPayload() {
       name: 'High inflation',
       income: totalIncome,
       spending: monthlySpending * (1 + inflationShockRate / 100),
-      note: 'Models purchasing power erosion without an equal increase in every income source.'
+      note: `Models purchasing power erosion at ${inflationShockRate.toFixed(1)}%, using CPI history as the default when blank.`
     }
   ].map((scenario) => {
     const gap = scenario.income - scenario.spending;
@@ -1484,7 +1555,8 @@ function buildIncomeShieldPayload() {
     });
   }
 
-  const narrative = `Current monthly income is about ${formatMoney(totalIncome)} against spending of ${formatMoney(monthlySpending)}, leaving a ${currentGap >= 0 ? 'surplus' : 'shortfall'} of ${formatMoney(Math.abs(currentGap))}. The worst stress test is "${worstScenario.name}," where the income gap shifts to ${formatMoney(Math.abs(worstScenario.gap))} ${worstScenario.gap >= 0 ? 'above' : 'below'} current spending. ${portfolioNotes ? portfolioNotes : 'This suggests the income system should be reviewed as a whole rather than one account at a time.'}`;
+  const dataSourceLine = `Inflation defaults use ${dataSources.cpiSnapshot.source}${dataSources.cpiSnapshot.latestDate ? ` through ${dataSources.cpiSnapshot.latestDate}` : ''}, and rate-sensitive assumptions use ${dataSources.benchmarkSource}.`;
+  const narrative = `Current monthly income is about ${formatMoney(totalIncome)} against spending of ${formatMoney(monthlySpending)}, leaving a ${currentGap >= 0 ? 'surplus' : 'shortfall'} of ${formatMoney(Math.abs(currentGap))}. The worst stress test is "${worstScenario.name}," where the income gap shifts to ${formatMoney(Math.abs(worstScenario.gap))} ${worstScenario.gap >= 0 ? 'above' : 'below'} current spending. ${dataSourceLine} ${portfolioNotes ? portfolioNotes : 'This suggests the income system should be reviewed as a whole rather than one account at a time.'}`;
 
   return {
     fullName,
@@ -1505,6 +1577,13 @@ function buildIncomeShieldPayload() {
     worstScenario,
     compare,
     rebalance,
+    dataSources: {
+      cpiSnapshot: dataSources.cpiSnapshot,
+      treasuryRate: dataSources.treasuryRate,
+      benchmarkSource: dataSources.benchmarkSource,
+      marketDividendShockPct: dataSources.marketDividendShockPct,
+      bondIncomeLiftPct: dataSources.bondIncomeLiftPct
+    },
     narrative
   };
 }
@@ -1526,7 +1605,7 @@ function renderIncomeShieldReport(payload) {
   document.getElementById('totalIncomeSub').textContent = 'All listed monthly income sources combined';
   document.getElementById('spendingSub').textContent = 'Current household outflow entered into the model';
   document.getElementById('gapSub').textContent = payload.currentGap >= 0 ? 'Current income surplus before stress hits' : 'Current shortfall before stress hits';
-  document.getElementById('scenarioPill').textContent = `${payload.scenarios.length} scenario view`;
+  document.getElementById('scenarioPill').textContent = `${payload.scenarios.length} scenario view · ${payload.dataSources?.benchmarkSource || 'benchmark context'}`;
 
   document.getElementById('scenarioGrid').innerHTML = payload.scenarios.map((scenario) => `
     <div class="scenario-card ${scenario.tone}">
@@ -1661,9 +1740,13 @@ async function hydrateSavedIncomeShieldReport(report) {
 }
 
 async function generateIncomeShieldReport() {
-  const payload = buildIncomeShieldPayload();
-  await saveIncomeShieldReport(payload);
-  showGeneratedIncomeShieldReport(payload);
+  try {
+    const payload = await buildIncomeShieldPayload();
+    await saveIncomeShieldReport(payload);
+    showGeneratedIncomeShieldReport(payload);
+  } catch (error) {
+    alert(error instanceof Error ? error.message : 'Unable to generate the Income Shield report.');
+  }
 }
 
 function editIncomeShieldReport() {

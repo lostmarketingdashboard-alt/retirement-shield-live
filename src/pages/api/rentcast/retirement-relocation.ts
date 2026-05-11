@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { createClient } from '@supabase/supabase-js';
+import sarppCsv from '../../../data/sarpp-regional-price-parities-state.csv?raw';
 
 const RENTCAST_API_BASE = 'https://api.rentcast.io/v1';
 const DEFAULT_HEADERS = { 'Content-Type': 'application/json' };
@@ -19,8 +20,12 @@ const STATE_NAME_BY_CODE: Record<string, string> = {
   WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming', DC: 'District of Columbia'
 };
 
-// State-level RPP-style planning index based on BEA regional price parity framing.
-const STATE_RPP_INDEX: Record<string, number> = {
+const STATE_CODE_BY_NAME = Object.fromEntries(
+  Object.entries(STATE_NAME_BY_CODE).map(([code, name]) => [name.toLowerCase(), code])
+);
+
+// Fallback used only when the SARPP CSV does not include a state row.
+const FALLBACK_STATE_RPP_INDEX: Record<string, number> = {
   AL: 89.8, AK: 104.8, AZ: 98.4, AR: 86.9, CA: 110.7, CO: 103.0, CT: 103.9, DE: 99.3,
   FL: 99.6, GA: 92.9, HI: 110.0, ID: 92.7, IL: 95.7, IN: 90.2, IA: 87.8, KS: 89.2,
   KY: 89.5, LA: 91.3, ME: 97.8, MD: 102.4, MA: 107.0, MI: 91.5, MN: 95.4, MS: 87.0,
@@ -72,6 +77,82 @@ function currency(value: number | null) {
     currency: 'USD',
     maximumFractionDigits: 0
   }).format(value);
+}
+
+function parseCsvLine(line: string) {
+  const cells: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+
+    if (char === '"' && next === '"') {
+      current += '"';
+      index += 1;
+      continue;
+    }
+
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (char === ',' && !inQuotes) {
+      cells.push(current.trim());
+      current = '';
+      continue;
+    }
+
+    current += char;
+  }
+
+  cells.push(current.trim());
+  return cells;
+}
+
+function loadSarppRppIndex() {
+  const rows = String(sarppCsv || '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const headerIndex = rows.findIndex((line) => line.startsWith('GeoFIPS,GeoName,LineCode,Description'));
+  if (headerIndex < 0) return {};
+
+  const headers = parseCsvLine(rows[headerIndex]);
+  const yearIndexes = headers
+    .map((header, index) => (/^\d{4}$/.test(header) ? { year: Number(header), index } : null))
+    .filter(Boolean) as Array<{ year: number; index: number }>;
+  const latestYear = yearIndexes.sort((a, b) => b.year - a.year)[0];
+  if (!latestYear) return {};
+
+  return rows.slice(headerIndex + 1).reduce((acc, line) => {
+    const cells = parseCsvLine(line);
+    const geoName = cells[1];
+    const lineCode = cells[2];
+    const description = cells[3];
+    const stateCode = STATE_CODE_BY_NAME[String(geoName || '').toLowerCase()];
+    const value = pickNumber(cells[latestYear.index]);
+
+    if (stateCode && lineCode === '1' && description === 'RPPs: All items' && value != null) {
+      acc[stateCode] = {
+        value,
+        source: `BEA SARPP ${latestYear.year} Regional Price Parities CSV`
+      };
+    }
+
+    return acc;
+  }, {} as Record<string, { value: number; source: string }>);
+}
+
+const SARPP_RPP_INDEX = loadSarppRppIndex();
+
+function getRppIndex(stateCode: string) {
+  const sarpp = SARPP_RPP_INDEX[stateCode];
+  if (sarpp) return sarpp;
+
+  return {
+    value: FALLBACK_STATE_RPP_INDEX[stateCode] ?? 100,
+    source: 'Fallback state RPP planning index'
+  };
 }
 
 function normalizeAddress(record: UnknownRecord, fallbackAddress: string) {
@@ -207,7 +288,8 @@ async function buildLocationSnapshot(
   const homeValue = pickNumber(valueData?.price, valueData?.value, valueData?.estimate, valueData?.predictedValue);
   const estimatedRent = pickNumber(rentData?.rent, rentData?.price, rentData?.estimate, rentData?.predictedRent);
   const stateCode = normalized.stateCode || '';
-  const rppIndex = STATE_RPP_INDEX[stateCode] ?? 100;
+  const rpp = getRppIndex(stateCode);
+  const rppIndex = rpp.value;
   const incomeTaxRate = STATE_INCOME_TAX_RATE[stateCode] ?? 0;
   const estimatedStateTax = annualTaxableIncome * (incomeTaxRate / 100);
   const budgetAdjusted = annualBudget * (rppIndex / 100);
@@ -227,6 +309,7 @@ async function buildLocationSnapshot(
     estimatedRentLabel: currency(estimatedRent) ?? '--',
     rppIndex,
     rppLabel: `${rppIndex.toFixed(1)} vs 100 U.S. baseline`,
+    rppSource: rpp.source,
     budgetAdjusted,
     budgetAdjustedLabel: currency(budgetAdjusted) ?? '--',
     incomeTaxRate,

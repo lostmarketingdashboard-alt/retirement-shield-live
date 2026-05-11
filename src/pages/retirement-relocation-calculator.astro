@@ -326,7 +326,7 @@ function renderRelocationReport(payload){
 
   document.getElementById('baselineGrid').innerHTML = [
     {label:'Home value',value:payload.current.homeValueLabel,sub:'RentCast-backed estimate'},
-    {label:'Cost index',value:payload.current.rppLabel,sub:`Budget-adjusted spend ${payload.current.budgetAdjustedLabel}`},
+    {label:'Cost index',value:payload.current.rppLabel,sub:`Budget-adjusted spend ${payload.current.budgetAdjustedLabel} · ${payload.current.rppSource || 'RPP source'}`},
     {label:'State tax drag',value:payload.current.estimatedStateTaxLabel,sub:`Approx. ${payload.current.incomeTaxRate.toFixed(2)}% planning rate`},
     {label:'Life expectancy',value:payload.current.lifeExpectancyLabel,sub:payload.current.countyName || 'County'},
     {label:'Estate complexity',value:payload.current.complexityLabel,sub:`Probate ${payload.current.estateGuide?.probateTimelineDisplay || 'review needed'}`},
