@@ -83,6 +83,7 @@ export const ssr = false;
         .replaceAll("'", '&#039;')
       const initials = getInitials(profile.full_name)
       let notificationToastTimer = null;
+      let portalStatusToastTimer = null;
 
       function showNotificationToast(count) {
         if (!['user', 'admin'].includes(profile.role)) return;
@@ -124,6 +125,32 @@ export const ssr = false;
         });
 
         notificationToastTimer = window.setTimeout(closeToast, 5200);
+      }
+
+      function showPortalStatusToast(title, copy) {
+        const existingToast = document.getElementById('portalStatusToast');
+        if (existingToast) existingToast.remove();
+        if (portalStatusToastTimer) window.clearTimeout(portalStatusToastTimer);
+
+        const toast = document.createElement('div');
+        toast.id = 'portalStatusToast';
+        toast.className = 'notification-toast';
+        toast.innerHTML = `
+          <button class="notification-toast-close" type="button" aria-label="Dismiss status popup">×</button>
+          <div class="notification-toast-title">${escapeHtml(title)}</div>
+          <div class="notification-toast-copy">${escapeHtml(copy)}</div>
+        `;
+
+        document.body.appendChild(toast);
+        window.requestAnimationFrame(() => toast.classList.add('show'));
+
+        const closeToast = () => {
+          toast.classList.remove('show');
+          window.setTimeout(() => toast.remove(), 220);
+        };
+
+        toast.addEventListener('click', closeToast);
+        portalStatusToastTimer = window.setTimeout(closeToast, 3200);
       }
 
       const app = document.getElementById('app')
@@ -264,6 +291,8 @@ export const ssr = false;
           reportsPromise: null,
           team: null,
           teamPromise: null,
+          quizSubmission: null,
+          quizSubmissionPromise: null,
           profileMarkup: null,
           notifications: [],
           notificationsPromise: null,
@@ -282,6 +311,42 @@ export const ssr = false;
           ['South Dakota','South Dakota'],['Tennessee','Tennessee'],['Texas','Texas'],['Utah','Utah'],['Vermont','Vermont'],
           ['Virginia','Virginia'],['Washington','Washington'],['West Virginia','West Virginia'],['Wisconsin','Wisconsin'],['Wyoming','Wyoming'],
           ['District of Columbia','District of Columbia']
+        ];
+        const ONBOARDING_PROFILE_FIELDS = [
+          { id: 'phone', label: 'Phone Number', type: 'text', placeholder: '(555) 555-5555' },
+          { id: 'age', label: 'Age Range', type: 'select', options: [
+            ['','Select an answer'],['under45','Under 45'],['45-54','45 - 54'],['55-59','55 - 59'],['60-64','60 - 64'],['65-69','65 - 69'],['70-75','70 - 75'],['76+','76 or older']
+          ] },
+          { id: 'marital', label: 'Marital Status', type: 'select', options: [
+            ['','Select an answer'],['married','Married'],['widowed','Widowed'],['divorced','Divorced'],['single','Single / Never Married'],['partnered','Partnered (not married)']
+          ] },
+          { id: 'dependents', label: 'Dependents', type: 'select', options: [
+            ['','Select an answer'],['minor','Yes - minor children (under 18)'],['adult','Yes - adult children only'],['special','Yes - a dependent with special needs'],['none','No dependents']
+          ] },
+          { id: 'will', label: 'Will Status', type: 'select', options: [
+            ['','Select an answer'],['recent','Yes - updated within the last 3 years'],['old','Yes - but it is more than 5 years old'],['unsure','Yes - but I am not sure when it was updated'],['none','No will in place']
+          ] },
+          { id: 'trust', label: 'Trust Structure', type: 'select', options: [
+            ['','Select an answer'],['revocable','Yes - a revocable living trust'],['irrevocable','Yes - an irrevocable trust'],['unsure','I am not sure what I have'],['none','No trust in place']
+          ] },
+          { id: 'beneficiary', label: 'Beneficiary Designations', type: 'select', options: [
+            ['','Select an answer'],['recent','Within the last 2 years'],['medium','3 - 5 years ago'],['old','More than 5 years ago'],['never','Never / Not sure']
+          ] },
+          { id: 'poa', label: 'Power of Attorney', type: 'select', options: [
+            ['','Select an answer'],['recent','Yes - recently reviewed and current'],['old','Yes - but it may be outdated'],['none','No power of attorney'],['unsure','Not sure if I have one']
+          ] },
+          { id: 'healthcare', label: 'Healthcare Directive', type: 'select', options: [
+            ['','Select an answer'],['both','Yes - both a proxy and living will'],['proxy','Just a healthcare proxy'],['living','Just a living will'],['none','Neither - no healthcare directive']
+          ] },
+          { id: 'ltc', label: 'Long-Term Care', type: 'select', options: [
+            ['','Select an answer'],['insurance','Yes - I have long-term care insurance'],['assets','Yes - I have assets set aside for this'],['medicaid','I plan to rely on Medicaid'],['none','No planning done yet']
+          ] },
+          { id: 'insurance', label: 'Life Insurance', type: 'select', options: [
+            ['','Select an answer'],['permanent','Permanent policy (whole life, IUL, universal)'],['term','Term life insurance only'],['both','Both permanent and term'],['none','No life insurance currently']
+          ] },
+          { id: 'networth', label: 'Net Worth', type: 'select', options: [
+            ['','Select an answer'],['under250','Under $250,000'],['250-500','$250,000 - $500,000'],['500-1m','$500,000 - $1,000,000'],['1m-2.5m','$1,000,000 - $2,500,000'],['over2.5m','Over $2,500,000']
+          ] }
         ];
 
         function renderTabLoading(message = 'Loading...') {
@@ -632,11 +697,163 @@ export const ssr = false;
           if (avatarEl) avatarEl.textContent = initialsValue;
         }
 
-        function renderProfile() {
+        function normalizeCountyState(stateName) {
+          return (stateName || '').toLowerCase().trim().replace(/\s+/g, '-');
+        }
+
+        function splitFullName(name) {
+          const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+          return {
+            firstName: parts[0] || '',
+            lastName: parts.slice(1).join(' ')
+          };
+        }
+
+        async function getLatestQuizSubmission({ force = false } = {}) {
+          if (!force && userTabCache.quizSubmission) return userTabCache.quizSubmission;
+          if (!force && userTabCache.quizSubmissionPromise) return userTabCache.quizSubmissionPromise;
+
+          userTabCache.quizSubmissionPromise = supabase
+            .from('quiz_submissions')
+            .select('id, answers, created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+            .then(({ data, error }) => {
+              if (error) console.error('Quiz submission fetch error:', error);
+              userTabCache.quizSubmission = data ?? null;
+              userTabCache.quizSubmissionPromise = null;
+              return userTabCache.quizSubmission;
+            });
+
+          return userTabCache.quizSubmissionPromise;
+        }
+
+        function renderProfileAnswerField(field, answers = {}) {
+          const value = answers[field.id] ?? '';
+
+          if (field.type === 'select') {
+            return `
+              <label class="profile-field">
+                <span class="profile-label">${escapeHtml(field.label)}</span>
+                <select class="profile-input" data-answer-field="${escapeHtml(field.id)}">
+                  ${field.options.map(([optionValue, label]) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? 'selected' : ''}>${escapeHtml(label)}</option>`).join('')}
+                </select>
+              </label>
+            `;
+          }
+
+          return `
+            <label class="profile-field">
+              <span class="profile-label">${escapeHtml(field.label)}</span>
+              <input class="profile-input" type="${escapeHtml(field.type)}" data-answer-field="${escapeHtml(field.id)}" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}">
+            </label>
+          `;
+        }
+
+        async function populateProfileCountyOptions(stateName, selectedCounty = '') {
+          const countySelect = document.getElementById('profileCounty');
+          if (!countySelect) return;
+
+          countySelect.innerHTML = '<option value="">Select your county</option>';
+
+          if (!stateName) {
+            countySelect.disabled = true;
+            return;
+          }
+
+          countySelect.disabled = true;
+          const { data, error } = await supabase
+            .from('county_population')
+            .select('county')
+            .eq('state', normalizeCountyState(stateName))
+            .order('county', { ascending: true });
+
+          if (error) {
+            console.error('County fetch error:', error);
+            countySelect.disabled = false;
+            if (selectedCounty) {
+              countySelect.innerHTML = `<option value="${escapeHtml(selectedCounty)}" selected>${escapeHtml(selectedCounty)}</option>`;
+            }
+            return;
+          }
+
+          const countyOptions = (data || []).map(row => row.county).filter(Boolean);
+          if (selectedCounty && !countyOptions.includes(selectedCounty)) {
+            countyOptions.unshift(selectedCounty);
+          }
+          countySelect.innerHTML = `
+            <option value="">Select your county</option>
+            ${countyOptions.map(county => `<option value="${escapeHtml(county)}" ${selectedCounty === county ? 'selected' : ''}>${escapeHtml(county)}</option>`).join('')}
+          `;
+          countySelect.disabled = false;
+        }
+
+        function collectProfileQuizAnswers(baseAnswers = {}) {
+          const fullName = document.getElementById('profileFullName')?.value.trim() || profile.full_name || '';
+          const email = document.getElementById('profileEmail')?.value.trim() || getProfileEmail();
+          const state = document.getElementById('profileState')?.value || profile.state || '';
+          const county = document.getElementById('profileCounty')?.value || profile.county || '';
+          const nameParts = splitFullName(fullName);
+          const updatedAnswers = { ...(baseAnswers || {}) };
+
+          updatedAnswers.firstName = nameParts.firstName;
+          updatedAnswers.lastName = nameParts.lastName;
+          updatedAnswers.email = email;
+          updatedAnswers.state = state;
+          updatedAnswers.county = county;
+
+          document.querySelectorAll('[data-answer-field]').forEach(fieldEl => {
+            updatedAnswers[fieldEl.dataset.answerField] = fieldEl.value;
+          });
+
+          return updatedAnswers;
+        }
+
+        async function saveProfileQuizAnswers({ showToast = false } = {}) {
+          const latestQuizSubmission = await getLatestQuizSubmission({ force: true });
+          const updatedAnswers = collectProfileQuizAnswers(latestQuizSubmission?.answers || {});
+
+          const quizWrite = latestQuizSubmission?.id
+            ? await supabase
+              .from('quiz_submissions')
+              .update({ answers: updatedAnswers })
+              .eq('id', latestQuizSubmission.id)
+              .select('id, answers, created_at')
+              .maybeSingle()
+            : await supabase
+              .from('quiz_submissions')
+              .insert({ user_id: user.id, answers: updatedAnswers })
+              .select('id, answers, created_at')
+              .maybeSingle();
+
+          if (quizWrite.error) {
+            console.error('Quiz answer save error:', quizWrite.error);
+            if (showToast) showPortalStatusToast('Unable to save', 'That quiz answer was not saved. Please try again.');
+            return { error: quizWrite.error };
+          }
+
+          userTabCache.quizSubmission = quizWrite.data || {
+            id: latestQuizSubmission?.id || null,
+            answers: updatedAnswers,
+            created_at: latestQuizSubmission?.created_at || null
+          };
+
+          if (showToast) showPortalStatusToast('Change saved', 'Your onboarding answer has been updated.');
+          return { data: userTabCache.quizSubmission };
+        }
+
+        async function renderProfile() {
+          const quizSubmission = await getLatestQuizSubmission();
+          const answers = quizSubmission?.answers || {};
+          const currentState = profile.state || answers.state || '';
+          const currentCounty = profile.county || answers.county || '';
           const memberSince = profile.created_at
             ? new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
             : 'Recently joined';
-          const stateLabel = getPortalStateLabel(profile.state);
+          const stateLabel = getPortalStateLabel(currentState);
+          const countyLabel = currentCounty || 'County not set';
           const saveStatusMarkup = userTabCache.profileMarkup || '';
 
           contentDiv.innerHTML = `
@@ -647,15 +864,16 @@ export const ssr = false;
                   <h2>Keep your portal details current.</h2>
                   <p>Your profile is what the portal uses to personalize saved tools, state-specific planning views, and household-facing documents. Update it here and the rest of the portal follows along.</p>
                   <div class="profile-pill-row">
-                    <span class="profile-pill">Role: ${profile.role}</span>
-                    <span class="profile-pill">State: ${stateLabel}</span>
-                    <span class="profile-pill">Member since ${memberSince}</span>
+                    <span class="profile-pill">Role: ${escapeHtml(profile.role)}</span>
+                    <span class="profile-pill">State: ${escapeHtml(stateLabel)}</span>
+                    <span class="profile-pill">County: ${escapeHtml(countyLabel)}</span>
+                    <span class="profile-pill">Member since ${escapeHtml(memberSince)}</span>
                   </div>
                 </div>
                 <div class="profile-identity-card">
                   <div class="profile-avatar-lg">${getInitials(profile.full_name)}</div>
-                  <div class="profile-identity-name">${profile.full_name || 'Retirement Shield Member'}</div>
-                  <div class="profile-identity-email">${getProfileEmail() || 'No email on file'}</div>
+                  <div class="profile-identity-name">${escapeHtml(profile.full_name || 'Retirement Shield Member')}</div>
+                  <div class="profile-identity-email">${escapeHtml(getProfileEmail() || 'No email on file')}</div>
                   <div class="profile-identity-meta">Household portal profile</div>
                 </div>
               </section>
@@ -664,11 +882,11 @@ export const ssr = false;
                 <section class="doc-card profile-card">
                   <div class="doc-header profile-card-head">
                     <div class="doc-icon">👤</div>
-                    <div>
-                      <h3>Edit Your Details</h3>
-                      <div class="doc-meta">These fields update your portal identity and state-based personalization.</div>
+                      <div>
+                        <h3>Edit Your Details</h3>
+                        <div class="doc-meta">These fields update your portal identity and location-based personalization.</div>
+                      </div>
                     </div>
-                  </div>
 
                   ${saveStatusMarkup}
 
@@ -676,16 +894,22 @@ export const ssr = false;
                     <div class="profile-form-grid">
                       <label class="profile-field">
                         <span class="profile-label">Full Name</span>
-                        <input id="profileFullName" class="profile-input" type="text" value="${profile.full_name ?? ''}" placeholder="e.g. Margaret Thomas">
+                        <input id="profileFullName" class="profile-input" type="text" value="${escapeHtml(profile.full_name ?? '')}" placeholder="e.g. Margaret Thomas">
                       </label>
                       <label class="profile-field">
                         <span class="profile-label">Email Address</span>
-                        <input id="profileEmail" class="profile-input" type="email" value="${getProfileEmail()}" placeholder="name@example.com">
+                        <input id="profileEmail" class="profile-input" type="email" value="${escapeHtml(getProfileEmail())}" placeholder="name@example.com">
                       </label>
-                      <label class="profile-field profile-field-full">
+                      <label class="profile-field">
                         <span class="profile-label">Primary State</span>
                         <select id="profileState" class="profile-input">
-                          ${PROFILE_STATE_OPTIONS.map(([value, label]) => `<option value="${value}" ${profile.state === value ? 'selected' : ''}>${label}</option>`).join('')}
+                          ${PROFILE_STATE_OPTIONS.map(([value, label]) => `<option value="${escapeHtml(value)}" ${currentState === value ? 'selected' : ''}>${escapeHtml(label)}</option>`).join('')}
+                        </select>
+                      </label>
+                      <label class="profile-field">
+                        <span class="profile-label">County</span>
+                        <select id="profileCounty" class="profile-input">
+                          <option value="">Loading counties...</option>
                         </select>
                       </label>
                     </div>
@@ -710,18 +934,63 @@ export const ssr = false;
                       <span>Your name and email appear across the header, saved reports, and profile summary views.</span>
                     </div>
                     <div class="profile-usage-item">
-                      <strong>State guidance</strong>
-                      <span>Your state helps prefill state-driven tools and keeps legal or planning content pointed at the right jurisdiction.</span>
+                      <strong>State and county guidance</strong>
+                      <span>Your location helps prefill jurisdiction-driven tools and planning content pointed at the right local rules.</span>
                     </div>
-                    <div class="profile-usage-item">
-                      <strong>Household continuity</strong>
-                      <span>Keeping this current makes shared family documents and saved outputs easier for a spouse or adult child to understand later.</span>
-                    </div>
+                    
                   </div>
                 </section>
               </div>
+
+              <section class="doc-card profile-card profile-quiz-card">
+                <div class="doc-header profile-card-head">
+                  <div class="doc-icon">✓</div>
+                  <div>
+                    <h3>Onboarding Quiz Answers</h3>
+                    <div class="doc-meta">Update the answers used to personalize your Retirement Shield recommendations.</div>
+                  </div>
+                </div>
+                ${quizSubmission ? '' : '<div class="profile-alert error">No onboarding quiz submission was found yet. Saving here will create one from these answers.</div>'}
+                <div class="profile-form-grid">
+                  ${ONBOARDING_PROFILE_FIELDS.map(field => renderProfileAnswerField(field, answers)).join('')}
+                </div>
+              </section>
             </div>
           `;
+
+          await populateProfileCountyOptions(currentState, currentCounty);
+
+          const profileStateSelect = document.getElementById('profileState');
+          if (profileStateSelect) {
+            profileStateSelect.addEventListener('change', async () => {
+              await populateProfileCountyOptions(profileStateSelect.value, '');
+            });
+          }
+
+          let onboardingSaveTimer = null;
+          let onboardingSaveRun = 0;
+          const queueOnboardingSave = (delay = 0) => {
+            if (onboardingSaveTimer) window.clearTimeout(onboardingSaveTimer);
+            onboardingSaveTimer = window.setTimeout(async () => {
+              const runId = ++onboardingSaveRun;
+              const result = await saveProfileQuizAnswers();
+              if (runId !== onboardingSaveRun) return;
+
+              if (result.error) {
+                showPortalStatusToast('Unable to save', 'That quiz answer was not saved. Please try again.');
+                return;
+              }
+
+              showPortalStatusToast('Change saved', 'Your onboarding answer has been updated.');
+            }, delay);
+          };
+
+          document.querySelectorAll('[data-answer-field]').forEach(fieldEl => {
+            fieldEl.addEventListener('change', () => queueOnboardingSave());
+            if (fieldEl.tagName === 'INPUT') {
+              fieldEl.addEventListener('input', () => queueOnboardingSave(650));
+            }
+          });
 
           const profileForm = document.getElementById('profileForm');
           if (profileForm) {
@@ -732,16 +1001,17 @@ export const ssr = false;
               const fullName = document.getElementById('profileFullName')?.value.trim() || '';
               const email = document.getElementById('profileEmail')?.value.trim() || '';
               const state = document.getElementById('profileState')?.value || '';
+              const county = document.getElementById('profileCounty')?.value || '';
 
               if (!fullName) {
                 userTabCache.profileMarkup = `<div class="profile-alert error">Please enter your full name before saving.</div>`;
-                renderProfile();
+                await renderProfile();
                 return;
               }
 
               if (!email) {
                 userTabCache.profileMarkup = `<div class="profile-alert error">Please enter an email address before saving.</div>`;
-                renderProfile();
+                await renderProfile();
                 return;
               }
 
@@ -755,22 +1025,31 @@ export const ssr = false;
                 .update({
                   full_name: fullName,
                   email,
-                  state
+                  state,
+                  county
                 })
                 .eq('id', user.id);
 
               if (error) {
                 userTabCache.profileMarkup = `<div class="profile-alert error">We could not save your profile just now. Please try again.</div>`;
-                renderProfile();
+                await renderProfile();
                 return;
+              }
+
+              const quizWrite = await saveProfileQuizAnswers();
+
+              if (quizWrite.error) {
+                userTabCache.profileMarkup = `<div class="profile-alert error">Your profile saved, but the onboarding answers could not be updated yet.</div>`;
+              } else {
+                userTabCache.profileMarkup = `<div class="profile-alert success">Your profile and onboarding answers have been updated.</div>`;
               }
 
               profile.full_name = fullName;
               profile.email = email;
               profile.state = state;
-              userTabCache.profileMarkup = `<div class="profile-alert success">Your profile has been updated.</div>`;
+              profile.county = county;
               refreshPortalIdentityUI();
-              renderProfile();
+              await renderProfile();
             });
           }
         }
@@ -1649,7 +1928,7 @@ export const ssr = false;
           contentDiv.innerHTML = `
             <div class="doc-card">
               <div class="doc-header">
-                <div class="doc-icon">RS</div>
+                <div class="doc-icon tools-main-icon">${renderToolIcon('shield')}</div>
                 <div>
                   <h3>Your Consultant${consultants && consultants.length > 1 ? 's' : ''}</h3>
                   <div class="doc-meta">Primary point${consultants && consultants.length > 1 ? 's' : ''} of contact</div>
@@ -1709,7 +1988,7 @@ export const ssr = false;
 
             <div class="doc-card">
               <div class="doc-header">
-                <div class="doc-icon">RS</div>
+                <div class="doc-icon tools-main-icon">${renderToolIcon('shield')}</div>
                 <div>
                   <h3>Need dates on this?</h3>
                   <div class="doc-meta">Turn the plan into scheduled milestones</div>
@@ -1725,6 +2004,31 @@ export const ssr = false;
               </div>
             </div>
           `
+        }
+
+        const TOOL_ICON_SVGS = {
+          family: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M4 19v-1.2C4 15.1 5.8 13 8 13s4 2.1 4 4.8V19"/><path d="M12 19v-1.2c0-1.3-.3-2.5-.9-3.4A4.8 4.8 0 0 1 16 13c2.2 0 4 2.1 4 4.8V19"/></svg>',
+          spouse: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>',
+          home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10.5V20h11V10.5"/><path d="M10 20v-5h4v5"/></svg>',
+          binder: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 8h7"/><path d="M8 12h6"/><path d="M8 16h4"/></svg>',
+          income: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14v10H5z"/><path d="M8 12h.01"/><path d="M16 12h.01"/><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>',
+          runway: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5"/><path d="M7 19h10"/><path d="M5 17V7"/><path d="M10 14h4"/><path d="M14 10h4"/></svg>',
+          shield: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-3.5 7-10V5l-7-2-7 2v6c0 6.5 7 10 7 10Z"/><path d="M9 12l2 2 4-5"/></svg>',
+          inflation: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17 19 7"/><path d="M7 7h5v5"/><path d="M17 17h-5v-5"/></svg>',
+          medicare: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16"/><path d="M4 12h16"/><path d="M6 6h12v12H6z"/></svg>',
+          calendar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12a2 2 0 0 1 2 2v12H4V7a2 2 0 0 1 2-2Z"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M4 10h16"/><path d="M8 14h3"/><path d="M13 14h3"/></svg>',
+          annuity: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18h16"/><path d="M6 18V9"/><path d="M12 18V5"/><path d="M18 18v-6"/><path d="M7 7l5-3 5 6"/></svg>',
+          search: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"/><path d="m16 16 4 4"/></svg>',
+          map: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.1 6-10a6 6 0 0 0-12 0c0 4.9 6 10 6 10Z"/><path d="M12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>',
+          collision: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h10"/><path d="m10 4 4 4-4 4"/><path d="M20 16H10"/><path d="m14 12-4 4 4 4"/></svg>',
+          checklist: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v14H5V6a2 2 0 0 1 2-2Z"/><path d="m8 10 2 2 4-5"/><path d="M8 17h8"/></svg>',
+          brief: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M8 9h8"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>',
+          dividend: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V5"/><path d="M5 19h14"/><path d="m8 15 3-4 3 2 4-6"/><path d="M17 7h1v1"/></svg>',
+          estate: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16"/><path d="M6 10v8"/><path d="M10 10v8"/><path d="M14 10v8"/><path d="M18 10v8"/><path d="M3 18h18"/><path d="M12 4 4 9h16Z"/></svg>'
+        };
+
+        function renderToolIcon(iconName) {
+          return TOOL_ICON_SVGS[iconName] || TOOL_ICON_SVGS.shield;
         }
 
         async function renderTools() {
@@ -1775,7 +2079,7 @@ export const ssr = false;
 
             <div class="doc-card">
               <div class="doc-header">
-                <div class="doc-icon">RS</div>
+                <div class="doc-icon tools-main-icon">${renderToolIcon('shield')}</div>
                 <div>
                   <h3>Tools</h3>
                   <div class="doc-meta">Helpful retirement tools for your plan</div>
@@ -1786,7 +2090,7 @@ export const ssr = false;
                 <div class="tools-grid">
                   ${[
                     {
-                      icon: 'FP',
+                      icon: 'family',
                       category: 'Family',
                       name: `Is Your Family's Plan Actually Ready?`,
                       description: 'Check whether the household plan is actually understandable and usable when family members need it.',
@@ -1797,7 +2101,7 @@ export const ssr = false;
                       restartHref: familyPlanQuizReport ? `/family-plan-quiz?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'WP',
+                      icon: 'spouse',
                       category: 'Family',
                       name: `The Widow's Playbook — The Surviving Spouse Financial Survival Report`,
                       description: 'Map the surviving spouse risks, income gaps, account access issues, and first decisions after loss.',
@@ -1808,7 +2112,7 @@ export const ssr = false;
                       restartHref: widowsReportResolved ? `/widows-playbook?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'HE',
+                      icon: 'home',
                       category: 'Property',
                       name: `What's Your Home Really Doing For Your Retirement? — The Home Equity Intelligence Report`,
                       description: 'Estimate how a home supports or strains the retirement plan using property-backed context.',
@@ -1819,7 +2123,7 @@ export const ssr = false;
                       restartHref: homeEquityReport ? `/home-equity?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'EB',
+                      icon: 'binder',
                       category: 'Family',
                       name: `The "After I'm Gone" Emergency Binder Generator`,
                       description: 'Create a practical household binder for accounts, contacts, documents, and immediate family steps.',
@@ -1830,7 +2134,7 @@ export const ssr = false;
                       restartHref: emergencyBinderReport ? `/emergency-binder-generator?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'RP',
+                      icon: 'income',
                       category: 'Income',
                       name: 'Your Retirement Paycheck — The Dividend Income X-Ray',
                       description: 'Turn dividend holdings into a month-by-month retirement paycheck view.',
@@ -1841,7 +2145,7 @@ export const ssr = false;
                       restartHref: retirementPaycheckReport ? `/retirement-paycheck?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'RR',
+                      icon: 'runway',
                       category: 'Income',
                       name: 'The Retirement Runway — Personalized Money-Lasts-Until Tracker',
                       description: 'Stress-test how long retirement assets may last under different spending and market assumptions.',
@@ -1853,7 +2157,7 @@ export const ssr = false;
                     },
 
                     {
-                      icon: 'IS',
+                      icon: 'shield',
                       category: 'Income',
                       name: 'The Income Shield — Retirement Income Stress Test & Rebalancing Alerts',
                       description: 'Look for retirement income fragility under market, spouse, and cash-flow stress scenarios.',
@@ -1866,7 +2170,7 @@ export const ssr = false;
 
                   
                     {
-                      icon: 'IE',
+                      icon: 'inflation',
                       category: 'Income',
                       name: 'The Inflation Erosion Visualizer',
                       description: 'See how inflation can quietly reduce spending power over the retirement horizon.',
@@ -1877,7 +2181,7 @@ export const ssr = false;
                       restartHref: inflationErosionReport ? `/inflation-erosion-visualizer?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'IG',
+                      icon: 'medicare',
                       category: 'Tax',
                       name: 'IRMAA Guard — Medicare Premium Surcharge Early Warning System',
                       description: 'Check whether income decisions may push Medicare premiums into a higher surcharge tier.',
@@ -1888,7 +2192,7 @@ export const ssr = false;
                       restartHref: irmaaGuardReport ? `/irmaa-guard?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'RM',
+                      icon: 'calendar',
                       category: 'Tax',
                       name: 'RMD Calendar + Tax Impact Estimator',
                       description: 'Estimate required distribution timing and the tax drag it may create.',
@@ -1899,7 +2203,7 @@ export const ssr = false;
                       restartHref: rmdCalendarReport ? `/rmd-calendar-tax-estimator?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'AX',
+                      icon: 'annuity',
                       category: 'Income',
                       name: 'Is Your Annuity Ripping You Off? — The Annuity X-Ray Report',
                       description: 'Review annuity tradeoffs, surrender constraints, fees, and benchmark comparisons.',
@@ -1910,7 +2214,7 @@ export const ssr = false;
                       restartHref: annuityXrayReport ? `/annuity-x-ray-report?utm=${user.id}` : ''
                     },
                       {
-                      icon: 'UP',
+                      icon: 'search',
                       category: 'Estate',
                       name: 'Unclaimed Property Finder',
                       description: 'Create a claim-prep checklist for dormant property searches and family follow-up.',
@@ -1922,7 +2226,7 @@ export const ssr = false;
                     },
                   
                     {
-                      icon: 'MV',
+                      icon: 'map',
                       category: 'Property',
                       name: 'Should You Move? — The Retirement Relocation Calculator',
                       description: 'Compare retirement locations through cost, tax, longevity, and estate-planning lenses.',
@@ -1934,7 +2238,7 @@ export const ssr = false;
                     },
 
                     {
-                      icon: 'IC',
+                      icon: 'collision',
                       category: 'Estate',
                       name: 'The Inheritance Collision Report — The Blended Family Estate Conflict Detector',
                       description: 'Surface estate conflict risks in remarriage, stepfamily, and beneficiary-designation situations.',
@@ -1945,7 +2249,7 @@ export const ssr = false;
                       restartHref: inheritanceCollisionReport ? `/inheritance-collision-report?utm=${user.id}` : ''
                     },
                     {
-                      icon: '72',
+                      icon: 'checklist',
                       category: 'Estate',
                       name: 'The 72-Hour Checklist — The Personalized After-Death Action Plan',
                       description: 'Generate a practical first-72-hours checklist for family, documents, and urgent deadlines.',
@@ -1956,7 +2260,7 @@ export const ssr = false;
                       restartHref: afterDeathChecklistReport ? `/72-hour-checklist?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'SB',
+                      icon: 'brief',
                       category: 'Income',
                       name: 'The Shield Brief — Your Monthly Retirement Intelligence Report',
                       description: 'Build a monthly briefing around rates, inflation, policy, and local retirement context.',
@@ -1967,7 +2271,7 @@ export const ssr = false;
                       restartHref: shieldBriefReport ? `/shield-brief?utm=${user.id}` : ''
                     },
                     {
-                      icon: 'DW',
+                      icon: 'dividend',
                       category: 'Income',
                       name: 'Dividend Watch — Retirement Income Portfolio Monitor',
                       description: 'Monitor dividend holdings, payout risk, expected income, and upcoming dividend events.',
@@ -1979,7 +2283,7 @@ export const ssr = false;
                     },
                   
                     {
-                      icon: 'EW',
+                      icon: 'estate',
                       category: 'Estate',
                       name: 'Estate Watch — State Law Change Tracker & Plan Review Alerts',
                       description: 'Track state-law changes that may affect probate, estate tax, Medicaid, and plan reviews.',
@@ -1993,7 +2297,7 @@ export const ssr = false;
                     <article class="tool-card" data-tool-search="${escapeHtml(`${tool.name} ${tool.description} ${tool.category}`)}" data-tool-category="${escapeHtml(tool.category)}">
                       <div class="tool-card-top">
                         <div class="tool-card-head">
-                          <div class="tool-badge">${tool.icon}</div>
+                          <div class="tool-badge">${renderToolIcon(tool.icon)}</div>
                           <span class="tool-category">${tool.category}</span>
                           ${tool.completed ? `<button class="tool-restart-btn" data-restart-href="${tool.restartHref ?? ''}">Start New</button>` : ''}
                         </div>
@@ -2129,7 +2433,7 @@ export const ssr = false;
               }
               renderPlan();
             }
-            if (type === 'profile') renderProfile()
+            if (type === 'profile') await renderProfile()
             if (type === 'documents') await renderDocuments()
             if (type === 'team') await renderTeam()
             if (type === 'timeline') renderTimeline()
@@ -4345,8 +4649,12 @@ modal.querySelectorAll('textarea').forEach(field => {
     width: 52px;
     height: 52px;
     border-radius: 14px;
-    font-size: 24px;
-    flex-shrink: 0;
+    flex: 0 0 52px;
+  }
+
+  .tool-badge svg {
+    width: 26px;
+    height: 26px;
   }
 
   .tool-copy h4 {
@@ -5303,10 +5611,26 @@ modal.querySelectorAll('textarea').forEach(field => {
       background: rgba(200,130,26,.1);
       width: 70px;
       height: 70px;
+      aspect-ratio: 1 / 1;
       border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex: 0 0 70px;
+      line-height: 1;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .doc-icon svg {
+      width: 34px;
+      height: 34px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .doc-header h3 {
@@ -5522,7 +5846,7 @@ modal.querySelectorAll('textarea').forEach(field => {
       display: grid;
       grid-template-columns: minmax(0, 1.25fr) minmax(0, .95fr);
       gap: 24px;
-      align-items: start;
+      align-items: stretch;
       width: 100%;
       min-width: 0;
     }
@@ -5530,6 +5854,9 @@ modal.querySelectorAll('textarea').forEach(field => {
     .profile-card {
       max-width: 100%;
       min-width: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .profile-card-head {
@@ -5540,6 +5867,8 @@ modal.querySelectorAll('textarea').forEach(field => {
       display: flex;
       flex-direction: column;
       gap: 18px;
+      flex: 1;
+      justify-content: space-between;
     }
 
     .profile-form-grid {
@@ -5822,12 +6151,22 @@ modal.querySelectorAll('textarea').forEach(field => {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-      letter-spacing: 1px;
       color: var(--navy);
       background: linear-gradient(135deg, rgba(13,27,42,0.08), rgba(200,130,26,0.2));
       box-shadow: inset 0 0 0 1px rgba(200,130,26,0.18);
+      flex: 0 0 64px;
+      box-sizing: border-box;
+    }
+
+    .tool-badge svg {
+      width: 31px;
+      height: 31px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .tool-category {
