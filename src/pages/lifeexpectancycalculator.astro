@@ -200,6 +200,280 @@ svg.surv-chart{width:100%;display:block;overflow:visible;}
     font-family:'DM Mono', monospace;
     font-size:14px;
   }
+
+  @media (max-width: 760px) {
+    body {
+      overflow-x: hidden;
+    }
+
+    nav {
+      height: auto;
+      min-height: 58px;
+      padding: 14px 18px;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .logo {
+      font-size: 17px;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+
+    .nav-r {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 58vw;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .nav-r a {
+      margin-left: 0;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .nav-r a:not(.nav-cta) {
+      display: none;
+    }
+
+    .nav-cta {
+      padding: 8px 12px;
+    }
+
+    .hero-strip {
+      padding: 34px 18px 32px;
+    }
+
+    .hero-inner {
+      max-width: none;
+    }
+
+    .hero-pill {
+      font-size: 10px;
+      letter-spacing: .6px;
+      margin-bottom: 14px;
+    }
+
+    .hero-strip h1 {
+      font-size: 32px;
+      line-height: 1.08;
+      margin-bottom: 12px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      line-height: 1.55;
+      max-width: none;
+    }
+
+    .main {
+      width: 100%;
+      padding: 18px 14px 34px;
+    }
+
+    .calc-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .form-panel {
+      position: static;
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .form-head {
+      padding: 18px 18px;
+    }
+
+    .form-body {
+      padding: 18px;
+    }
+
+    .field-row,
+    .check-group {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .field-group {
+      margin-bottom: 16px;
+    }
+
+    .field-input {
+      min-height: 46px;
+      font-size: 16px;
+      padding: 11px 13px;
+    }
+
+    .toggle-group {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .toggle-btn {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .check-item {
+      min-height: 44px;
+      padding: 10px 12px;
+    }
+
+    .btn-calc {
+      min-height: 50px;
+      font-size: 14px;
+      border-radius: 10px;
+    }
+
+    #results-area,
+    .placeholder-panel,
+    .results-panel {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .placeholder-panel {
+      padding: 34px 20px;
+      border-radius: 12px;
+    }
+
+    .result-headline,
+    .card,
+    .ss-card,
+    .cta-card {
+      border-radius: 12px;
+      padding: 20px 16px;
+      margin-bottom: 16px;
+    }
+
+    .rh-name {
+      font-size: 18px;
+    }
+
+    .rh-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .rh-stat {
+      padding: 14px 12px;
+    }
+
+    .rh-stat-num {
+      font-size: 29px;
+    }
+
+    .actuarial-note {
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+
+    .pct-row {
+      display: grid !important;
+      grid-template-columns: 1fr;
+      gap: 7px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pct-row:last-child {
+      border-bottom: 0;
+    }
+
+    .pct-label,
+    .pct-val {
+      width: auto;
+      text-align: left;
+    }
+
+    .pct-track {
+      width: 100%;
+      height: 30px;
+    }
+
+    svg.surv-chart {
+      min-height: 230px;
+      width: 100%;
+    }
+
+    .chart-legend {
+      gap: 10px;
+    }
+
+    .leg-item {
+      font-size: 11px;
+    }
+
+    .factor-item {
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .factor-left {
+      min-width: 0;
+    }
+
+    .factor-impact {
+      white-space: nowrap;
+    }
+
+    .ss-verdict {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ss-badge {
+      align-self: flex-start;
+    }
+
+    .ss-table-mini {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-row {
+      flex-direction: column;
+    }
+
+    .btn-gold,
+    .btn-outline {
+      width: 100%;
+      text-align: center;
+    }
+
+    #state-guide-cta a {
+      font-size: 17px !important;
+      padding: 15px 16px !important;
+    }
+
+    #newsletterModal {
+      padding: 12px !important;
+      align-items: flex-start !important;
+      overflow-y: auto;
+    }
+
+    #newsletterModal > div {
+      width: 100% !important;
+      padding: 22px 16px !important;
+      margin-top: 20px;
+    }
+
+    #newsletterModal iframe {
+      height: 420px !important;
+    }
+  }
 </style>
 <nav>
   <div class="logo" style="cursor:pointer;" onclick="goBack()">Retirement<span>Shield</span></div>
