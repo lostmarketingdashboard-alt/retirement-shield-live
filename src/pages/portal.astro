@@ -244,9 +244,13 @@ export const ssr = false;
           </section>
     ` : ''}
           <div class="tabs-wrap">
+            <button class="tab-scroll-btn tab-scroll-left" type="button" data-tab-scroll="left" aria-label="Scroll tabs left">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5 9 12l5.5 5.5"/></svg>
+            </button>
             <div class="tabs">
               ${profile.role === 'admin' ? `
   <button class="tab active" data-tab="users">Users</button>
+  <button class="tab" data-tab="admin-profile">My Profile</button>
   <button class="tab" data-tab="tasks">Action Tasks</button>
   <button class="tab" data-tab="add-users">Add Users</button>
   <button class="tab" data-tab="assign-referrals">Assign Referral Members</button>
@@ -265,6 +269,9 @@ export const ssr = false;
   <button class="tab" data-tab="timeline">Timeline</button>
 `}
             </div>
+            <button class="tab-scroll-btn tab-scroll-right" type="button" data-tab-scroll="right" aria-label="Scroll tabs right">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6.5 5.5 5.5-5.5 5.5"/></svg>
+            </button>
             <div class="tab-underline"></div>
           </div>
 
@@ -328,6 +335,27 @@ export const ssr = false;
       })
 
       const contentDiv = document.getElementById('portalContent')
+      const tabsWrap = document.querySelector('.tabs-wrap');
+      const tabsScroller = document.querySelector('.tabs');
+      const updateTabScrollState = () => {
+        if (!tabsWrap || !tabsScroller) return;
+        const canScroll = tabsScroller.scrollWidth > tabsScroller.clientWidth + 2;
+        const atStart = tabsScroller.scrollLeft <= 2;
+        const atEnd = tabsScroller.scrollLeft + tabsScroller.clientWidth >= tabsScroller.scrollWidth - 2;
+        tabsWrap.classList.toggle('is-scrollable', canScroll);
+        tabsWrap.classList.toggle('at-start', !canScroll || atStart);
+        tabsWrap.classList.toggle('at-end', !canScroll || atEnd);
+      };
+
+      tabsScroller?.addEventListener('scroll', updateTabScrollState, { passive: true });
+      window.addEventListener('resize', updateTabScrollState);
+      document.querySelectorAll('[data-tab-scroll]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const direction = btn.dataset.tabScroll === 'left' ? -1 : 1;
+          tabsScroller?.scrollBy({ left: direction * 220, behavior: 'smooth' });
+        });
+      });
+      window.setTimeout(updateTabScrollState, 80);
       const assistantShell = document.getElementById('assistantShell');
       const assistantLauncher = document.getElementById('assistantLauncher');
       const assistantClose = document.getElementById('assistantClose');
@@ -3067,6 +3095,135 @@ export const ssr = false;
           `;
         }
 
+        function refreshAdminIdentityUI() {
+          const initialsValue = getInitials(profile.full_name);
+          const userNameEl = document.getElementById('portalUserName');
+          const avatarEl = document.querySelector('.avatar');
+
+          if (userNameEl) userNameEl.textContent = profile.full_name || 'Retirement Shield Admin';
+          if (avatarEl) avatarEl.textContent = initialsValue;
+        }
+
+        function renderAdminProfile(statusMarkup = '') {
+          const memberSince = profile.created_at
+            ? new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+            : 'Recently joined';
+
+          contentDiv.innerHTML = `
+            ${adminHeader({
+              kicker: 'Admin Account',
+              title: 'My Profile',
+              copy: 'View and update the account details attached to your admin login.',
+              stats: [
+                { value: escapeHtml(profile.role || 'admin'), label: 'Role' },
+                { value: escapeHtml(getProfileEmail() || 'Missing'), label: 'Email' },
+                { value: escapeHtml(memberSince), label: 'Member since' }
+              ]
+            })}
+
+            <div class="profile-grid">
+              <section class="doc-card profile-card">
+                <div class="doc-header profile-card-head">
+                  <div class="doc-icon">👤</div>
+                  <div>
+                    <h3>Edit Admin Details</h3>
+                    <div class="doc-meta">These fields update your admin portal identity.</div>
+                  </div>
+                </div>
+
+                ${statusMarkup}
+
+                <form id="adminProfileForm" class="profile-form">
+                  <div class="profile-form-grid">
+                    <label class="profile-field">
+                      <span class="profile-label">Full Name</span>
+                      <input id="adminProfileFullName" class="profile-input" type="text" value="${escapeHtml(profile.full_name || '')}" placeholder="Full name">
+                    </label>
+                    <label class="profile-field">
+                      <span class="profile-label">Email Address</span>
+                      <input id="adminProfileEmail" class="profile-input" type="email" value="${escapeHtml(getProfileEmail())}" placeholder="name@example.com">
+                    </label>
+                    <label class="profile-field">
+                      <span class="profile-label">State</span>
+                      <input id="adminProfileState" class="profile-input" type="text" value="${escapeHtml(profile.state || '')}" placeholder="Optional">
+                    </label>
+                    <label class="profile-field">
+                      <span class="profile-label">County</span>
+                      <input id="adminProfileCounty" class="profile-input" type="text" value="${escapeHtml(profile.county || '')}" placeholder="Optional">
+                    </label>
+                  </div>
+                  <div class="profile-actions">
+                    <button type="submit" class="view-pdf-btn" id="saveAdminProfileBtn">Save Profile</button>
+                  </div>
+                </form>
+              </section>
+
+              <section class="doc-card profile-card">
+                <div class="doc-header profile-card-head">
+                  <div class="doc-icon">RS</div>
+                  <div>
+                    <h3>Admin Identity</h3>
+                    <div class="doc-meta">What this account controls inside Retirement Shield.</div>
+                  </div>
+                </div>
+                <div class="profile-usage-list">
+                  <div class="profile-usage-item">
+                    <strong>Portal header</strong>
+                    <span>Your name and initials appear in the admin header and account menu.</span>
+                  </div>
+                  <div class="profile-usage-item">
+                    <strong>Admin notifications</strong>
+                    <span>This account receives admin-only messages, assignment requests, and scheduled portal notices.</span>
+                  </div>
+                  <div class="profile-usage-item">
+                    <strong>Team visibility</strong>
+                    <span>Your role controls access to users, tasks, referrals, articles, and notification management.</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          `;
+
+          document.getElementById('adminProfileForm')?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const saveBtn = document.getElementById('saveAdminProfileBtn');
+            const fullName = document.getElementById('adminProfileFullName')?.value.trim() || '';
+            const email = document.getElementById('adminProfileEmail')?.value.trim() || '';
+            const state = document.getElementById('adminProfileState')?.value.trim() || '';
+            const county = document.getElementById('adminProfileCounty')?.value.trim() || '';
+
+            if (!fullName || !email) {
+              renderAdminProfile(`<div class="profile-alert error">Please enter both your name and email before saving.</div>`);
+              return;
+            }
+
+            if (saveBtn) {
+              saveBtn.disabled = true;
+              saveBtn.textContent = 'Saving...';
+            }
+
+            const { error } = await supabase
+              .from('profiles')
+              .update({ full_name: fullName, email, state, county })
+              .eq('id', user.id);
+
+            if (error) {
+              console.error(error);
+              renderAdminProfile(`<div class="profile-alert error">We could not save your admin profile right now.</div>`);
+              return;
+            }
+
+            profile.full_name = fullName;
+            profile.email = email;
+            profile.state = state;
+            profile.county = county;
+            invalidateAdminData('users', 'team');
+            refreshAdminIdentityUI();
+            renderAdminProfile(`<div class="profile-alert success">Your admin profile has been updated.</div>`);
+          });
+        }
+
         async function renderUsers() {
           const users = await getAdminData('users');
 
@@ -4564,6 +4721,7 @@ modal.querySelectorAll('textarea').forEach(field => {
             const type = tab.dataset.tab
 
             if (type === 'users') renderUsers()
+            if (type === 'admin-profile') renderAdminProfile()
             if (type === 'tasks') renderActionTasks()
             if (type === 'add-users') renderAddUsers()
             if (type === 'assign-referrals') renderAssignReferrals()
@@ -4693,6 +4851,7 @@ modal.querySelectorAll('textarea').forEach(field => {
   .tabs-wrap {
     margin-top: 30px;
     padding: 0 20px;
+    position: relative;
   }
 
   .tabs {
@@ -4700,9 +4859,40 @@ modal.querySelectorAll('textarea').forEach(field => {
     gap: 24px;
     padding-bottom: 8px;
     scrollbar-width: none;
+    flex-wrap: nowrap;
   }
 
   .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs-wrap.is-scrollable::before,
+  .tabs-wrap.is-scrollable::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 10px;
+    width: 34px;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .tabs-wrap.is-scrollable::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--cream-dark), rgba(237,230,214,0));
+  }
+
+  .tabs-wrap.is-scrollable::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--cream-dark), rgba(237,230,214,0));
+  }
+
+  .tabs-wrap.at-start::before,
+  .tabs-wrap.at-end::after {
+    opacity: 0;
+  }
+
+  .tab-scroll-btn {
     display: none;
   }
 
@@ -5856,12 +6046,100 @@ modal.querySelectorAll('textarea').forEach(field => {
       max-width: 1100px;
       margin: 60px auto 0;
       padding: 0 48px;
+      position: relative;
     }
 
     .tabs {
       display: flex;
       gap: 48px;
       align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tabs-wrap.is-scrollable::before,
+    .tabs-wrap.is-scrollable::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 10px;
+      width: 42px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .tabs-wrap.is-scrollable::before {
+      left: 48px;
+      background: linear-gradient(90deg, var(--cream-dark), rgba(237,230,214,0));
+    }
+
+    .tabs-wrap.is-scrollable::after {
+      right: 48px;
+      background: linear-gradient(270deg, var(--cream-dark), rgba(237,230,214,0));
+    }
+
+    .tabs-wrap.at-start::before,
+    .tabs-wrap.at-end::after {
+      opacity: 0;
+    }
+
+    .tab-scroll-btn {
+      position: absolute;
+      top: 6px;
+      z-index: 3;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(200,184,154,.46);
+      background: rgba(255,255,255,.58);
+      backdrop-filter: blur(10px);
+      color: var(--navy);
+      box-shadow: 0 14px 34px rgba(13,27,42,.10);
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    .tab-scroll-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .tab-scroll-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(200,130,26,.42);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 18px 40px rgba(13,27,42,.14);
+    }
+
+    .tabs-wrap.is-scrollable .tab-scroll-btn {
+      display: flex;
+    }
+
+    .tabs-wrap.at-start .tab-scroll-left,
+    .tabs-wrap.at-end .tab-scroll-right {
+      opacity: .18;
+      pointer-events: none;
+    }
+
+    .tab-scroll-left {
+      left: 0;
+    }
+
+    .tab-scroll-right {
+      right: 0;
     }
 
     .tab {
@@ -5874,6 +6152,9 @@ modal.querySelectorAll('textarea').forEach(field => {
       padding: 16px 0;
       position: relative;
       transition: color .2s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      line-height: 1.1;
     }
 
     .tab:hover {
@@ -5906,6 +6187,14 @@ modal.querySelectorAll('textarea').forEach(field => {
     @media (max-width: 900px) {
       .tabs-wrap {
         padding: 0 20px;
+      }
+
+      .tabs-wrap.is-scrollable::before {
+        left: 20px;
+      }
+
+      .tabs-wrap.is-scrollable::after {
+        right: 20px;
       }
 
       .tabs {

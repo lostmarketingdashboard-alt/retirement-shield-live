@@ -88,7 +88,9 @@ function applyProfileName(profile) {
 
   for (const field of nameFields) {
     if (!field.value) {
-      field.value = profileName;
+      field.value = field.id === 'firstName'
+        ? String(profileName).trim().split(/\s+/)[0]
+        : profileName;
       field.dataset.prefilled = 'true';
       field.dispatchEvent(new Event('input', { bubbles: true }));
       field.dispatchEvent(new Event('change', { bubbles: true }));
