@@ -1,6 +1,8 @@
 ---
 import { supabase } from '../lib/supabase';
 
+export const prerender = true;
+
 const { data, error } = await supabase
   .from('articles')
   .select('slug, headline, lede, pillar, published_at')

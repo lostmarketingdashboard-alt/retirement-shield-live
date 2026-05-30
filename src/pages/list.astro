@@ -1,54 +1,10 @@
 ---
-import { createClient } from '@supabase/supabase-js'
+import countyList from '../data/county-list.json'
 
-const supabase = createClient(
-  import.meta.env.PUBLIC_SUPABASE_URL,
-  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-)
+export const prerender = true;
 
-let rows = []
-let from = 0
-const pageSize = 1000
-
-while (true) {
-  const { data, error } = await supabase
-    .from('counties')
-    .select('State, County')
-    .range(from, from + pageSize - 1)
-
-  if (error) {
-    console.error(error)
-    break
-  }
-
-  if (!data || data.length === 0) break
-
-  rows = rows.concat(data)
-
-  if (data.length < pageSize) break
-
-  from += pageSize
-}
-
-
-const stateMap = {}
-
-rows?.forEach(r => {
-  const state = r.State
-  const county = r.County?.replace(' County','')
-
-  if (!stateMap[state]) stateMap[state] = new Set()
-  if (county) stateMap[state].add(county)
-})
-
-// Convert Sets back to arrays
-Object.keys(stateMap).forEach(state => {
-  stateMap[state] = Array.from(stateMap[state])
-})
-
-const states = [...new Set(rows?.map(r => r.State))]
-  .filter(Boolean)
-  .sort()
+const states = countyList.states
+const stateMap = countyList.stateMap
 ---
 
 <!DOCTYPE html>

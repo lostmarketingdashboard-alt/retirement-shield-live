@@ -1,35 +1,41 @@
 ---
-export const prerender = false;
-const { slug } = Astro.params;
+export const prerender = true;
 
-const query = new URLSearchParams({
-  'filters[slug][$eq]': slug || '',
-  'populate[0]': 'cover',
-  'populate[blocks][on][shared.rich-text][populate]': '*',
-  'populate[blocks][on][shared.media][populate]': '*',
-  'populate[blocks][on][shared.slider][populate]': '*',
-  'populate[blocks][on][shared.quote][populate]': '*',
-});
+export async function getStaticPaths() {
+  const query = new URLSearchParams({
+    'populate[0]': 'cover',
+    'populate[blocks][on][shared.rich-text][populate]': '*',
+    'populate[blocks][on][shared.media][populate]': '*',
+    'populate[blocks][on][shared.slider][populate]': '*',
+    'populate[blocks][on][shared.quote][populate]': '*',
+    'pagination[pageSize]': '100',
+  });
 
-const url = `${import.meta.env.PUBLIC_STRAPI_URL}/api/articles?${query.toString()}`;
+  const url = `${import.meta.env.PUBLIC_STRAPI_URL}/api/articles?${query.toString()}`;
 
-let article = null;
-let fetchError = null;
+  try {
+    const res = await fetch(url);
 
-try {
-  const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Strapi error: ${res.status}`);
+    }
 
-  if (!res.ok) {
-    throw new Error(`Strapi error: ${res.status}`);
+    const json = await res.json();
+    const articles = Array.isArray(json?.data) ? json.data : [];
+
+    return articles
+      .filter((article) => article?.slug)
+      .map((article) => ({
+        params: { slug: article.slug },
+        props: { article }
+      }));
+  } catch (err) {
+    console.error('Blog slug path fetch failed:', err);
+    return [];
   }
-
-  const json = await res.json();
-  const items = Array.isArray(json?.data) ? json.data : [];
-  article = items[0] ?? null;
-} catch (err) {
-  console.error('Blog slug fetch failed:', err);
-  fetchError = err;
 }
+
+const { article } = Astro.props;
 
 const formatDate = (dateStr) => {
   if (!dateStr) return null
@@ -559,7 +565,6 @@ nav{
   {!article && (
     <div>
       <h1>Article not found</h1>
-      {fetchError && <p>Something went wrong loading this article.</p>}
     </div>
   )}
 

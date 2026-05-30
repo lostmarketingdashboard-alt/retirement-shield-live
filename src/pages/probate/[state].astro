@@ -1,29 +1,32 @@
 ---
 import { supabase } from '../../lib/supabase'
 
+export const prerender = true;
+
 export async function getStaticPaths() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('state_guides')
-    .select('state_slug')
+    .select('*')
+
+  if (error || !data) {
+    console.error('Unable to build probate guide paths:', error)
+    return []
+  }
 
   return data.map(row => ({
-    params: { state: row.state_slug }
+    params: { state: row.state_slug },
+    props: { guide: row }
   }))
 }
 
-const { state } = Astro.params
-
-const { data: guide } = await supabase
-  .from('state_guides')
-  .select('*')
-  .eq('state_slug', state)
-  .single()
+const { guide } = Astro.props
 
 if (!guide) {
-  throw new Error(`State guide not found: ${state}`)
+  throw new Error('State guide not found')
 }
 
 const stateName = guide.state_name
+const state = guide.state_slug
 
 const clean = (str) => {
   if (typeof str !== 'string') return str;
