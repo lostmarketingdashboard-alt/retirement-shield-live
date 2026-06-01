@@ -673,13 +673,20 @@ svg.surv-chart{width:100%;display:block;overflow:visible;}
     </div>
 
     <iframe 
-      src="https://api.leadconnectorhq.com/widget/form/1fEKSAEG00dBmEd1y8gn" 
+      data-src="https://api.leadconnectorhq.com/widget/form/1fEKSAEG00dBmEd1y8gn" 
       style="width:100%; height:350px; border:none; border-radius:8px; background:transparent;">
     </iframe>
   </div>
 </div>
 
-<script is:inline>
+
+<script>
+function hydrateModalIframes(modal) {
+  if (!modal) return;
+  modal.querySelectorAll('iframe[data-src]').forEach(function (iframe) {
+    if (!iframe.getAttribute('src')) iframe.setAttribute('src', iframe.dataset.src);
+  });
+}
 // --- Supabase (lazy load to avoid breaking non-module script) ---
 let supabaseClient = null;
 
@@ -698,7 +705,8 @@ async function getSupabase() {
 window.openNewsletterModal = function(e) {
   if (e) e.preventDefault();
   const modal = document.getElementById('newsletterModal');
-  if (modal) modal.style.display = 'flex';
+hydrateModalIframes(modal);
+if (modal) modal.style.display = 'flex';
 }
 
 window.closeNewsletterModal = function() {
